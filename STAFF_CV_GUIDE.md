@@ -15,6 +15,12 @@ Eye-tracking studies describe an **F-shaped scan**: a horizontal pass across the
 
 This complements—not replaces—the Staff-level content checklist below.
 
+## ATS compatibility (applicant tracking systems)
+
+Many employers parse CVs with **ATS** software before a human reads them. Guidance from resume/ATS guides (layout, not magic keywords): use a **single-column**, top-to-bottom flow; **standard section titles** (e.g. Professional Summary, Professional Experience, Education, Technical Skills); **plain text** contact details with **full URLs** for LinkedIn and GitHub; **consistent date ranges** (e.g. `Jan 2020 - Present`); avoid relying on **tables, text boxes, headers/footers, images, or icons** in Word/PDF exports; prefer **simple bullets** over dense paragraphs.
+
+**This repo’s Markdown source** is structured for that plain-text model: minimal special punctuation, spelled-out employer context where helpful (e.g. Willis Towers Watson (WTW)), and skills as a simple list. If you export to PDF, use a simple template (no multi-column body text) and test a plain-text extract. **Trade-off:** heavy bold and decorative punctuation help human F-pattern scans but can be reduced here for cleaner ATS parsing; you can tune emphasis when producing a human-only PDF.
+
 ## What “Staff” usually signals on a CV
 
 Hiring teams look for **scope**, **impact**, and **influence**, not only a skills list.
@@ -63,5 +69,4 @@ Map your real work honestly—for example, **WebRTC / real-time media** → late
 
 ## Canonical file in this repo
 
-- Edited by the local app: **`content/cv.md`**
-- Original export snapshot (if kept): `DebmallyaBhattacharya_CV.md` at repo root
+- **`content/cv.md`** — single source of truth; edited by the local app (`GET`/`PUT` `/api/cv` in dev).

@@ -24,9 +24,10 @@ Open the URL Vite prints (usually `http://localhost:5173`). **Save** issues a `P
 
 ## Canonical CV path
 
-- **Edited by the app:** `content/cv.md`
-- **Staff-level writing guide:** [`STAFF_CV_GUIDE.md`](STAFF_CV_GUIDE.md)
-- Optional snapshot at repo root: `DebmallyaBhattacharya_CV.md` (not used by the app unless you copy manually)
+- **Canonical CV (edited by the app):** [`content/cv.md`](content/cv.md)
+- **Staff-level writing guide:** [`STAFF_CV_GUIDE.md`](STAFF_CV_GUIDE.md) (includes F-pattern and **ATS** notes)
+
+The Markdown is structured for **ATS-friendly** plain text (standard section headings, plain contact lines, simple bullets). If you export to PDF for applications, use a simple single-column layout; see the guide.
 
 ## Scripts
 
@@ -35,7 +36,7 @@ Open the URL Vite prints (usually `http://localhost:5173`). **Save** issues a `P
 | `npm run dev`      | Dev server + `/api/cv` read/write    |
 | `npm run build`    | Typecheck + production bundle        |
 | `npm run preview`  | Preview production build (no save)   |
-| `npm run typecheck`| `tsc -b`                             |
+| `npm run typecheck`| `tsc --noEmit`                       |
 | `npm run lint`     | ESLint                               |
 | `npm run test`     | Vitest (validation helpers)          |
 
