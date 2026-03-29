@@ -1,0 +1,220 @@
+.app {
+  max-width: 120rem;
+  margin: 0 auto;
+  padding: 1.25rem 1.25rem 2rem;
+}
+
+.app-header {
+  margin-bottom: 1rem;
+}
+
+.app-title {
+  font-size: 1.5rem;
+  font-weight: 650;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.app-lede {
+  margin: 0 0 0.75rem;
+  color: var(--muted);
+  max-width: 52rem;
+  font-size: 0.95rem;
+}
+
+.inline-code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.9em;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.1em 0.35em;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn {
+  font: inherit;
+  cursor: pointer;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 0.45rem 0.9rem;
+  box-shadow: var(--shadow);
+}
+
+.btn:hover {
+  border-color: var(--muted);
+}
+
+.btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: #fff;
+  border-color: color-mix(in srgb, var(--accent) 70%, #000);
+}
+
+@media (prefers-color-scheme: dark) {
+  .btn-primary {
+    color: #0a0a08;
+  }
+}
+
+.banner {
+  margin: 0.6rem 0 0;
+  font-size: 0.9rem;
+}
+
+.banner-error {
+  color: var(--danger);
+}
+
+.banner-success {
+  color: var(--accent);
+}
+
+.staff-hints {
+  margin: 0.75rem 0 1rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  max-width: 52rem;
+}
+
+.staff-hints summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.staff-hints ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  min-height: min(70vh, 900px);
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+    min-height: unset;
+  }
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.panel-heading {
+  margin: 0;
+  padding: 0.55rem 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 92%, var(--border));
+}
+
+.editor {
+  flex: 1;
+  width: 100%;
+  min-height: 22rem;
+  resize: vertical;
+  border: none;
+  margin: 0;
+  padding: 0.75rem;
+  font-family: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  background: transparent;
+  color: var(--text);
+}
+
+.editor:focus {
+  outline: 2px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  outline-offset: -2px;
+}
+
+.preview {
+  flex: 1;
+  overflow: auto;
+  padding: 0.85rem 1rem 1.25rem;
+  font-size: 0.95rem;
+}
+
+.markdown-body h1 {
+  font-size: 1.45rem;
+  margin: 0 0 0.5rem;
+}
+
+.markdown-body h2 {
+  font-size: 1.15rem;
+  margin: 1.25rem 0 0.4rem;
+}
+
+.markdown-body h3 {
+  font-size: 1.05rem;
+  margin: 1rem 0 0.35rem;
+}
+
+.markdown-body p,
+.markdown-body li {
+  margin: 0.35rem 0;
+}
+
+.markdown-body ul {
+  padding-left: 1.2rem;
+}
+
+.markdown-body a {
+  color: var(--accent);
+}
+
+.markdown-body code {
+  font-family: ui-monospace, monospace;
+  font-size: 0.88em;
+}
+
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1rem 0;
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.5rem;
+}
