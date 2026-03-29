@@ -168,6 +168,12 @@
   font-size: 0.95rem;
 }
 
+/* F-pattern friendly: left-aligned scan column, comfortable line length */
+.preview.markdown-body {
+  max-width: 72ch;
+  text-align: start;
+}
+
 .markdown-body h1 {
   font-size: 1.45rem;
   margin: 0 0 0.5rem;
@@ -176,6 +182,10 @@
 .markdown-body h2 {
   font-size: 1.15rem;
   margin: 1.25rem 0 0.4rem;
+}
+
+.preview.markdown-body h2:first-of-type {
+  margin-top: 0.35rem;
 }
 
 .markdown-body h3 {

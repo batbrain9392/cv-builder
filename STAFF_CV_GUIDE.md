@@ -2,6 +2,19 @@
 
 Use this when editing [`content/cv.md`](content/cv.md). It is a **writing bar**, not permission to invent facts.
 
+## F-pattern scanning (recruiters’ first pass)
+
+Eye-tracking studies describe an **F-shaped scan**: a horizontal pass across the **top** of the page, then **down the left** (section headers, job titles, bullet stems), with another shorter horizontal band mid-page. Initial reviews are often very short, so **placement and scannability** matter.
+
+**Practical implications for this CV:**
+
+- **Top band:** Name, target title, **contact on one line** (location, email, phone, links), then a **short** summary with **bold keywords** at the start of clauses.
+- **Left rail:** Clear `###` job lines; bullets **front-loaded** with a bold label or strong verb so the left edge reads as a list of hooks.
+- **Density:** Prefer short lines and bullets over long paragraphs; put **education and older sections** after experience (lower visual priority in a quick scan).
+- **PDF/layout tools:** If you export to two columns later, keep the **strongest** content in the **top-left**; avoid burying key terms on the far right or in wall-of-text blocks.
+
+This complements—not replaces—the Staff-level content checklist below.
+
 ## What “Staff” usually signals on a CV
 
 Hiring teams look for **scope**, **impact**, and **influence**, not only a skills list.
