@@ -1,9 +1,9 @@
 import type React from 'react';
 
-import type { CvFormData } from './cvFormSchema.ts';
+import type { CvFormData } from '../cvFormSchema.ts';
 
-import { CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT, CV_LAYOUT } from './cvConstants.ts';
-import { formatDateRange, formatEntryMeta, formatLinksLine } from './cvFormatters.ts';
+import { CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT, CV_LAYOUT } from '../cvConstants.ts';
+import { formatDateRange, formatEntryMeta, formatLinksLine } from '../cvFormatters.ts';
 import './CvPreview.css';
 
 const cssVars = {

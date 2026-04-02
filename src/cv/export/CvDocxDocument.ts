@@ -11,10 +11,10 @@
 
 import { Document, Paragraph, TextRun, BorderStyle, Packer, convertMillimetersToTwip } from 'docx';
 
-import type { CvFormData } from './cvFormSchema.ts';
+import type { CvFormData } from '../cvFormSchema.ts';
 
-import { CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT, CV_LAYOUT, PT, TWIP } from './cvConstants.ts';
-import { formatDateRange, formatEntryMeta, formatLinksLine } from './cvFormatters.ts';
+import { CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT, CV_LAYOUT, PT, TWIP } from '../cvConstants.ts';
+import { formatDateRange, formatEntryMeta, formatLinksLine } from '../cvFormatters.ts';
 
 const FONT = CV_FONT.family;
 

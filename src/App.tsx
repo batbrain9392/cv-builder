@@ -2,12 +2,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRef, useState } from 'react';
 import { useForm, useFieldArray, type SubmitHandler } from 'react-hook-form';
 
-import type { CvFormData } from './lib/cvFormSchema.ts';
+import type { CvFormData } from './cv/cvFormSchema.ts';
 
 import seedData from '../content/cv.json';
-import { createCvDocxBlob } from './lib/CvDocxDocument.ts';
-import { cvFormSchema } from './lib/cvFormSchema.ts';
-import { CvPreview } from './lib/CvPreview.tsx';
+import { cvFormSchema } from './cv/cvFormSchema.ts';
+import { createCvDocxBlob } from './cv/export/CvDocxDocument.ts';
+import { CvPreview } from './cv/preview/CvPreview.tsx';
 import './App.css';
 
 export function App() {
