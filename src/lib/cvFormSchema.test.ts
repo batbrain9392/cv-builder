@@ -4,6 +4,7 @@ import { cvFormSchema } from "./cvFormSchema";
 describe("cvFormSchema", () => {
   it("validates good data", () => {
     const goodData = {
+      jobDescriptionUrl: "",
       personalInfo: {
         name: "Debmallya Bhattacharya",
         title: "Senior Software Engineer",

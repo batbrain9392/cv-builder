@@ -48,6 +48,7 @@ const certificationSchema = z.object({
 });
 
 export const cvFormSchema = z.object({
+  jobDescriptionUrl: z.url('Must be a valid URL').optional().or(z.literal('')),
   personalInfo: personalInfoSchema,
   summary: z.string().min(10, 'Summary should be at least 10 characters'),
   experience: z.array(experienceSchema).min(1, 'At least one experience entry is required'),
