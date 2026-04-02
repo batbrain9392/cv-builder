@@ -1,3 +1,11 @@
+/**
+ * CV design tokens shared by the web preview and DOCX export.
+ *
+ * All sizes are in typographic points (pt). Consumers convert as needed:
+ * - CSS: values are injected as custom properties on the preview root element (see CvPreview.tsx).
+ * - DOCX: font sizes use `* PT` (half-points), spacing uses `* TWIP` (twentieths of a point).
+ */
+
 export function stripProtocol(url: string): string {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 }
@@ -20,11 +28,16 @@ export const CV_SIZE = {
 } as const;
 
 export const CV_COLOR = {
-  primary: '000000',
   secondary: '333333',
   meta: '444444',
   rule: '888888',
 } as const;
+
+/** docx half-point multiplier: size value = pt * 2 */
+export const PT = 2;
+
+/** 1 pt = 20 twips (paragraph spacing units in docx) */
+export const TWIP = 20;
 
 export const CV_SPACING_PT = {
   sectionBefore: 16,
@@ -35,4 +48,13 @@ export const CV_SPACING_PT = {
   contactGap: 2,
   contactToSection: 12,
   summaryAfter: 8,
+  techStackBefore: 1,
+  ruleGap: 8,
+} as const;
+
+export const CV_LAYOUT = {
+  bulletIndentMm: 6,
+  pageWidthMm: 210,
+  pageHeightMm: 297,
+  marginMm: 15,
 } as const;

@@ -1,11 +1,7 @@
 /*
  * Styles for the live web preview.
  * Matches the DOCX export as closely as possible.
- * Uses pt units to match Word/DOCX output.
- *
- * Canonical values live in cvConstants.ts.
- * When changing sizes, colors, or spacing, update cvConstants.ts first,
- * then sync the hardcoded values here to match.
+ * Design token values are injected as CSS custom properties from cvConstants.ts.
  */
 
 .cv-preview {
@@ -13,8 +9,8 @@
   min-height: 297mm;
   padding: 15mm;
   box-sizing: border-box;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 11pt;
+  font-family: var(--cv-font);
+  font-size: var(--cv-body-size);
   line-height: 1.2;
   color: #000000;
   background: white;
@@ -25,85 +21,85 @@
   display: flex;
   flex-direction: row;
   align-items: baseline;
-  margin-bottom: 2pt;
+  margin-bottom: var(--cv-contact-gap);
 }
 
 .cv-preview-name {
   font-weight: bold;
-  font-size: 18pt;
+  font-size: var(--cv-name-size);
 }
 
 .cv-preview-header-sep {
-  font-size: 12pt;
+  font-size: var(--cv-title-size);
   margin: 0 6pt;
 }
 
 .cv-preview-title {
   font-weight: bold;
-  font-size: 12pt;
+  font-size: var(--cv-title-size);
 }
 
 .cv-preview-contact {
-  font-size: 10pt;
-  color: #333333;
-  margin-bottom: 2pt;
+  font-size: var(--cv-contact-size);
+  color: var(--cv-color-secondary);
+  margin-bottom: var(--cv-contact-gap);
 }
 
 .cv-preview-contact-last {
-  font-size: 10pt;
-  color: #333333;
-  margin-bottom: 12pt;
+  font-size: var(--cv-contact-size);
+  color: var(--cv-color-secondary);
+  margin-bottom: var(--cv-contact-to-section);
 }
 
 /* Sections */
 .cv-preview-section-heading {
   font-weight: bold;
-  font-size: 13pt;
+  font-size: var(--cv-section-heading-size);
   text-transform: uppercase;
-  margin-top: 16pt;
+  margin-top: var(--cv-section-before);
   margin-bottom: 0;
 }
 
 .cv-preview-section-rule {
-  border-bottom: 0.5pt solid #888888;
-  margin-bottom: 8pt;
+  border-bottom: 0.5pt solid var(--cv-color-rule);
+  margin-bottom: var(--cv-section-after);
 }
 
 /* Entries */
 .cv-preview-entry-title {
   font-weight: bold;
-  font-size: 12pt;
-  margin-top: 10pt;
+  font-size: var(--cv-entry-title-size);
+  margin-top: var(--cv-entry-before);
 }
 
 .cv-preview-entry-meta {
-  font-size: 10pt;
-  color: #444444;
-  margin-bottom: 2pt;
+  font-size: var(--cv-meta-size);
+  color: var(--cv-color-meta);
+  margin-bottom: var(--cv-meta-after);
 }
 
 .cv-preview-bullet {
-  font-size: 10.5pt;
-  margin-left: 18pt;
-  margin-bottom: 2pt;
+  font-size: var(--cv-bullet-size);
+  margin-left: var(--cv-bullet-indent);
+  margin-bottom: var(--cv-bullet-after);
 }
 
 .cv-preview-tech-stack {
-  font-size: 10pt;
-  color: #444444;
-  margin-left: 18pt;
-  margin-top: 1pt;
-  margin-bottom: 2pt;
+  font-size: var(--cv-tech-size);
+  color: var(--cv-color-meta);
+  margin-left: var(--cv-bullet-indent);
+  margin-top: var(--cv-tech-before);
+  margin-bottom: var(--cv-bullet-after);
 }
 
 /* Summary */
 .cv-preview-summary {
-  font-size: 11pt;
-  margin-bottom: 8pt;
+  font-size: var(--cv-body-size);
+  margin-bottom: var(--cv-summary-after);
   white-space: pre-wrap;
 }
 
 /* Skills */
 .cv-preview-skills {
-  font-size: 11pt;
+  font-size: var(--cv-body-size);
 }

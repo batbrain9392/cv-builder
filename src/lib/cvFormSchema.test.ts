@@ -1,46 +1,46 @@
-import { describe, it, expect } from "vitest";
-import { cvFormSchema } from "./cvFormSchema";
+import { describe, it, expect } from 'vitest';
+import { cvFormSchema } from './cvFormSchema';
 
-describe("cvFormSchema", () => {
-  it("validates good data", () => {
+describe('cvFormSchema', () => {
+  it('validates good data', () => {
     const goodData = {
-      jobDescriptionUrl: "",
+      jobDescriptionUrl: '',
       personalInfo: {
-        name: "Debmallya Bhattacharya",
-        title: "Senior Software Engineer",
-        location: "Dublin, Ireland",
-        email: "batbrain9392@gmail.com",
-        phone: "+353 89 977 0399",
+        name: 'Debmallya Bhattacharya',
+        title: 'Senior Software Engineer',
+        location: 'Dublin, Ireland',
+        email: 'batbrain9392@gmail.com',
+        phone: '+353 89 977 0399',
         links: [
-          { label: "LinkedIn", url: "https://www.linkedin.com/in/batbrain9392/" },
-          { label: "GitHub", url: "https://github.com/batbrain9392" },
+          { label: 'LinkedIn', url: 'https://www.linkedin.com/in/batbrain9392/' },
+          { label: 'GitHub', url: 'https://github.com/batbrain9392' },
         ],
       },
-      summary: "11+ years in large-scale web applications...",
+      summary: '11+ years in large-scale web applications...',
       experience: [
         {
-          role: "Senior Software Engineer",
-          company: "Workday (Peakon)",
-          url: "https://www.workday.com",
-          startDate: "Dec 2022",
-          endDate: "Present",
-          location: "Dublin, Ireland",
-          bullets: ["Admin UI for Peakon...", "Shipped scheduling model..."],
-          techStack: "React, TypeScript, React Hook Form, Zod",
+          role: 'Senior Software Engineer',
+          company: 'Workday (Peakon)',
+          url: 'https://www.workday.com',
+          startDate: 'Dec 2022',
+          endDate: 'Present',
+          location: 'Dublin, Ireland',
+          bullets: ['Admin UI for Peakon...', 'Shipped scheduling model...'],
+          techStack: 'React, TypeScript, React Hook Form, Zod',
         },
       ],
       education: [
         {
-          degree: "Bachelor of Computer Science and Engineering",
-          institution: "Netaji Subhash Engineering College",
-          institutionUrl: "https://www.nsec.ac.in/",
-          startYear: "2010",
-          endYear: "2014",
-          location: "Kolkata, India",
-          bullets: ["Graduated with 8.34 DGPA."],
+          degree: 'Bachelor of Computer Science and Engineering',
+          institution: 'Netaji Subhash Engineering College',
+          institutionUrl: 'https://www.nsec.ac.in/',
+          startYear: '2010',
+          endYear: '2014',
+          location: 'Kolkata, India',
+          bullets: ['Graduated with 8.34 DGPA.'],
         },
       ],
-      skills: ["TypeScript", "React", "Angular"],
+      skills: ['TypeScript', 'React', 'Angular'],
       certifications: [],
       others: [],
     };
@@ -49,10 +49,10 @@ describe("cvFormSchema", () => {
     expect(result.success).toBe(true);
   });
 
-  it("rejects missing required fields", () => {
+  it('rejects missing required fields', () => {
     const badData = {
-      personalInfo: { name: "" },
-      summary: "",
+      personalInfo: { name: '' },
+      summary: '',
       experience: [],
       education: [],
       skills: [],

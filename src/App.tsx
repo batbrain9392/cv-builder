@@ -1,11 +1,13 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useRef, useState } from 'react';
 import { useForm, useFieldArray, type SubmitHandler } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+
 import type { CvFormData } from './lib/cvFormSchema.ts';
-import { cvFormSchema } from './lib/cvFormSchema.ts';
-import { createCvDocxBlob } from './lib/CvDocxDocument.ts';
-import { CvPreview } from './lib/CvPreview.tsx';
+
 import seedData from '../content/cv.json';
+import { createCvDocxBlob } from './lib/CvDocxDocument.ts';
+import { cvFormSchema } from './lib/cvFormSchema.ts';
+import { CvPreview } from './lib/CvPreview.tsx';
 import './App.css';
 
 export function App() {
@@ -113,11 +115,11 @@ export function App() {
         <h1>CV Builder</h1>
 
         <div>
-          <input ref={fileInputRef} type='file' accept='.json' onChange={onImport} />
-          <button type='button' onClick={handleSubmit(onExport)}>
+          <input ref={fileInputRef} type="file" accept=".json" onChange={onImport} />
+          <button type="button" onClick={handleSubmit(onExport)}>
             Export data
           </button>
-          <button type='button' onClick={handleExportDocx}>
+          <button type="button" onClick={handleExportDocx}>
             Export as DOCX
           </button>
         </div>
@@ -125,281 +127,314 @@ export function App() {
         {message && <p>{message}</p>}
       </header>
 
-      <div className='app-layout'>
-      <form className='app-form'>
-        <fieldset>
-          <legend>Job Description URL (optional)</legend>
-          <div>
-            <input
-              {...register('jobDescriptionUrl')}
-              placeholder='https://boards.greenhouse.io/...'
-            />
-            {errors.jobDescriptionUrl && <p>{errors.jobDescriptionUrl.message}</p>}
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Personal Information</legend>
-          <div>
+      <div className="app-layout">
+        <form className="app-form">
+          <fieldset>
+            <legend>Job Description URL (optional)</legend>
             <div>
-              <label htmlFor='name'>Full Name</label>
-              <input id='name' {...register('personalInfo.name')} />
-              {errors.personalInfo?.name && <p>{errors.personalInfo.name.message}</p>}
+              <input
+                {...register('jobDescriptionUrl')}
+                placeholder="https://boards.greenhouse.io/..."
+              />
+              {errors.jobDescriptionUrl && <p>{errors.jobDescriptionUrl.message}</p>}
             </div>
+          </fieldset>
 
+          <fieldset>
+            <legend>Personal Information</legend>
             <div>
-              <label htmlFor='title'>Professional Title</label>
-              <input id='title' {...register('personalInfo.title')} />
-              {errors.personalInfo?.title && <p>{errors.personalInfo.title.message}</p>}
-            </div>
+              <div>
+                <label htmlFor="name">Full Name</label>
+                <input id="name" {...register('personalInfo.name')} />
+                {errors.personalInfo?.name && <p>{errors.personalInfo.name.message}</p>}
+              </div>
 
+              <div>
+                <label htmlFor="title">Professional Title</label>
+                <input id="title" {...register('personalInfo.title')} />
+                {errors.personalInfo?.title && <p>{errors.personalInfo.title.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="location">Location</label>
+                <input id="location" {...register('personalInfo.location')} />
+                {errors.personalInfo?.location && <p>{errors.personalInfo.location.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="email">Email</label>
+                <input id="email" type="email" {...register('personalInfo.email')} />
+                {errors.personalInfo?.email && <p>{errors.personalInfo.email.message}</p>}
+              </div>
+
+              <div>
+                <label htmlFor="phone">Phone</label>
+                <input id="phone" {...register('personalInfo.phone')} />
+                {errors.personalInfo?.phone && <p>{errors.personalInfo.phone.message}</p>}
+              </div>
+
+              {linkFields.map((field, index) => (
+                <div key={field.id}>
+                  <label>Label</label>
+                  <input
+                    {...register(`personalInfo.links.${index}.label` as const)}
+                    placeholder="LinkedIn"
+                  />
+                  <label>URL</label>
+                  <input
+                    {...register(`personalInfo.links.${index}.url` as const)}
+                    placeholder="https://"
+                  />
+                  <button type="button" onClick={() => removeLink(index)}>
+                    Remove
+                  </button>
+                </div>
+              ))}
+
+              <button type="button" onClick={() => appendLink({ label: '', url: '' })}>
+                + Add Link
+              </button>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Professional Summary</legend>
             <div>
-              <label htmlFor='location'>Location</label>
-              <input id='location' {...register('personalInfo.location')} />
-              {errors.personalInfo?.location && <p>{errors.personalInfo.location.message}</p>}
+              <textarea
+                {...register('summary')}
+                rows={6}
+                placeholder="Write a professional summary."
+              />
+              {errors.summary && <p>{errors.summary.message}</p>}
             </div>
+          </fieldset>
 
-            <div>
-              <label htmlFor='email'>Email</label>
-              <input id='email' type='email' {...register('personalInfo.email')} />
-              {errors.personalInfo?.email && <p>{errors.personalInfo.email.message}</p>}
-            </div>
+          <fieldset>
+            <legend>Experience</legend>
+            <button
+              type="button"
+              onClick={() =>
+                insertExperience(0, {
+                  role: '',
+                  company: '',
+                  url: '',
+                  startDate: '',
+                  location: '',
+                  bullets: [''],
+                  techStack: '',
+                })
+              }
+            >
+              + Add Experience
+            </button>
 
-            <div>
-              <label htmlFor='phone'>Phone</label>
-              <input id='phone' {...register('personalInfo.phone')} />
-              {errors.personalInfo?.phone && <p>{errors.personalInfo.phone.message}</p>}
-            </div>
+            {experienceFields.map((field, index) => (
+              <div key={field.id} className="repeatable-item">
+                <div>
+                  <div>
+                    <label>Role</label>
+                    <input {...register(`experience.${index}.role` as const)} />
+                  </div>
+                  <div>
+                    <label>Company</label>
+                    <input {...register(`experience.${index}.company` as const)} />
+                  </div>
+                  <div>
+                    <label>URL</label>
+                    <input
+                      {...register(`experience.${index}.url` as const)}
+                      placeholder="https://"
+                    />
+                  </div>
+                  <div>
+                    <label>Start Date</label>
+                    <input
+                      {...register(`experience.${index}.startDate` as const)}
+                      placeholder="Dec 2022"
+                    />
+                  </div>
+                  <div>
+                    <label>End Date</label>
+                    <input
+                      {...register(`experience.${index}.endDate` as const)}
+                      placeholder="Present"
+                    />
+                  </div>
+                  <div>
+                    <label>Location</label>
+                    <input {...register(`experience.${index}.location` as const)} />
+                  </div>
+                </div>
 
-            {linkFields.map((field, index) => (
-              <div key={field.id}>
-                <label>Label</label>
-                <input {...register(`personalInfo.links.${index}.label` as const)} placeholder='LinkedIn' />
-                <label>URL</label>
-                <input {...register(`personalInfo.links.${index}.url` as const)} placeholder='https://' />
-                <button type='button' onClick={() => removeLink(index)}>Remove</button>
+                <div>
+                  <label>Bullets (one per line)</label>
+                  <textarea
+                    {...register(`experience.${index}.bullets` as const)}
+                    rows={4}
+                    placeholder="Bullet 1&#10;Bullet 2"
+                  />
+                </div>
+
+                <div>
+                  <label>Tech Stack</label>
+                  <input
+                    {...register(`experience.${index}.techStack` as const)}
+                    placeholder="React, TypeScript, Zod"
+                  />
+                </div>
+
+                <button type="button" onClick={() => removeExperience(index)}>
+                  Remove Experience
+                </button>
               </div>
             ))}
+          </fieldset>
 
-            <button type='button' onClick={() => appendLink({ label: '', url: '' })}>
-              + Add Link
+          <fieldset>
+            <legend>Certifications</legend>
+            <button
+              type="button"
+              onClick={() =>
+                appendCertification({
+                  title: '',
+                  issuer: '',
+                  date: '',
+                  location: '',
+                  courseUrl: '',
+                  certificateUrl: '',
+                  bullets: [''],
+                })
+              }
+            >
+              + Add Certification
             </button>
-          </div>
-        </fieldset>
 
-        <fieldset>
-          <legend>Professional Summary</legend>
-          <div>
-            <textarea {...register('summary')} rows={6} placeholder='Write a professional summary.' />
-            {errors.summary && <p>{errors.summary.message}</p>}
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Experience</legend>
-          <button
-            type='button'
-            onClick={() =>
-              insertExperience(0, {
-                role: '',
-                company: '',
-                url: '',
-                startDate: '',
-                location: '',
-                bullets: [''],
-                techStack: '',
-              })
-            }
-          >
-            + Add Experience
-          </button>
-
-          {experienceFields.map((field, index) => (
-            <div key={field.id} className='repeatable-item'>
-              <div>
+            {certificationFields.map((field, index) => (
+              <div key={field.id} className="repeatable-item">
                 <div>
-                  <label>Role</label>
-                  <input {...register(`experience.${index}.role` as const)} />
+                  <label>Title</label>
+                  <input {...register(`certifications.${index}.title` as const)} />
                 </div>
                 <div>
-                  <label>Company</label>
-                  <input {...register(`experience.${index}.company` as const)} />
+                  <label>Issuer</label>
+                  <input {...register(`certifications.${index}.issuer` as const)} />
                 </div>
                 <div>
-                  <label>URL</label>
-                  <input {...register(`experience.${index}.url` as const)} placeholder='https://' />
-                </div>
-                <div>
-                  <label>Start Date</label>
-                  <input {...register(`experience.${index}.startDate` as const)} placeholder='Dec 2022' />
-                </div>
-                <div>
-                  <label>End Date</label>
-                  <input {...register(`experience.${index}.endDate` as const)} placeholder='Present' />
+                  <label>Date</label>
+                  <input
+                    {...register(`certifications.${index}.date` as const)}
+                    placeholder="Aug 2021"
+                  />
                 </div>
                 <div>
                   <label>Location</label>
-                  <input {...register(`experience.${index}.location` as const)} />
-                </div>
-              </div>
-
-              <div>
-                <label>Bullets (one per line)</label>
-                <textarea
-                  {...register(`experience.${index}.bullets` as const)}
-                  rows={4}
-                  placeholder='Bullet 1&#10;Bullet 2'
-                />
-              </div>
-
-              <div>
-                <label>Tech Stack</label>
-                <input {...register(`experience.${index}.techStack` as const)} placeholder='React, TypeScript, Zod' />
-              </div>
-
-              <button type='button' onClick={() => removeExperience(index)}>
-                Remove Experience
-              </button>
-            </div>
-          ))}
-        </fieldset>
-
-        <fieldset>
-          <legend>Certifications</legend>
-          <button
-            type='button'
-            onClick={() =>
-              appendCertification({
-                title: '',
-                issuer: '',
-                date: '',
-                location: '',
-                courseUrl: '',
-                certificateUrl: '',
-                bullets: [''],
-              })
-            }
-          >
-            + Add Certification
-          </button>
-
-          {certificationFields.map((field, index) => (
-            <div key={field.id} className='repeatable-item'>
-              <div>
-                <label>Title</label>
-                <input {...register(`certifications.${index}.title` as const)} />
-              </div>
-              <div>
-                <label>Issuer</label>
-                <input {...register(`certifications.${index}.issuer` as const)} />
-              </div>
-              <div>
-                <label>Date</label>
-                <input {...register(`certifications.${index}.date` as const)} placeholder='Aug 2021' />
-              </div>
-              <div>
-                <label>Location</label>
-                <input {...register(`certifications.${index}.location` as const)} />
-              </div>
-              <div>
-                <label>Course URL</label>
-                <input {...register(`certifications.${index}.courseUrl` as const)} placeholder='https://' />
-              </div>
-              <div>
-                <label>Certificate URL</label>
-                <input {...register(`certifications.${index}.certificateUrl` as const)} placeholder='https://' />
-              </div>
-              <div>
-                <label>Bullets (one per line)</label>
-                <textarea
-                  {...register(`certifications.${index}.bullets` as const)}
-                  rows={3}
-                  placeholder='Bullet 1&#10;Bullet 2'
-                />
-              </div>
-
-              <button type='button' onClick={() => removeCertification(index)}>
-                Remove Certification
-              </button>
-            </div>
-          ))}
-        </fieldset>
-
-        <fieldset>
-          <legend>Others</legend>
-          <button
-            type='button'
-            onClick={() =>
-              insertOther(0, {
-                role: '',
-                company: '',
-                url: '',
-                startDate: '',
-                location: '',
-                bullets: [''],
-                techStack: '',
-              })
-            }
-          >
-            + Add Other
-          </button>
-
-          {othersFields.map((field, index) => (
-            <div key={field.id} className='repeatable-item'>
-              <div>
-                <div>
-                  <label>Role</label>
-                  <input {...register(`others.${index}.role` as const)} />
+                  <input {...register(`certifications.${index}.location` as const)} />
                 </div>
                 <div>
-                  <label>Company</label>
-                  <input {...register(`others.${index}.company` as const)} />
+                  <label>Course URL</label>
+                  <input
+                    {...register(`certifications.${index}.courseUrl` as const)}
+                    placeholder="https://"
+                  />
                 </div>
                 <div>
-                  <label>URL</label>
-                  <input {...register(`others.${index}.url` as const)} placeholder='https://' />
+                  <label>Certificate URL</label>
+                  <input
+                    {...register(`certifications.${index}.certificateUrl` as const)}
+                    placeholder="https://"
+                  />
                 </div>
                 <div>
-                  <label>Start Date</label>
-                  <input {...register(`others.${index}.startDate` as const)} placeholder='2019' />
+                  <label>Bullets (one per line)</label>
+                  <textarea
+                    {...register(`certifications.${index}.bullets` as const)}
+                    rows={3}
+                    placeholder="Bullet 1&#10;Bullet 2"
+                  />
                 </div>
-                <div>
-                  <label>End Date</label>
-                  <input {...register(`others.${index}.endDate` as const)} placeholder='2020' />
-                </div>
-                <div>
-                  <label>Location</label>
-                  <input {...register(`others.${index}.location` as const)} />
-                </div>
+
+                <button type="button" onClick={() => removeCertification(index)}>
+                  Remove Certification
+                </button>
               </div>
+            ))}
+          </fieldset>
 
-              <div>
-                <label>Bullets (one per line)</label>
-                <textarea
-                  {...register(`others.${index}.bullets` as const)}
-                  rows={3}
-                  placeholder='Bullet 1&#10;Bullet 2'
-                />
+          <fieldset>
+            <legend>Others</legend>
+            <button
+              type="button"
+              onClick={() =>
+                insertOther(0, {
+                  role: '',
+                  company: '',
+                  url: '',
+                  startDate: '',
+                  location: '',
+                  bullets: [''],
+                  techStack: '',
+                })
+              }
+            >
+              + Add Other
+            </button>
+
+            {othersFields.map((field, index) => (
+              <div key={field.id} className="repeatable-item">
+                <div>
+                  <div>
+                    <label>Role</label>
+                    <input {...register(`others.${index}.role` as const)} />
+                  </div>
+                  <div>
+                    <label>Company</label>
+                    <input {...register(`others.${index}.company` as const)} />
+                  </div>
+                  <div>
+                    <label>URL</label>
+                    <input {...register(`others.${index}.url` as const)} placeholder="https://" />
+                  </div>
+                  <div>
+                    <label>Start Date</label>
+                    <input {...register(`others.${index}.startDate` as const)} placeholder="2019" />
+                  </div>
+                  <div>
+                    <label>End Date</label>
+                    <input {...register(`others.${index}.endDate` as const)} placeholder="2020" />
+                  </div>
+                  <div>
+                    <label>Location</label>
+                    <input {...register(`others.${index}.location` as const)} />
+                  </div>
+                </div>
+
+                <div>
+                  <label>Bullets (one per line)</label>
+                  <textarea
+                    {...register(`others.${index}.bullets` as const)}
+                    rows={3}
+                    placeholder="Bullet 1&#10;Bullet 2"
+                  />
+                </div>
+
+                <div>
+                  <label>Tech Stack</label>
+                  <input {...register(`others.${index}.techStack` as const)} />
+                </div>
+
+                <button type="button" onClick={() => removeOther(index)}>
+                  Remove
+                </button>
               </div>
+            ))}
+          </fieldset>
+        </form>
 
-              <div>
-                <label>Tech Stack</label>
-                <input {...register(`others.${index}.techStack` as const)} />
-              </div>
-
-              <button type='button' onClick={() => removeOther(index)}>
-                Remove
-              </button>
-            </div>
-          ))}
-        </fieldset>
-      </form>
-
-      <aside className='app-preview'>
-        <div className='cv-preview-wrapper'>
-          <CvPreview data={watchedData} />
-        </div>
-      </aside>
+        <aside className="app-preview">
+          <div className="cv-preview-wrapper">
+            <CvPreview data={watchedData} />
+          </div>
+        </aside>
       </div>
     </div>
   );

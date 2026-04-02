@@ -1,18 +1,22 @@
-import {
-  Document,
-  Paragraph,
-  TextRun,
-  BorderStyle,
-  Packer,
-  convertMillimetersToTwip,
-} from 'docx';
+/**
+ * DOCX export for the CV.
+ *
+ * Unit system:
+ * - Font sizes: `pt * PT` (half-points, where PT = 2)
+ * - Paragraph spacing: `pt * TWIP` (twentieths of a point, where TWIP = 20)
+ * - Page/margin dimensions: millimeters converted via `convertMillimetersToTwip`
+ *
+ * PT and TWIP are imported from cvConstants.ts.
+ */
+
+import { Document, Paragraph, TextRun, BorderStyle, Packer, convertMillimetersToTwip } from 'docx';
+
 import type { CvFormData } from './cvFormSchema.ts';
-import { stripProtocol, CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT } from './cvConstants.ts';
+
+import { CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT, CV_LAYOUT, PT, TWIP } from './cvConstants.ts';
+import { formatDateRange, formatEntryMeta, formatLinksLine } from './cvFormatters.ts';
 
 const FONT = CV_FONT.family;
-const PT = 2; // docx half-point multiplier: size value = pt * 2
-
-const TWIP = 20; // 1pt = 20 twips (paragraph spacing units)
 
 function headerLine(info: CvFormData['personalInfo']): Paragraph {
   return new Paragraph({
@@ -40,12 +44,14 @@ function headerLine(info: CvFormData['personalInfo']): Paragraph {
 }
 
 function contactLines(info: CvFormData['personalInfo']): Paragraph[] {
-  const contact = [info.email, info.phone, info.location].join(' | ');
-  const links = info.links.map((l) => stripProtocol(l.url)).join(' | ');
+  const contact = formatEntryMeta(info.email, info.phone, info.location);
+  const links = formatLinksLine(info.links);
 
   const paragraphs: Paragraph[] = [
     new Paragraph({
-      spacing: { after: (links ? CV_SPACING_PT.contactGap : CV_SPACING_PT.contactToSection) * TWIP },
+      spacing: {
+        after: (links ? CV_SPACING_PT.contactGap : CV_SPACING_PT.contactToSection) * TWIP,
+      },
       children: [
         new TextRun({
           text: contact,
@@ -78,9 +84,17 @@ function contactLines(info: CvFormData['personalInfo']): Paragraph[] {
 
 function sectionHeading(text: string): Paragraph {
   return new Paragraph({
-    spacing: { before: CV_SPACING_PT.sectionBefore * TWIP, after: CV_SPACING_PT.sectionAfter * TWIP },
+    spacing: {
+      before: CV_SPACING_PT.sectionBefore * TWIP,
+      after: CV_SPACING_PT.sectionAfter * TWIP,
+    },
     border: {
-      bottom: { style: BorderStyle.SINGLE, size: 1, color: CV_COLOR.rule, space: 8 },
+      bottom: {
+        style: BorderStyle.SINGLE,
+        size: 1,
+        color: CV_COLOR.rule,
+        space: CV_SPACING_PT.ruleGap,
+      },
     },
     children: [
       new TextRun({
@@ -124,7 +138,7 @@ function entryMeta(text: string): Paragraph {
 function bulletParagraph(text: string): Paragraph {
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.bulletAfter * TWIP },
-    indent: { left: convertMillimetersToTwip(6) },
+    indent: { left: convertMillimetersToTwip(CV_LAYOUT.bulletIndentMm) },
     children: [
       new TextRun({
         text: `\u2022 ${text}`,
@@ -137,8 +151,11 @@ function bulletParagraph(text: string): Paragraph {
 
 function techStackParagraph(text: string): Paragraph {
   return new Paragraph({
-    spacing: { before: 1 * TWIP, after: CV_SPACING_PT.bulletAfter * TWIP },
-    indent: { left: convertMillimetersToTwip(6) },
+    spacing: {
+      before: CV_SPACING_PT.techStackBefore * TWIP,
+      after: CV_SPACING_PT.bulletAfter * TWIP,
+    },
+    indent: { left: convertMillimetersToTwip(CV_LAYOUT.bulletIndentMm) },
     children: [
       new TextRun({
         text: `Tech: ${text}`,
@@ -162,41 +179,25 @@ function summaryParagraphs(text: string): Paragraph[] {
   });
 }
 
-function experienceEntryParagraphs(entry: CvFormData['experience'][number]): Paragraph[] {
-  const dateParts = [entry.startDate, entry.endDate].filter(Boolean).join(' \u2013 ');
-  const meta = [dateParts, entry.location].filter(Boolean).join(' | ');
+function entryParagraphs(
+  title: string,
+  meta: string,
+  bullets: string[],
+  techStack?: string,
+): Paragraph[] {
   const paragraphs: Paragraph[] = [
-    entryTitle(`${entry.role}, ${entry.company}`),
+    entryTitle(title),
     entryMeta(meta),
-    ...entry.bullets.map((b) => bulletParagraph(b)),
+    ...bullets.map((b) => bulletParagraph(b)),
   ];
-  if (entry.techStack) {
-    paragraphs.push(techStackParagraph(entry.techStack));
+  if (techStack) {
+    paragraphs.push(techStackParagraph(techStack));
   }
   return paragraphs;
 }
 
-function educationEntryParagraphs(entry: CvFormData['education'][number]): Paragraph[] {
-  const dateParts = [entry.startYear, entry.endYear].filter(Boolean).join(' \u2013 ');
-  const meta = [dateParts, entry.location].filter(Boolean).join(' | ');
-  return [
-    entryTitle(`${entry.degree}, ${entry.institution}`),
-    entryMeta(meta),
-    ...entry.bullets.map((b) => bulletParagraph(b)),
-  ];
-}
-
-function certificationEntryParagraphs(entry: CvFormData['certifications'][number]): Paragraph[] {
-  const meta = [entry.date, entry.location].filter(Boolean).join(' | ');
-  return [
-    entryTitle(`${entry.title}, ${entry.issuer}`),
-    entryMeta(meta),
-    ...entry.bullets.map((b) => bulletParagraph(b)),
-  ];
-}
-
 export function createCvDocx(data: CvFormData): Document {
-  const margin = convertMillimetersToTwip(15);
+  const margin = convertMillimetersToTwip(CV_LAYOUT.marginMm);
 
   const children: Paragraph[] = [
     headerLine(data.personalInfo),
@@ -206,10 +207,23 @@ export function createCvDocx(data: CvFormData): Document {
     ...summaryParagraphs(data.summary),
 
     sectionHeading('Work Experience'),
-    ...data.experience.flatMap(experienceEntryParagraphs),
+    ...data.experience.flatMap((exp) =>
+      entryParagraphs(
+        `${exp.role}, ${exp.company}`,
+        formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location),
+        exp.bullets,
+        exp.techStack,
+      ),
+    ),
 
     sectionHeading('Education'),
-    ...data.education.flatMap(educationEntryParagraphs),
+    ...data.education.flatMap((edu) =>
+      entryParagraphs(
+        `${edu.degree}, ${edu.institution}`,
+        formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location),
+        edu.bullets,
+      ),
+    ),
 
     sectionHeading('Technical Skills'),
     new Paragraph({
@@ -226,14 +240,27 @@ export function createCvDocx(data: CvFormData): Document {
   if (data.certifications.length > 0) {
     children.push(
       sectionHeading('Certifications'),
-      ...data.certifications.flatMap(certificationEntryParagraphs),
+      ...data.certifications.flatMap((cert) =>
+        entryParagraphs(
+          `${cert.title}, ${cert.issuer}`,
+          formatEntryMeta(cert.date, cert.location),
+          cert.bullets,
+        ),
+      ),
     );
   }
 
   if (data.others.length > 0) {
     children.push(
       sectionHeading('Other Experience'),
-      ...data.others.flatMap(experienceEntryParagraphs),
+      ...data.others.flatMap((other) =>
+        entryParagraphs(
+          `${other.role}, ${other.company}`,
+          formatEntryMeta(formatDateRange(other.startDate, other.endDate), other.location),
+          other.bullets,
+          other.techStack,
+        ),
+      ),
     );
   }
 
@@ -242,7 +269,10 @@ export function createCvDocx(data: CvFormData): Document {
       {
         properties: {
           page: {
-            size: { width: convertMillimetersToTwip(210), height: convertMillimetersToTwip(297) },
+            size: {
+              width: convertMillimetersToTwip(CV_LAYOUT.pageWidthMm),
+              height: convertMillimetersToTwip(CV_LAYOUT.pageHeightMm),
+            },
             margin: { top: margin, right: margin, bottom: margin, left: margin },
           },
         },

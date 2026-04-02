@@ -53,7 +53,9 @@ export const cvFormSchema = z.object({
   summary: z.string().min(10, 'Summary should be at least 10 characters'),
   experience: z.array(experienceSchema).min(1, 'At least one experience entry is required'),
   education: z.array(educationSchema).min(1, 'At least one education entry is required'),
-  skills: z.array(z.string().min(1, 'Skill cannot be empty')).min(1, 'At least one skill is required'),
+  skills: z
+    .array(z.string().min(1, 'Skill cannot be empty'))
+    .min(1, 'At least one skill is required'),
   certifications: z.array(certificationSchema),
   others: z.array(experienceSchema),
 });
