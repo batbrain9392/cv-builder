@@ -144,47 +144,63 @@ export function App() {
             <legend>Personal Information</legend>
             <div>
               <div>
-                <label htmlFor="name">Full Name</label>
-                <input id="name" {...register('personalInfo.name')} />
+                <label htmlFor="name">
+                  Full Name
+                  <input id="name" {...register('personalInfo.name')} />
+                </label>
                 {errors.personalInfo?.name && <p>{errors.personalInfo.name.message}</p>}
               </div>
 
               <div>
-                <label htmlFor="title">Professional Title</label>
-                <input id="title" {...register('personalInfo.title')} />
+                <label htmlFor="title">
+                  Professional Title
+                  <input id="title" {...register('personalInfo.title')} />
+                </label>
                 {errors.personalInfo?.title && <p>{errors.personalInfo.title.message}</p>}
               </div>
 
               <div>
-                <label htmlFor="location">Location</label>
-                <input id="location" {...register('personalInfo.location')} />
+                <label htmlFor="location">
+                  Location
+                  <input id="location" {...register('personalInfo.location')} />
+                </label>
                 {errors.personalInfo?.location && <p>{errors.personalInfo.location.message}</p>}
               </div>
 
               <div>
-                <label htmlFor="email">Email</label>
-                <input id="email" type="email" {...register('personalInfo.email')} />
+                <label htmlFor="email">
+                  Email
+                  <input id="email" type="email" {...register('personalInfo.email')} />
+                </label>
                 {errors.personalInfo?.email && <p>{errors.personalInfo.email.message}</p>}
               </div>
 
               <div>
-                <label htmlFor="phone">Phone</label>
-                <input id="phone" {...register('personalInfo.phone')} />
+                <label htmlFor="phone">
+                  Phone
+                  <input id="phone" {...register('personalInfo.phone')} />
+                </label>
                 {errors.personalInfo?.phone && <p>{errors.personalInfo.phone.message}</p>}
               </div>
 
               {linkFields.map((field, index) => (
                 <div key={field.id}>
-                  <label>Label</label>
-                  <input
-                    {...register(`personalInfo.links.${index}.label` as const)}
-                    placeholder="LinkedIn"
-                  />
-                  <label>URL</label>
-                  <input
-                    {...register(`personalInfo.links.${index}.url` as const)}
-                    placeholder="https://"
-                  />
+                  <label htmlFor={`link-label-${index}`}>
+                    Label
+                    <input
+                      id={`link-label-${index}`}
+                      {...register(`personalInfo.links.${index}.label` as const)}
+                      placeholder="LinkedIn"
+                    />
+                  </label>
+                  <label htmlFor={`link-url-${index}`}>
+                    URL
+                    <input
+                      id={`link-url-${index}`}
+                      {...register(`personalInfo.links.${index}.url` as const)}
+                      placeholder="https://"
+                    />
+                  </label>
                   <button type="button" onClick={() => removeLink(index)}>
                     Remove
                   </button>
@@ -232,55 +248,85 @@ export function App() {
               <div key={field.id} className="repeatable-item">
                 <div>
                   <div>
-                    <label>Role</label>
-                    <input {...register(`experience.${index}.role` as const)} />
+                    <label htmlFor={`exp-role-${index}`}>
+                      Role
+                      <input
+                        id={`exp-role-${index}`}
+                        {...register(`experience.${index}.role` as const)}
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>Company</label>
-                    <input {...register(`experience.${index}.company` as const)} />
+                    <label htmlFor={`exp-company-${index}`}>
+                      Company
+                      <input
+                        id={`exp-company-${index}`}
+                        {...register(`experience.${index}.company` as const)}
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>URL</label>
-                    <input
-                      {...register(`experience.${index}.url` as const)}
-                      placeholder="https://"
-                    />
+                    <label htmlFor={`exp-url-${index}`}>
+                      URL
+                      <input
+                        id={`exp-url-${index}`}
+                        {...register(`experience.${index}.url` as const)}
+                        placeholder="https://"
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>Start Date</label>
-                    <input
-                      {...register(`experience.${index}.startDate` as const)}
-                      placeholder="Dec 2022"
-                    />
+                    <label htmlFor={`exp-start-${index}`}>
+                      Start Date
+                      <input
+                        id={`exp-start-${index}`}
+                        {...register(`experience.${index}.startDate` as const)}
+                        placeholder="Dec 2022"
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>End Date</label>
-                    <input
-                      {...register(`experience.${index}.endDate` as const)}
-                      placeholder="Present"
-                    />
+                    <label htmlFor={`exp-end-${index}`}>
+                      End Date
+                      <input
+                        id={`exp-end-${index}`}
+                        {...register(`experience.${index}.endDate` as const)}
+                        placeholder="Present"
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>Location</label>
-                    <input {...register(`experience.${index}.location` as const)} />
+                    <label htmlFor={`exp-location-${index}`}>
+                      Location
+                      <input
+                        id={`exp-location-${index}`}
+                        {...register(`experience.${index}.location` as const)}
+                      />
+                    </label>
                   </div>
                 </div>
 
                 <div>
-                  <label>Bullets (one per line)</label>
-                  <textarea
-                    {...register(`experience.${index}.bullets` as const)}
-                    rows={4}
-                    placeholder="Bullet 1&#10;Bullet 2"
-                  />
+                  <label htmlFor={`exp-bullets-${index}`}>
+                    Bullets (one per line)
+                    <textarea
+                      id={`exp-bullets-${index}`}
+                      {...register(`experience.${index}.bullets` as const)}
+                      rows={4}
+                      placeholder="Bullet 1&#10;Bullet 2"
+                    />
+                  </label>
                 </div>
 
                 <div>
-                  <label>Tech Stack</label>
-                  <input
-                    {...register(`experience.${index}.techStack` as const)}
-                    placeholder="React, TypeScript, Zod"
-                  />
+                  <label htmlFor={`exp-tech-${index}`}>
+                    Tech Stack
+                    <input
+                      id={`exp-tech-${index}`}
+                      {...register(`experience.${index}.techStack` as const)}
+                      placeholder="React, TypeScript, Zod"
+                    />
+                  </label>
                 </div>
 
                 <button type="button" onClick={() => removeExperience(index)}>
@@ -312,45 +358,72 @@ export function App() {
             {certificationFields.map((field, index) => (
               <div key={field.id} className="repeatable-item">
                 <div>
-                  <label>Title</label>
-                  <input {...register(`certifications.${index}.title` as const)} />
+                  <label htmlFor={`cert-title-${index}`}>
+                    Title
+                    <input
+                      id={`cert-title-${index}`}
+                      {...register(`certifications.${index}.title` as const)}
+                    />
+                  </label>
                 </div>
                 <div>
-                  <label>Issuer</label>
-                  <input {...register(`certifications.${index}.issuer` as const)} />
+                  <label htmlFor={`cert-issuer-${index}`}>
+                    Issuer
+                    <input
+                      id={`cert-issuer-${index}`}
+                      {...register(`certifications.${index}.issuer` as const)}
+                    />
+                  </label>
                 </div>
                 <div>
-                  <label>Date</label>
-                  <input
-                    {...register(`certifications.${index}.date` as const)}
-                    placeholder="Aug 2021"
-                  />
+                  <label htmlFor={`cert-date-${index}`}>
+                    Date
+                    <input
+                      id={`cert-date-${index}`}
+                      {...register(`certifications.${index}.date` as const)}
+                      placeholder="Aug 2021"
+                    />
+                  </label>
                 </div>
                 <div>
-                  <label>Location</label>
-                  <input {...register(`certifications.${index}.location` as const)} />
+                  <label htmlFor={`cert-location-${index}`}>
+                    Location
+                    <input
+                      id={`cert-location-${index}`}
+                      {...register(`certifications.${index}.location` as const)}
+                    />
+                  </label>
                 </div>
                 <div>
-                  <label>Course URL</label>
-                  <input
-                    {...register(`certifications.${index}.courseUrl` as const)}
-                    placeholder="https://"
-                  />
+                  <label htmlFor={`cert-course-url-${index}`}>
+                    Course URL
+                    <input
+                      id={`cert-course-url-${index}`}
+                      {...register(`certifications.${index}.courseUrl` as const)}
+                      placeholder="https://"
+                    />
+                  </label>
                 </div>
                 <div>
-                  <label>Certificate URL</label>
-                  <input
-                    {...register(`certifications.${index}.certificateUrl` as const)}
-                    placeholder="https://"
-                  />
+                  <label htmlFor={`cert-cert-url-${index}`}>
+                    Certificate URL
+                    <input
+                      id={`cert-cert-url-${index}`}
+                      {...register(`certifications.${index}.certificateUrl` as const)}
+                      placeholder="https://"
+                    />
+                  </label>
                 </div>
                 <div>
-                  <label>Bullets (one per line)</label>
-                  <textarea
-                    {...register(`certifications.${index}.bullets` as const)}
-                    rows={3}
-                    placeholder="Bullet 1&#10;Bullet 2"
-                  />
+                  <label htmlFor={`cert-bullets-${index}`}>
+                    Bullets (one per line)
+                    <textarea
+                      id={`cert-bullets-${index}`}
+                      {...register(`certifications.${index}.bullets` as const)}
+                      rows={3}
+                      placeholder="Bullet 1&#10;Bullet 2"
+                    />
+                  </label>
                 </div>
 
                 <button type="button" onClick={() => removeCertification(index)}>
@@ -383,43 +456,84 @@ export function App() {
               <div key={field.id} className="repeatable-item">
                 <div>
                   <div>
-                    <label>Role</label>
-                    <input {...register(`others.${index}.role` as const)} />
+                    <label htmlFor={`other-role-${index}`}>
+                      Role
+                      <input
+                        id={`other-role-${index}`}
+                        {...register(`others.${index}.role` as const)}
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>Company</label>
-                    <input {...register(`others.${index}.company` as const)} />
+                    <label htmlFor={`other-company-${index}`}>
+                      Company
+                      <input
+                        id={`other-company-${index}`}
+                        {...register(`others.${index}.company` as const)}
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>URL</label>
-                    <input {...register(`others.${index}.url` as const)} placeholder="https://" />
+                    <label htmlFor={`other-url-${index}`}>
+                      URL
+                      <input
+                        id={`other-url-${index}`}
+                        {...register(`others.${index}.url` as const)}
+                        placeholder="https://"
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>Start Date</label>
-                    <input {...register(`others.${index}.startDate` as const)} placeholder="2019" />
+                    <label htmlFor={`other-start-${index}`}>
+                      Start Date
+                      <input
+                        id={`other-start-${index}`}
+                        {...register(`others.${index}.startDate` as const)}
+                        placeholder="2019"
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>End Date</label>
-                    <input {...register(`others.${index}.endDate` as const)} placeholder="2020" />
+                    <label htmlFor={`other-end-${index}`}>
+                      End Date
+                      <input
+                        id={`other-end-${index}`}
+                        {...register(`others.${index}.endDate` as const)}
+                        placeholder="2020"
+                      />
+                    </label>
                   </div>
                   <div>
-                    <label>Location</label>
-                    <input {...register(`others.${index}.location` as const)} />
+                    <label htmlFor={`other-location-${index}`}>
+                      Location
+                      <input
+                        id={`other-location-${index}`}
+                        {...register(`others.${index}.location` as const)}
+                      />
+                    </label>
                   </div>
                 </div>
 
                 <div>
-                  <label>Bullets (one per line)</label>
-                  <textarea
-                    {...register(`others.${index}.bullets` as const)}
-                    rows={3}
-                    placeholder="Bullet 1&#10;Bullet 2"
-                  />
+                  <label htmlFor={`other-bullets-${index}`}>
+                    Bullets (one per line)
+                    <textarea
+                      id={`other-bullets-${index}`}
+                      {...register(`others.${index}.bullets` as const)}
+                      rows={3}
+                      placeholder="Bullet 1&#10;Bullet 2"
+                    />
+                  </label>
                 </div>
 
                 <div>
-                  <label>Tech Stack</label>
-                  <input {...register(`others.${index}.techStack` as const)} />
+                  <label htmlFor={`other-tech-${index}`}>
+                    Tech Stack
+                    <input
+                      id={`other-tech-${index}`}
+                      {...register(`others.${index}.techStack` as const)}
+                    />
+                  </label>
                 </div>
 
                 <button type="button" onClick={() => removeOther(index)}>
