@@ -1,16 +1,15 @@
 import { useRef, useState } from 'react';
 import { useForm, useFieldArray, type SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PDFViewer, pdf } from '@react-pdf/renderer';
 import type { CvFormData } from './lib/cvFormSchema.ts';
 import { cvFormSchema } from './lib/cvFormSchema.ts';
-import { CvPdfDocument } from './lib/CvPdfDocument.tsx';
+import { createCvDocxBlob } from './lib/CvDocxDocument.ts';
+import { CvPreview } from './lib/CvPreview.tsx';
 import seedData from '../content/cv.json';
 import './App.css';
 
 export function App() {
   const [message, setMessage] = useState<string | null>(null);
-  const [pdfPreviewData, setPdfPreviewData] = useState<CvFormData | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -19,10 +18,14 @@ export function App() {
     handleSubmit,
     formState: { errors },
     reset,
+    watch,
+    getValues,
   } = useForm<CvFormData>({
     resolver: zodResolver(cvFormSchema),
     defaultValues: seedData as CvFormData,
   });
+
+  const watchedData = watch();
 
   const {
     fields: linkFields,
@@ -93,17 +96,13 @@ export function App() {
     URL.revokeObjectURL(url);
   };
 
-  const onExportPdf: SubmitHandler<CvFormData> = (data) => {
-    setPdfPreviewData(data);
-  };
-
-  const handleDownloadPdf = async () => {
-    if (!pdfPreviewData) return;
-    const blob = await pdf(<CvPdfDocument data={pdfPreviewData} />).toBlob();
+  const handleExportDocx = async () => {
+    const data = getValues();
+    const blob = await createCvDocxBlob(data);
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'cv.pdf';
+    a.download = 'cv.docx';
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -118,15 +117,16 @@ export function App() {
           <button type='button' onClick={handleSubmit(onExport)}>
             Export data
           </button>
-          <button type='button' onClick={handleSubmit(onExportPdf)}>
-            Export as PDF
+          <button type='button' onClick={handleExportDocx}>
+            Export as DOCX
           </button>
         </div>
 
         {message && <p>{message}</p>}
       </header>
 
-      <form>
+      <div className='app-layout'>
+      <form className='app-form'>
         <fieldset>
           <legend>Job Description URL (optional)</legend>
           <div>
@@ -395,23 +395,12 @@ export function App() {
         </fieldset>
       </form>
 
-      {pdfPreviewData && (
-        <div className='pdf-modal-overlay' onClick={() => setPdfPreviewData(null)}>
-          <div className='pdf-modal' onClick={(e) => e.stopPropagation()}>
-            <div className='pdf-modal-header'>
-              <button type='button' onClick={handleDownloadPdf}>
-                Download PDF
-              </button>
-              <button type='button' onClick={() => setPdfPreviewData(null)}>
-                Close
-              </button>
-            </div>
-            <PDFViewer width='100%' height='100%' showToolbar={false}>
-              <CvPdfDocument data={pdfPreviewData} />
-            </PDFViewer>
-          </div>
+      <aside className='app-preview'>
+        <div className='cv-preview-wrapper'>
+          <CvPreview data={watchedData} />
         </div>
-      )}
+      </aside>
+      </div>
     </div>
   );
 }

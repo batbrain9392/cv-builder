@@ -29,5 +29,6 @@ Thumbs.db
 # Test / coverage
 coverage/
 
-# PDF exports (local only; not source of truth)
+# Exported files (local only; not source of truth)
 *.pdf
+*.docx

@@ -2,29 +2,29 @@
   margin-bottom: 1rem;
 }
 
-.pdf-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+.app-layout {
   display: flex;
-  align-items: center;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+.app-form {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding-right: 1rem;
+}
+
+.app-preview {
+  width: 50%;
+  overflow-y: auto;
+  flex-shrink: 0;
+  border-left: 1px solid #eee;
+  background: #f9f9f9;
+}
+
+.cv-preview-wrapper {
+  padding: 30px 0;
+  display: flex;
   justify-content: center;
-}
-
-.pdf-modal {
-  background: white;
-  width: 90vw;
-  height: 90vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.pdf-modal-header {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  padding: 0.5rem;
 }
