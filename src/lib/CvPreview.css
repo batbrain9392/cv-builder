@@ -2,6 +2,10 @@
  * Styles for the live web preview.
  * Matches the DOCX export as closely as possible.
  * Uses pt units to match Word/DOCX output.
+ *
+ * Canonical values live in cvConstants.ts.
+ * When changing sizes, colors, or spacing, update cvConstants.ts first,
+ * then sync the hardcoded values here to match.
  */
 
 .cv-preview {
@@ -57,7 +61,7 @@
   font-size: 13pt;
   text-transform: uppercase;
   margin-top: 16pt;
-  margin-bottom: 4pt;
+  margin-bottom: 0;
 }
 
 .cv-preview-section-rule {
@@ -68,7 +72,7 @@
 /* Entries */
 .cv-preview-entry-title {
   font-weight: bold;
-  font-size: 11pt;
+  font-size: 12pt;
   margin-top: 10pt;
 }
 

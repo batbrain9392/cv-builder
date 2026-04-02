@@ -7,33 +7,32 @@ import {
   convertMillimetersToTwip,
 } from 'docx';
 import type { CvFormData } from './cvFormSchema.ts';
+import { stripProtocol, CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT } from './cvConstants.ts';
 
-const FONT = 'Helvetica';
+const FONT = CV_FONT.family;
 const PT = 2; // docx half-point multiplier: size value = pt * 2
 
-function stripProtocol(url: string): string {
-  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-}
+const TWIP = 20; // 1pt = 20 twips (paragraph spacing units)
 
 function headerLine(info: CvFormData['personalInfo']): Paragraph {
   return new Paragraph({
-    spacing: { after: 40 },
+    spacing: { after: CV_SPACING_PT.contactGap * TWIP },
     children: [
       new TextRun({
         text: info.name,
         bold: true,
-        size: 18 * PT,
+        size: CV_SIZE.name * PT,
         font: FONT,
       }),
       new TextRun({
         text: '  \u2014  ',
-        size: 12 * PT,
+        size: CV_SIZE.title * PT,
         font: FONT,
       }),
       new TextRun({
         text: info.title,
         bold: true,
-        size: 12 * PT,
+        size: CV_SIZE.title * PT,
         font: FONT,
       }),
     ],
@@ -46,13 +45,13 @@ function contactLines(info: CvFormData['personalInfo']): Paragraph[] {
 
   const paragraphs: Paragraph[] = [
     new Paragraph({
-      spacing: { after: links ? 40 : 240 },
+      spacing: { after: (links ? CV_SPACING_PT.contactGap : CV_SPACING_PT.contactToSection) * TWIP },
       children: [
         new TextRun({
           text: contact,
-          size: 10 * PT,
+          size: CV_SIZE.contact * PT,
           font: FONT,
-          color: '333333',
+          color: CV_COLOR.secondary,
         }),
       ],
     }),
@@ -61,13 +60,13 @@ function contactLines(info: CvFormData['personalInfo']): Paragraph[] {
   if (links) {
     paragraphs.push(
       new Paragraph({
-        spacing: { after: 240 },
+        spacing: { after: CV_SPACING_PT.contactToSection * TWIP },
         children: [
           new TextRun({
             text: links,
-            size: 10 * PT,
+            size: CV_SIZE.contact * PT,
             font: FONT,
-            color: '333333',
+            color: CV_COLOR.secondary,
           }),
         ],
       }),
@@ -79,15 +78,15 @@ function contactLines(info: CvFormData['personalInfo']): Paragraph[] {
 
 function sectionHeading(text: string): Paragraph {
   return new Paragraph({
-    spacing: { before: 320, after: 160 },
+    spacing: { before: CV_SPACING_PT.sectionBefore * TWIP, after: CV_SPACING_PT.sectionAfter * TWIP },
     border: {
-      bottom: { style: BorderStyle.SINGLE, size: 1, color: '888888', space: 8 },
+      bottom: { style: BorderStyle.SINGLE, size: 1, color: CV_COLOR.rule, space: 8 },
     },
     children: [
       new TextRun({
         text: text.toUpperCase(),
         bold: true,
-        size: 13 * PT,
+        size: CV_SIZE.sectionHeading * PT,
         font: FONT,
       }),
     ],
@@ -96,12 +95,12 @@ function sectionHeading(text: string): Paragraph {
 
 function entryTitle(text: string): Paragraph {
   return new Paragraph({
-    spacing: { before: 200, after: 0 },
+    spacing: { before: CV_SPACING_PT.entryBefore * TWIP, after: 0 },
     children: [
       new TextRun({
         text,
         bold: true,
-        size: 11 * PT,
+        size: CV_SIZE.entryTitle * PT,
         font: FONT,
       }),
     ],
@@ -110,13 +109,13 @@ function entryTitle(text: string): Paragraph {
 
 function entryMeta(text: string): Paragraph {
   return new Paragraph({
-    spacing: { after: 40 },
+    spacing: { after: CV_SPACING_PT.metaAfter * TWIP },
     children: [
       new TextRun({
         text,
-        size: 10 * PT,
+        size: CV_SIZE.meta * PT,
         font: FONT,
-        color: '444444',
+        color: CV_COLOR.meta,
       }),
     ],
   });
@@ -124,12 +123,12 @@ function entryMeta(text: string): Paragraph {
 
 function bulletParagraph(text: string): Paragraph {
   return new Paragraph({
-    spacing: { after: 40 },
+    spacing: { after: CV_SPACING_PT.bulletAfter * TWIP },
     indent: { left: convertMillimetersToTwip(6) },
     children: [
       new TextRun({
         text: `\u2022 ${text}`,
-        size: Math.round(10.5 * PT),
+        size: Math.round(CV_SIZE.bullet * PT),
         font: FONT,
       }),
     ],
@@ -138,14 +137,14 @@ function bulletParagraph(text: string): Paragraph {
 
 function techStackParagraph(text: string): Paragraph {
   return new Paragraph({
-    spacing: { before: 20, after: 40 },
+    spacing: { before: 1 * TWIP, after: CV_SPACING_PT.bulletAfter * TWIP },
     indent: { left: convertMillimetersToTwip(6) },
     children: [
       new TextRun({
         text: `Tech: ${text}`,
-        size: 10 * PT,
+        size: CV_SIZE.techStack * PT,
         font: FONT,
-        color: '444444',
+        color: CV_COLOR.meta,
       }),
     ],
   });
@@ -155,9 +154,9 @@ function summaryParagraphs(text: string): Paragraph[] {
   return text.split('\n').map((line, i, arr) => {
     const isLast = i === arr.length - 1;
     return new Paragraph({
-      spacing: { after: isLast ? 160 : 0 },
+      spacing: { after: isLast ? CV_SPACING_PT.summaryAfter * TWIP : 0 },
       children: line.trim()
-        ? [new TextRun({ text: line, size: 11 * PT, font: FONT })]
+        ? [new TextRun({ text: line, size: CV_SIZE.body * PT, font: FONT })]
         : [],
     });
   });
@@ -217,7 +216,7 @@ export function createCvDocx(data: CvFormData): Document {
       children: [
         new TextRun({
           text: data.skills.join(', '),
-          size: 11 * PT,
+          size: CV_SIZE.body * PT,
           font: FONT,
         }),
       ],

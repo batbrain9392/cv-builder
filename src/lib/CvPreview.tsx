@@ -1,9 +1,6 @@
 import type { CvFormData } from './cvFormSchema.ts';
+import { stripProtocol } from './cvConstants.ts';
 import './CvPreview.css';
-
-function stripProtocol(url: string): string {
-  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-}
 
 function Header({ info }: { info: CvFormData['personalInfo'] }) {
   const contactLine = [info.email, info.phone, info.location].join(' | ');
