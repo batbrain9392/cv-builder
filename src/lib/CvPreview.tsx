@@ -33,16 +33,20 @@ const cssVars = {
   '--cv-rule-gap': `${CV_SPACING_PT.ruleGap}pt`,
 } as React.CSSProperties;
 
-function Header({ info }: { info: CvFormData['personalInfo'] }) {
-  const contactLine = formatEntryMeta(info.email, info.phone, info.location);
-  const linksLine = formatLinksLine(info.links);
+interface HeaderProps {
+  name: string;
+  title: string;
+  contactLine: string;
+  linksLine: string;
+}
 
+function Header({ name, title, contactLine, linksLine }: HeaderProps) {
   return (
     <div>
       <div className="cv-preview-header-line1">
-        <span className="cv-preview-name">{info.name}</span>
+        <span className="cv-preview-name">{name}</span>
         <span className="cv-preview-header-sep">{' \u2014 '}</span>
-        <span className="cv-preview-title">{info.title}</span>
+        <span className="cv-preview-title">{title}</span>
       </div>
       <div className={linksLine ? 'cv-preview-contact' : 'cv-preview-contact-last'}>
         {contactLine}
@@ -91,7 +95,16 @@ interface CvPreviewProps {
 export function CvPreview({ data }: CvPreviewProps) {
   return (
     <div className="cv-preview" style={cssVars}>
-      <Header info={data.personalInfo} />
+      <Header
+        name={data.personalInfo.name}
+        title={data.personalInfo.title}
+        contactLine={formatEntryMeta(
+          data.personalInfo.email,
+          data.personalInfo.phone,
+          data.personalInfo.location,
+        )}
+        linksLine={formatLinksLine(data.personalInfo.links)}
+      />
 
       <SectionHeading>Professional Summary</SectionHeading>
       <div className="cv-preview-summary">{data.summary}</div>
