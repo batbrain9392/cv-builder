@@ -20,12 +20,12 @@ const FONT = CV_FONT.family;
 
 function headerLine(info: CvFormData['personalInfo']): Paragraph {
   return new Paragraph({
-    spacing: { after: CV_SPACING_PT.contactGap * TWIP },
+    spacing: { after: CV_SPACING_PT.sm * TWIP },
     children: [
       new TextRun({
         text: info.name,
         bold: true,
-        size: CV_SIZE.name * PT,
+        size: CV_SIZE.heading * PT,
         font: FONT,
       }),
       new TextRun({
@@ -50,14 +50,14 @@ function contactLines(info: CvFormData['personalInfo']): Paragraph[] {
   const paragraphs: Paragraph[] = [
     new Paragraph({
       spacing: {
-        after: (links ? CV_SPACING_PT.contactGap : CV_SPACING_PT.contactToSection) * TWIP,
+        after: (links ? CV_SPACING_PT.sm : CV_SPACING_PT.headerAfter) * TWIP,
       },
       children: [
         new TextRun({
           text: contact,
-          size: CV_SIZE.contact * PT,
+          size: CV_SIZE.hint * PT,
           font: FONT,
-          color: CV_COLOR.secondary,
+          color: CV_COLOR.text,
         }),
       ],
     }),
@@ -66,13 +66,13 @@ function contactLines(info: CvFormData['personalInfo']): Paragraph[] {
   if (links) {
     paragraphs.push(
       new Paragraph({
-        spacing: { after: CV_SPACING_PT.contactToSection * TWIP },
+        spacing: { after: CV_SPACING_PT.headerAfter * TWIP },
         children: [
           new TextRun({
             text: links,
-            size: CV_SIZE.contact * PT,
+            size: CV_SIZE.hint * PT,
             font: FONT,
-            color: CV_COLOR.secondary,
+            color: CV_COLOR.text,
           }),
         ],
       }),
@@ -86,21 +86,21 @@ function sectionHeading(text: string): Paragraph {
   return new Paragraph({
     spacing: {
       before: CV_SPACING_PT.sectionBefore * TWIP,
-      after: CV_SPACING_PT.sectionAfter * TWIP,
+      after: CV_SPACING_PT.md * TWIP,
     },
     border: {
       bottom: {
         style: BorderStyle.SINGLE,
         size: 1,
         color: CV_COLOR.rule,
-        space: CV_SPACING_PT.ruleGap,
+        space: CV_SPACING_PT.md,
       },
     },
     children: [
       new TextRun({
         text: text.toUpperCase(),
         bold: true,
-        size: CV_SIZE.sectionHeading * PT,
+        size: CV_SIZE.subheading * PT,
         font: FONT,
       }),
     ],
@@ -109,12 +109,12 @@ function sectionHeading(text: string): Paragraph {
 
 function entryTitle(text: string): Paragraph {
   return new Paragraph({
-    spacing: { before: CV_SPACING_PT.entryBefore * TWIP, after: 0 },
+    spacing: { before: CV_SPACING_PT.lg * TWIP, after: 0 },
     children: [
       new TextRun({
         text,
         bold: true,
-        size: CV_SIZE.entryTitle * PT,
+        size: CV_SIZE.title * PT,
         font: FONT,
       }),
     ],
@@ -123,13 +123,13 @@ function entryTitle(text: string): Paragraph {
 
 function entryMeta(text: string): Paragraph {
   return new Paragraph({
-    spacing: { after: CV_SPACING_PT.metaAfter * TWIP },
+    spacing: { after: CV_SPACING_PT.sm * TWIP },
     children: [
       new TextRun({
         text,
-        size: CV_SIZE.meta * PT,
+        size: CV_SIZE.hint * PT,
         font: FONT,
-        color: CV_COLOR.meta,
+        color: CV_COLOR.hint,
       }),
     ],
   });
@@ -137,31 +137,28 @@ function entryMeta(text: string): Paragraph {
 
 function bulletParagraph(text: string): Paragraph {
   return new Paragraph({
-    spacing: { after: CV_SPACING_PT.bulletAfter * TWIP },
-    indent: { left: convertMillimetersToTwip(CV_LAYOUT.bulletIndentMm) },
+    spacing: { after: CV_SPACING_PT.sm * TWIP },
+    indent: { left: convertMillimetersToTwip(CV_LAYOUT.indentMm) },
     children: [
       new TextRun({
         text: `\u2022 ${text}`,
-        size: Math.round(CV_SIZE.bullet * PT),
+        size: CV_SIZE.body * PT,
         font: FONT,
       }),
     ],
   });
 }
 
-function techStackParagraph(text: string): Paragraph {
+function techStackBullet(text: string): Paragraph {
   return new Paragraph({
-    spacing: {
-      before: CV_SPACING_PT.techStackBefore * TWIP,
-      after: CV_SPACING_PT.bulletAfter * TWIP,
-    },
-    indent: { left: convertMillimetersToTwip(CV_LAYOUT.bulletIndentMm) },
+    spacing: { after: CV_SPACING_PT.sm * TWIP },
+    indent: { left: convertMillimetersToTwip(CV_LAYOUT.indentMm) },
     children: [
       new TextRun({
-        text: `Tech: ${text}`,
-        size: CV_SIZE.techStack * PT,
+        text: `\u2022 Tech: ${text}`,
+        size: CV_SIZE.body * PT,
         font: FONT,
-        color: CV_COLOR.meta,
+        color: CV_COLOR.hint,
       }),
     ],
   });
@@ -171,7 +168,7 @@ function summaryParagraphs(text: string): Paragraph[] {
   return text.split('\n').map((line, i, arr) => {
     const isLast = i === arr.length - 1;
     return new Paragraph({
-      spacing: { after: isLast ? CV_SPACING_PT.summaryAfter * TWIP : 0 },
+      spacing: { after: isLast ? CV_SPACING_PT.md * TWIP : 0 },
       children: line.trim()
         ? [new TextRun({ text: line, size: CV_SIZE.body * PT, font: FONT })]
         : [],
@@ -191,7 +188,7 @@ function entryParagraphs(
     ...bullets.map((b) => bulletParagraph(b)),
   ];
   if (techStack) {
-    paragraphs.push(techStackParagraph(techStack));
+    paragraphs.push(techStackBullet(techStack));
   }
   return paragraphs;
 }

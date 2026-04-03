@@ -8,29 +8,20 @@ import './CvPreview.css';
 
 const cssVars: React.CSSProperties = {
   '--cv-font': CV_FONT.fallback,
-  '--cv-name-size': `${CV_SIZE.name}pt`,
-  '--cv-section-heading-size': `${CV_SIZE.sectionHeading}pt`,
+  '--cv-heading-size': `${CV_SIZE.heading}pt`,
+  '--cv-subheading-size': `${CV_SIZE.subheading}pt`,
   '--cv-title-size': `${CV_SIZE.title}pt`,
-  '--cv-entry-title-size': `${CV_SIZE.entryTitle}pt`,
   '--cv-body-size': `${CV_SIZE.body}pt`,
-  '--cv-bullet-size': `${CV_SIZE.bullet}pt`,
-  '--cv-meta-size': `${CV_SIZE.meta}pt`,
-  '--cv-contact-size': `${CV_SIZE.contact}pt`,
-  '--cv-tech-size': `${CV_SIZE.techStack}pt`,
-  '--cv-color-secondary': `#${CV_COLOR.secondary}`,
-  '--cv-color-meta': `#${CV_COLOR.meta}`,
+  '--cv-hint-size': `${CV_SIZE.hint}pt`,
+  '--cv-color-text': `#${CV_COLOR.text}`,
+  '--cv-color-hint': `#${CV_COLOR.hint}`,
   '--cv-color-rule': `#${CV_COLOR.rule}`,
+  '--cv-gap-sm': `${CV_SPACING_PT.sm}pt`,
+  '--cv-gap-md': `${CV_SPACING_PT.md}pt`,
+  '--cv-gap-lg': `${CV_SPACING_PT.lg}pt`,
+  '--cv-header-after': `${CV_SPACING_PT.headerAfter}pt`,
   '--cv-section-before': `${CV_SPACING_PT.sectionBefore}pt`,
-  '--cv-section-after': `${CV_SPACING_PT.sectionAfter}pt`,
-  '--cv-entry-before': `${CV_SPACING_PT.entryBefore}pt`,
-  '--cv-meta-after': `${CV_SPACING_PT.metaAfter}pt`,
-  '--cv-bullet-after': `${CV_SPACING_PT.bulletAfter}pt`,
-  '--cv-bullet-indent': `${CV_LAYOUT.bulletIndentMm}mm`,
-  '--cv-contact-gap': `${CV_SPACING_PT.contactGap}pt`,
-  '--cv-contact-to-section': `${CV_SPACING_PT.contactToSection}pt`,
-  '--cv-summary-after': `${CV_SPACING_PT.summaryAfter}pt`,
-  '--cv-tech-before': `${CV_SPACING_PT.techStackBefore}pt`,
-  '--cv-rule-gap': `${CV_SPACING_PT.ruleGap}pt`,
+  '--cv-indent': `${CV_LAYOUT.indentMm}mm`,
 };
 
 interface HeaderProps {
@@ -42,26 +33,24 @@ interface HeaderProps {
 
 function Header({ name, title, contactLine, linksLine }: HeaderProps) {
   return (
-    <div>
-      <div className="cv-preview-header-line1">
+    <header className="cv-preview-header">
+      <h1 className="cv-preview-header-line1">
         <span className="cv-preview-name">{name}</span>
         <span className="cv-preview-header-sep">{' \u2014 '}</span>
         <span className="cv-preview-title">{title}</span>
-      </div>
-      <div className={linksLine ? 'cv-preview-contact' : 'cv-preview-contact-last'}>
-        {contactLine}
-      </div>
-      {linksLine && <div className="cv-preview-contact-last">{linksLine}</div>}
-    </div>
+      </h1>
+      <div className="cv-preview-contact">{contactLine}</div>
+      {linksLine && <div className="cv-preview-contact">{linksLine}</div>}
+    </header>
   );
 }
 
 function SectionHeading({ children }: { children: string }) {
   return (
-    <div>
-      <div className="cv-preview-section-heading">{children}</div>
+    <>
+      <h2 className="cv-preview-section-heading">{children}</h2>
       <div className="cv-preview-section-rule" />
-    </div>
+    </>
   );
 }
 
@@ -74,7 +63,7 @@ interface EntryProps {
 
 function Entry({ title, meta, bullets, techStack }: EntryProps) {
   return (
-    <div>
+    <>
       <div className="cv-preview-entry-title">{title}</div>
       <div className="cv-preview-entry-meta">{meta}</div>
       {bullets.map((b, i) => (
@@ -83,8 +72,13 @@ function Entry({ title, meta, bullets, techStack }: EntryProps) {
           {b}
         </div>
       ))}
-      {techStack ? <div className="cv-preview-tech-stack">Tech: {techStack}</div> : null}
-    </div>
+      {techStack && (
+        <div className="cv-preview-bullet cv-preview-hint">
+          {'\u2022 '}
+          Tech: {techStack}
+        </div>
+      )}
+    </>
   );
 }
 
@@ -107,7 +101,7 @@ export function CvPreview({ data }: CvPreviewProps) {
       />
 
       <SectionHeading>Professional Summary</SectionHeading>
-      <div className="cv-preview-summary">{data.summary}</div>
+      <p className="cv-preview-summary">{data.summary}</p>
 
       <SectionHeading>Work Experience</SectionHeading>
       {data.experience.map((exp, i) => (
@@ -131,7 +125,7 @@ export function CvPreview({ data }: CvPreviewProps) {
       ))}
 
       {data.others.length > 0 && (
-        <div>
+        <>
           <SectionHeading>Others</SectionHeading>
           {data.others.map((other, i) => (
             <Entry
@@ -145,7 +139,7 @@ export function CvPreview({ data }: CvPreviewProps) {
               techStack={other.techStack}
             />
           ))}
-        </div>
+        </>
       )}
     </div>
   );
