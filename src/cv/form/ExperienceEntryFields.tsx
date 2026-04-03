@@ -1,8 +1,19 @@
 import type { UseFormRegister, Control, FieldErrors } from 'react-hook-form';
 
+import { ChevronsDownUpIcon, ChevronsUpDownIcon, TrashIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useWatch } from 'react-hook-form';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
+import { Input } from '@/components/ui/input';
+
 import type { CvFormData } from '../cvFormSchema.ts';
 
-import { BulletsTextarea } from './BulletsTextarea.tsx';
+import { BulletsInput } from './BulletsInput.tsx';
+import { TagsInput } from './TagsInput.tsx';
 
 type ExperienceErrors = FieldErrors<CvFormData>['experience'];
 
@@ -15,6 +26,7 @@ interface ExperienceEntryFieldsProps {
   errors?: ExperienceErrors;
   onRemove: () => void;
   removeLabel: string;
+  toggleSignal?: { n: number; open: boolean };
 }
 
 export function ExperienceEntryFields({
@@ -26,141 +38,187 @@ export function ExperienceEntryFields({
   errors,
   onRemove,
   removeLabel,
+  toggleSignal,
 }: ExperienceEntryFieldsProps) {
+  const [open, setOpen] = useState(true);
+
+  useEffect(() => {
+    if (toggleSignal && toggleSignal.n > 0) setOpen(toggleSignal.open);
+  }, [toggleSignal]);
   const entryErrors = errors?.[index];
+
+  const role = useWatch({ control, name: `${prefix}.role` });
+  const company = useWatch({ control, name: `${prefix}.company` });
+  const summary = [role, company].filter(Boolean).join(' at ') || 'New entry';
+
   return (
-    <div className="repeatable-item">
-      <div>
-        <div>
-          <label htmlFor={`${idPrefix}-role-${index}`}>
-            Role
-            <input
-              id={`${idPrefix}-role-${index}`}
-              {...register(`${prefix}.role`)}
-              aria-describedby={entryErrors?.role ? `${idPrefix}-role-${index}-error` : undefined}
-            />
-          </label>
-          {entryErrors?.role && (
-            <p id={`${idPrefix}-role-${index}-error`} role="alert">
-              {entryErrors.role.message}
-            </p>
-          )}
+    <Card>
+      <Collapsible open={open} onOpenChange={setOpen}>
+        <div className="flex items-center justify-between px-4 py-2">
+          <CollapsibleTrigger
+            render={<Button variant="ghost" className="flex-1 justify-start gap-2 text-left" />}
+          >
+            {open ? (
+              <ChevronsDownUpIcon className="size-4 shrink-0 text-muted-foreground" />
+            ) : (
+              <ChevronsUpDownIcon className="size-4 shrink-0 text-muted-foreground" />
+            )}
+            <span className="truncate text-sm font-medium">{summary}</span>
+          </CollapsibleTrigger>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="text-foreground/40 hover:bg-destructive/10 hover:text-destructive"
+            onClick={onRemove}
+            aria-label={`${removeLabel}: ${summary}`}
+          >
+            <TrashIcon />
+          </Button>
         </div>
-        <div>
-          <label htmlFor={`${idPrefix}-company-${index}`}>
-            Company
-            <input
-              id={`${idPrefix}-company-${index}`}
-              {...register(`${prefix}.company`)}
-              aria-describedby={
-                entryErrors?.company ? `${idPrefix}-company-${index}-error` : undefined
-              }
-            />
-          </label>
-          {entryErrors?.company && (
-            <p id={`${idPrefix}-company-${index}-error`} role="alert">
-              {entryErrors.company.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor={`${idPrefix}-url-${index}`}>
-            URL
-            <input
-              id={`${idPrefix}-url-${index}`}
-              {...register(`${prefix}.url`)}
-              placeholder="https://"
-              aria-describedby={entryErrors?.url ? `${idPrefix}-url-${index}-error` : undefined}
-            />
-          </label>
-          {entryErrors?.url && (
-            <p id={`${idPrefix}-url-${index}-error`} role="alert">
-              {entryErrors.url.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor={`${idPrefix}-start-${index}`}>
-            Start Date
-            <input
-              id={`${idPrefix}-start-${index}`}
-              {...register(`${prefix}.startDate`)}
-              placeholder="Dec 2022"
-              aria-describedby={
-                entryErrors?.startDate ? `${idPrefix}-start-${index}-error` : undefined
-              }
-            />
-          </label>
-          {entryErrors?.startDate && (
-            <p id={`${idPrefix}-start-${index}-error`} role="alert">
-              {entryErrors.startDate.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor={`${idPrefix}-end-${index}`}>
-            End Date
-            <input
-              id={`${idPrefix}-end-${index}`}
-              {...register(`${prefix}.endDate`)}
-              placeholder="Present"
-              aria-describedby={entryErrors?.endDate ? `${idPrefix}-end-${index}-error` : undefined}
-            />
-          </label>
-          {entryErrors?.endDate && (
-            <p id={`${idPrefix}-end-${index}-error`} role="alert">
-              {entryErrors.endDate.message}
-            </p>
-          )}
-        </div>
-        <div>
-          <label htmlFor={`${idPrefix}-location-${index}`}>
-            Location
-            <input
-              id={`${idPrefix}-location-${index}`}
-              {...register(`${prefix}.location`)}
-              aria-describedby={
-                entryErrors?.location ? `${idPrefix}-location-${index}-error` : undefined
-              }
-            />
-          </label>
-          {entryErrors?.location && (
-            <p id={`${idPrefix}-location-${index}-error`} role="alert">
-              {entryErrors.location.message}
-            </p>
-          )}
-        </div>
-      </div>
 
-      <BulletsTextarea
-        control={control}
-        name={`${prefix}.bullets`}
-        id={`${idPrefix}-bullets-${index}`}
-        label="Bullets (one per line)"
-      />
+        <CollapsibleContent>
+          <CardContent className="pt-4">
+            <FieldGroup>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <Field data-invalid={entryErrors?.role ? true : undefined}>
+                  <FieldLabel htmlFor={`${idPrefix}-role-${index}`}>Role</FieldLabel>
+                  <Input
+                    id={`${idPrefix}-role-${index}`}
+                    {...register(`${prefix}.role`)}
+                    aria-invalid={entryErrors?.role ? true : undefined}
+                    aria-describedby={
+                      entryErrors?.role ? `${idPrefix}-role-${index}-error` : undefined
+                    }
+                  />
+                  {entryErrors?.role && (
+                    <FieldError
+                      id={`${idPrefix}-role-${index}-error`}
+                      errors={[entryErrors.role]}
+                    />
+                  )}
+                </Field>
 
-      <div>
-        <label htmlFor={`${idPrefix}-tech-${index}`}>
-          Tech Stack
-          <input
-            id={`${idPrefix}-tech-${index}`}
-            {...register(`${prefix}.techStack`)}
-            placeholder="React, TypeScript, Zod"
-            aria-describedby={
-              entryErrors?.techStack ? `${idPrefix}-tech-${index}-error` : undefined
-            }
-          />
-        </label>
-        {entryErrors?.techStack && (
-          <p id={`${idPrefix}-tech-${index}-error`} role="alert">
-            {entryErrors.techStack.message}
-          </p>
-        )}
-      </div>
+                <Field data-invalid={entryErrors?.company ? true : undefined}>
+                  <FieldLabel htmlFor={`${idPrefix}-company-${index}`}>Company</FieldLabel>
+                  <Input
+                    id={`${idPrefix}-company-${index}`}
+                    {...register(`${prefix}.company`)}
+                    aria-invalid={entryErrors?.company ? true : undefined}
+                    aria-describedby={
+                      entryErrors?.company ? `${idPrefix}-company-${index}-error` : undefined
+                    }
+                  />
+                  {entryErrors?.company && (
+                    <FieldError
+                      id={`${idPrefix}-company-${index}-error`}
+                      errors={[entryErrors.company]}
+                    />
+                  )}
+                </Field>
+              </div>
 
-      <button type="button" onClick={onRemove}>
-        {removeLabel}
-      </button>
-    </div>
+              <Field data-invalid={entryErrors?.url ? true : undefined}>
+                <FieldLabel htmlFor={`${idPrefix}-url-${index}`}>URL</FieldLabel>
+                <Input
+                  id={`${idPrefix}-url-${index}`}
+                  {...register(`${prefix}.url`)}
+                  placeholder="https://"
+                  aria-invalid={entryErrors?.url ? true : undefined}
+                  aria-describedby={entryErrors?.url ? `${idPrefix}-url-${index}-error` : undefined}
+                />
+                {entryErrors?.url && (
+                  <FieldError id={`${idPrefix}-url-${index}-error`} errors={[entryErrors.url]} />
+                )}
+              </Field>
+
+              <div className="grid gap-4 sm:grid-cols-3">
+                <Field data-invalid={entryErrors?.startDate ? true : undefined}>
+                  <FieldLabel htmlFor={`${idPrefix}-start-${index}`}>Start Date</FieldLabel>
+                  <Input
+                    id={`${idPrefix}-start-${index}`}
+                    {...register(`${prefix}.startDate`)}
+                    placeholder="Dec 2022"
+                    aria-invalid={entryErrors?.startDate ? true : undefined}
+                    aria-describedby={
+                      entryErrors?.startDate ? `${idPrefix}-start-${index}-error` : undefined
+                    }
+                  />
+                  {entryErrors?.startDate && (
+                    <FieldError
+                      id={`${idPrefix}-start-${index}-error`}
+                      errors={[entryErrors.startDate]}
+                    />
+                  )}
+                </Field>
+
+                <Field data-invalid={entryErrors?.endDate ? true : undefined}>
+                  <FieldLabel htmlFor={`${idPrefix}-end-${index}`}>End Date</FieldLabel>
+                  <Input
+                    id={`${idPrefix}-end-${index}`}
+                    {...register(`${prefix}.endDate`)}
+                    placeholder="Present"
+                    aria-invalid={entryErrors?.endDate ? true : undefined}
+                    aria-describedby={
+                      entryErrors?.endDate ? `${idPrefix}-end-${index}-error` : undefined
+                    }
+                  />
+                  {entryErrors?.endDate && (
+                    <FieldError
+                      id={`${idPrefix}-end-${index}-error`}
+                      errors={[entryErrors.endDate]}
+                    />
+                  )}
+                </Field>
+
+                <Field data-invalid={entryErrors?.location ? true : undefined}>
+                  <FieldLabel htmlFor={`${idPrefix}-location-${index}`}>Location</FieldLabel>
+                  <Input
+                    id={`${idPrefix}-location-${index}`}
+                    {...register(`${prefix}.location`)}
+                    aria-invalid={entryErrors?.location ? true : undefined}
+                    aria-describedby={
+                      entryErrors?.location ? `${idPrefix}-location-${index}-error` : undefined
+                    }
+                  />
+                  {entryErrors?.location && (
+                    <FieldError
+                      id={`${idPrefix}-location-${index}-error`}
+                      errors={[entryErrors.location]}
+                    />
+                  )}
+                </Field>
+              </div>
+
+              <BulletsInput
+                control={control}
+                name={`${prefix}.bullets`}
+                id={`${idPrefix}-bullets-${index}`}
+                label="Bullets"
+              />
+
+              <div className="grid gap-4 sm:grid-cols-[1fr_2fr]">
+                <Field>
+                  <FieldLabel htmlFor={`${idPrefix}-tags-label-${index}`}>Tags Label</FieldLabel>
+                  <Input
+                    id={`${idPrefix}-tags-label-${index}`}
+                    {...register(`${prefix}.tagsLabel`)}
+                    placeholder="e.g. Tech, Tools, Skills"
+                  />
+                </Field>
+                <Field>
+                  <FieldLabel htmlFor={`${idPrefix}-tags-${index}`}>Tags</FieldLabel>
+                  <TagsInput
+                    control={control}
+                    name={`${prefix}.tags`}
+                    id={`${idPrefix}-tags-${index}`}
+                  />
+                </Field>
+              </div>
+            </FieldGroup>
+          </CardContent>
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
   );
 }

@@ -1,10 +1,14 @@
+import { useCallback, useEffect, useRef } from 'react';
 import { useWatch, type Control } from 'react-hook-form';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
+import { CV_LAYOUT } from '../cvConstants.ts';
 import { CvPreview } from './CvPreview.tsx';
 
 const identity = (v: CvFormData) => v;
+
+const A4_WIDTH_PX = (CV_LAYOUT.pageWidthMm / 25.4) * 96;
 
 interface CvPreviewPanelProps {
   control: Control<CvFormData>;
@@ -13,11 +17,38 @@ interface CvPreviewPanelProps {
 
 export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) {
   const data = useWatch({ control, defaultValue: defaultValues, compute: identity });
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  const updateScale = useCallback(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const available = el.clientWidth;
+    if (available >= A4_WIDTH_PX) {
+      el.style.removeProperty('--cv-scale');
+    } else {
+      el.style.setProperty('--cv-scale', String(available / A4_WIDTH_PX));
+    }
+  }, []);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(updateScale);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [updateScale]);
+
   return (
-    <aside className="app-preview">
-      <div className="cv-preview-wrapper">
+    <div className="p-4 lg:p-6 xl:p-8">
+      <div className="mb-8">
+        <h2 className="text-xl font-bold tracking-tight">Preview</h2>
+        <p className="text-sm text-muted-foreground">
+          Live preview of your CV. Export as DOCX or JSON when ready.
+        </p>
+      </div>
+      <div ref={wrapperRef} className="flex justify-center">
         <CvPreview data={data} />
       </div>
-    </aside>
+    </div>
   );
 }

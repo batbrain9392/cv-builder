@@ -2,6 +2,9 @@
  * Styles for the live web preview.
  * Matches the DOCX export as closely as possible.
  * Design token values are injected as CSS custom properties from cvConstants.ts.
+ *
+ * NOT wrapped in @layer so these rules beat Tailwind's preflight reset
+ * (which strips default h1/h2/p/ul/li styles via @layer base).
  */
 
 .cv-preview {
@@ -14,6 +17,19 @@
   line-height: 1.2;
   color: #000000;
   background: white;
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.1),
+    0 1px 2px -1px rgb(0 0 0 / 0.1);
+  border-radius: 2px;
+  zoom: var(--cv-scale, 1);
+}
+
+/* Reset Tailwind/shadcn global overrides inside the preview */
+.cv-preview *,
+.cv-preview *::before,
+.cv-preview *::after {
+  border-color: initial;
+  outline: initial;
 }
 
 /* Header */
@@ -89,6 +105,7 @@
 
 .cv-preview-bullets li {
   margin-bottom: var(--cv-gap-sm);
+  display: list-item;
 }
 
 .cv-preview-hint {

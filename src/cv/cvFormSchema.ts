@@ -24,7 +24,8 @@ const experienceSchema = z.object({
   endDate: z.string().optional(),
   location: z.string().min(1, 'Location is required'),
   bullets: z.array(bulletSchema).min(1, 'At least one bullet is required'),
-  techStack: z.string().optional(),
+  tagsLabel: z.string().optional(),
+  tags: z.array(z.string().min(1)).optional(),
 });
 
 const educationSchema = z.object({

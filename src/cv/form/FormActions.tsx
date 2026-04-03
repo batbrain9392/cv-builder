@@ -1,22 +1,29 @@
 import type React from 'react';
 
+import { Menu } from '@base-ui/react/menu';
+import {
+  DownloadIcon,
+  EllipsisVerticalIcon,
+  FileDownIcon,
+  Loader2Icon,
+  UploadIcon,
+} from 'lucide-react';
 import { useRef } from 'react';
+
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { Button } from '@/components/ui/button';
 
 interface FormActionsProps {
   onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onExportJson: () => void;
   onExportDocx: () => void;
   exporting: boolean;
-  message: string | null;
 }
 
-export function FormActions({
-  onImport,
-  onExportJson,
-  onExportDocx,
-  exporting,
-  message,
-}: FormActionsProps) {
+const menuItemClass =
+  'flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground';
+
+export function FormActions({ onImport, onExportJson, onExportDocx, exporting }: FormActionsProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,26 +32,95 @@ export function FormActions({
   };
 
   return (
-    <header>
-      <h1>CV Builder</h1>
+    <header className="z-40 flex shrink-0 items-center justify-between border-b border-primary/20 bg-primary px-4 py-3 text-primary-foreground lg:px-6 xl:px-8">
+      <h1 className="text-lg font-semibold tracking-tight">CV Builder</h1>
 
-      <div>
+      <nav aria-label="CV actions" className="flex items-center gap-2">
+        <ThemeToggle />
+
+        {/* Mobile: overflow menu */}
+        <Menu.Root>
+          <Menu.Trigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground sm:hidden"
+                aria-label="Actions"
+              />
+            }
+          >
+            <EllipsisVerticalIcon />
+          </Menu.Trigger>
+          <Menu.Portal>
+            <Menu.Positioner align="end" sideOffset={12}>
+              <Menu.Popup className="z-50 min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
+                <Menu.Item className={menuItemClass} onClick={() => fileInputRef.current?.click()}>
+                  <UploadIcon className="size-4" />
+                  Upload data
+                </Menu.Item>
+                <Menu.Item className={menuItemClass} onClick={onExportJson}>
+                  <DownloadIcon className="size-4" />
+                  Download data
+                </Menu.Item>
+                <Menu.Item className={menuItemClass} disabled={exporting} onClick={onExportDocx}>
+                  {exporting ? (
+                    <Loader2Icon className="size-4 animate-spin" />
+                  ) : (
+                    <FileDownIcon className="size-4" />
+                  )}
+                  {exporting ? 'Downloading…' : 'Download DOCX'}
+                </Menu.Item>
+              </Menu.Popup>
+            </Menu.Positioner>
+          </Menu.Portal>
+        </Menu.Root>
+
+        {/* Desktop: full buttons */}
+        <Button
+          variant="outline"
+          size="sm"
+          className="hidden border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground sm:inline-flex"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <UploadIcon data-icon="inline-start" />
+          Upload data
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          className="hidden border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground sm:inline-flex"
+          onClick={onExportJson}
+        >
+          <DownloadIcon data-icon="inline-start" />
+          Download data
+        </Button>
+
+        <Button
+          size="sm"
+          className="hidden bg-primary-foreground text-primary hover:bg-primary-foreground/90 sm:inline-flex"
+          onClick={onExportDocx}
+          disabled={exporting}
+          aria-busy={exporting || undefined}
+        >
+          {exporting ? (
+            <Loader2Icon className="animate-spin" data-icon="inline-start" />
+          ) : (
+            <FileDownIcon data-icon="inline-start" />
+          )}
+          {exporting ? 'Downloading…' : 'Download DOCX'}
+        </Button>
+
         <input
           ref={fileInputRef}
           type="file"
           accept=".json"
           aria-label="Import CV JSON"
           onChange={handleImport}
+          className="hidden"
         />
-        <button type="button" onClick={onExportJson}>
-          Export data
-        </button>
-        <button type="button" onClick={onExportDocx} disabled={exporting}>
-          {exporting ? 'Exporting...' : 'Export as DOCX'}
-        </button>
-      </div>
-
-      {message && <p>{message}</p>}
+      </nav>
     </header>
   );
 }

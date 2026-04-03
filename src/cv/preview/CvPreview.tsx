@@ -48,7 +48,7 @@ function SectionHeading({ children }: { children: string }) {
   return (
     <>
       <h2 className="cv-preview-section-heading">{children}</h2>
-      <div className="cv-preview-section-rule" />
+      <div className="cv-preview-section-rule" aria-hidden="true" />
     </>
   );
 }
@@ -57,10 +57,11 @@ interface EntryProps {
   title: string;
   meta: string;
   bullets: string[];
-  techStack?: string;
+  tagsLabel?: string;
+  tags?: string[];
 }
 
-function Entry({ title, meta, bullets, techStack }: EntryProps) {
+function Entry({ title, meta, bullets, tagsLabel, tags }: EntryProps) {
   return (
     <>
       <div className="cv-preview-entry-title">{title}</div>
@@ -69,7 +70,12 @@ function Entry({ title, meta, bullets, techStack }: EntryProps) {
         {bullets.map((b, i) => (
           <li key={i}>{b}</li>
         ))}
-        {techStack && <li className="cv-preview-hint">Tech: {techStack}</li>}
+        {tags && tags.length > 0 && (
+          <li className="cv-preview-hint">
+            {tagsLabel ? `${tagsLabel}: ` : ''}
+            {tags.join(', ')}
+          </li>
+        )}
       </ul>
     </>
   );
@@ -103,7 +109,8 @@ export function CvPreview({ data }: CvPreviewProps) {
           title={`${exp.role}, ${exp.company}`}
           meta={formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location)}
           bullets={exp.bullets}
-          techStack={exp.techStack}
+          tagsLabel={exp.tagsLabel}
+          tags={exp.tags}
         />
       ))}
 
@@ -129,7 +136,8 @@ export function CvPreview({ data }: CvPreviewProps) {
                 other.location,
               )}
               bullets={other.bullets}
-              techStack={other.techStack}
+              tagsLabel={other.tagsLabel}
+              tags={other.tags}
             />
           ))}
         </>

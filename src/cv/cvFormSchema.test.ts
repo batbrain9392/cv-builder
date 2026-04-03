@@ -26,7 +26,8 @@ describe('cvFormSchema', () => {
           endDate: 'Present',
           location: 'Dublin, Ireland',
           bullets: ['Admin UI for Peakon...', 'Shipped scheduling model...'],
-          techStack: 'React, TypeScript, React Hook Form, Zod',
+          tagsLabel: 'Tech',
+          tags: ['React', 'TypeScript', 'React Hook Form', 'Zod'],
         },
       ],
       education: [
@@ -40,8 +41,6 @@ describe('cvFormSchema', () => {
           bullets: ['Graduated with 8.34 DGPA.'],
         },
       ],
-      skills: ['TypeScript', 'React', 'Angular'],
-      certifications: [],
       others: [],
     };
 

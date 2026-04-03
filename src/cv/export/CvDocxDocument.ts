@@ -149,13 +149,14 @@ function bulletParagraph(text: string): Paragraph {
   });
 }
 
-function techStackBullet(text: string): Paragraph {
+function tagsBullet(label: string | undefined, items: string[]): Paragraph {
+  const text = label ? `${label}: ${items.join(', ')}` : items.join(', ');
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
     bullet: { level: 0 },
     children: [
       new TextRun({
-        text: `Tech: ${text}`,
+        text,
         size: CV_SIZE.body * PT,
         font: FONT,
         color: CV_COLOR.hint,
@@ -180,20 +181,21 @@ function entryParagraphs(
   title: string,
   meta: string,
   bullets: string[],
-  techStack?: string,
+  tagsLabel?: string,
+  tags?: string[],
 ): Paragraph[] {
   const paragraphs: Paragraph[] = [
     entryTitle(title),
     entryMeta(meta),
     ...bullets.map((b) => bulletParagraph(b)),
   ];
-  if (techStack) {
-    paragraphs.push(techStackBullet(techStack));
+  if (tags && tags.length > 0) {
+    paragraphs.push(tagsBullet(tagsLabel, tags));
   }
   return paragraphs;
 }
 
-export function createCvDocx(data: CvFormData): Document {
+function createCvDocx(data: CvFormData): Document {
   const margin = convertMillimetersToTwip(CV_LAYOUT.marginMm);
 
   const children: Paragraph[] = [
@@ -209,7 +211,8 @@ export function createCvDocx(data: CvFormData): Document {
         `${exp.role}, ${exp.company}`,
         formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location),
         exp.bullets,
-        exp.techStack,
+        exp.tagsLabel,
+        exp.tags,
       ),
     ),
 
@@ -231,7 +234,8 @@ export function createCvDocx(data: CvFormData): Document {
           `${other.role}, ${other.company}`,
           formatEntryMeta(formatDateRange(other.startDate, other.endDate), other.location),
           other.bullets,
-          other.techStack,
+          other.tagsLabel,
+          other.tags,
         ),
       ),
     );

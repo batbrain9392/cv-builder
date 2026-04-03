@@ -4,7 +4,7 @@
 
 import type { CvFormData } from './cvFormSchema.ts';
 
-export function stripProtocol(url: string): string {
+function stripProtocol(url: string): string {
   return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
 }
 
