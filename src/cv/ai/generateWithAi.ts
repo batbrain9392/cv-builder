@@ -86,6 +86,81 @@ export async function generateSummary(
   return generate(apiKey, prompt, input);
 }
 
+function buildEntryContext(
+  entry: CvFormData['experience'][number] | CvFormData['education'][number],
+): string {
+  const lines: string[] = [];
+  if ('role' in entry) {
+    lines.push(
+      `${entry.role} at ${entry.company} (${entry.startDate}${entry.endDate ? ` – ${entry.endDate}` : ''}, ${entry.location})`,
+    );
+    if (entry.tags?.length) lines.push(`${entry.tagsLabel ?? 'Tags'}: ${entry.tags.join(', ')}`);
+  } else {
+    lines.push(
+      `${entry.degree}, ${entry.institution} (${entry.startYear}${entry.endYear ? ` – ${entry.endYear}` : ''}, ${entry.location})`,
+    );
+  }
+  lines.push('', 'Current highlights:');
+  for (const b of entry.bullets) lines.push(`• ${b}`);
+  return lines.join('\n');
+}
+
+export async function generateHighlights(
+  apiKey: string,
+  prompt: string,
+  entry: CvFormData['experience'][number] | CvFormData['education'][number],
+  jobDescriptionText: string,
+): Promise<string[]> {
+  const input = [
+    '--- Entry ---',
+    buildEntryContext(entry),
+    '',
+    '--- Job Description ---',
+    jobDescriptionText,
+  ].join('\n');
+
+  const raw = await generate(apiKey, prompt, input);
+  return raw
+    .split('\n')
+    .map((line) => line.replace(/^[\s•\-*]+/, '').trim())
+    .filter(Boolean);
+}
+
+export type HighlightsResultMap = Map<string, string[]>;
+
+export async function generateAllHighlights(
+  apiKey: string,
+  cvData: CvFormData,
+  jobDescriptionText: string,
+): Promise<HighlightsResultMap> {
+  const results: HighlightsResultMap = new Map();
+
+  const tasks: {
+    path: string;
+    entry: CvFormData['experience'][number] | CvFormData['education'][number];
+  }[] = [];
+
+  cvData.experience.forEach((entry, i) => tasks.push({ path: `experience.${i}`, entry }));
+  cvData.education.forEach((entry, i) => tasks.push({ path: `education.${i}`, entry }));
+  cvData.others.forEach((entry, i) => tasks.push({ path: `others.${i}`, entry }));
+
+  const settled = await Promise.allSettled(
+    tasks.map(async ({ path, entry }) => {
+      const prompt = entry.aiHighlightsPrompt || '';
+      const bullets = await generateHighlights(apiKey, prompt, entry, jobDescriptionText);
+      return { path, bullets };
+    }),
+  );
+
+  for (const result of settled) {
+    if (result.status === 'fulfilled') {
+      results.set(result.value.path, result.value.bullets);
+    }
+  }
+
+  return results;
+}
+
 export async function generateCoverLetter(
   apiKey: string,
   prompt: string,

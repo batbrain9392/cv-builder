@@ -2,11 +2,11 @@ import type React from 'react';
 
 import { Menu } from '@base-ui/react/menu';
 import {
-  DownloadIcon,
   EllipsisVerticalIcon,
   FileDownIcon,
+  FileOutputIcon,
+  FolderOpenIcon,
   Loader2Icon,
-  UploadIcon,
 } from 'lucide-react';
 import { useRef } from 'react';
 
@@ -56,12 +56,12 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
             <Menu.Positioner align="end" sideOffset={12}>
               <Menu.Popup className="z-50 min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
                 <Menu.Item className={menuItemClass} onClick={() => fileInputRef.current?.click()}>
-                  <UploadIcon className="size-4" />
-                  Upload data
+                  <FolderOpenIcon className="size-4" />
+                  Load data
                 </Menu.Item>
                 <Menu.Item className={menuItemClass} onClick={onExportJson}>
-                  <DownloadIcon className="size-4" />
-                  Download data
+                  <FileOutputIcon className="size-4" />
+                  Export data
                 </Menu.Item>
                 <Menu.Item className={menuItemClass} disabled={exporting} onClick={onExportDocx}>
                   {exporting ? (
@@ -83,8 +83,8 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
           className="hidden sm:inline-flex"
           onClick={() => fileInputRef.current?.click()}
         >
-          <UploadIcon data-icon="inline-start" />
-          Upload data
+          <FolderOpenIcon data-icon="inline-start" />
+          Load data
         </Button>
 
         <Button
@@ -93,8 +93,8 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
           className="hidden sm:inline-flex"
           onClick={onExportJson}
         >
-          <DownloadIcon data-icon="inline-start" />
-          Download data
+          <FileOutputIcon data-icon="inline-start" />
+          Export data
         </Button>
 
         <Button

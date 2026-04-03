@@ -12,6 +12,7 @@ import { Input } from '@/components/ui/input';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
+import { HighlightsAiEnhance } from './HighlightsAiEnhance.tsx';
 import { HighlightsInput } from './HighlightsInput.tsx';
 import { TagsInput } from './TagsInput.tsx';
 
@@ -27,6 +28,13 @@ interface ExperienceEntryFieldsProps {
   onRemove: () => void;
   removeLabel: string;
   toggleSignal?: { n: number; open: boolean };
+  canGenerate?: boolean;
+  generatingHighlights?: boolean;
+  generatedHighlights?: string[] | null;
+  onGenerateHighlights?: () => void;
+  onUseHighlights?: () => void;
+  onCopyHighlights?: () => void;
+  onDismissHighlights?: () => void;
 }
 
 export function ExperienceEntryFields({
@@ -39,6 +47,13 @@ export function ExperienceEntryFields({
   onRemove,
   removeLabel,
   toggleSignal,
+  canGenerate = false,
+  generatingHighlights = false,
+  generatedHighlights = null,
+  onGenerateHighlights,
+  onUseHighlights,
+  onCopyHighlights,
+  onDismissHighlights,
 }: ExperienceEntryFieldsProps) {
   const [open, setOpen] = useState(true);
 
@@ -196,6 +211,23 @@ export function ExperienceEntryFields({
                 id={`${idPrefix}-highlights-${index}`}
                 label="Highlights"
               />
+
+              {onGenerateHighlights &&
+                onUseHighlights &&
+                onCopyHighlights &&
+                onDismissHighlights && (
+                  <HighlightsAiEnhance
+                    canGenerate={canGenerate}
+                    generating={generatingHighlights}
+                    generatedBullets={generatedHighlights}
+                    onGenerate={onGenerateHighlights}
+                    onUse={onUseHighlights}
+                    onCopy={onCopyHighlights}
+                    onDismiss={onDismissHighlights}
+                    promptId={`${idPrefix}-ai-prompt-${index}`}
+                    registerPrompt={register(`${prefix}.aiHighlightsPrompt`)}
+                  />
+                )}
 
               <div className="grid gap-4 sm:grid-cols-[1fr_2fr]">
                 <Field>

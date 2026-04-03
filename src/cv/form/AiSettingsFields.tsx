@@ -7,7 +7,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
@@ -87,12 +86,13 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
             render={
               <button
                 type="button"
+                aria-label="Toggle AI settings"
                 className="flex w-full items-center justify-between text-left"
               />
             }
           >
             <CardTitle>
-              AI Settings{' '}
+              AI Assist{' '}
               <span className="text-sm font-normal text-muted-foreground">(optional)</span>
             </CardTitle>
             <ChevronDownIcon
@@ -108,9 +108,9 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
           <CardContent>
             <FieldGroup>
               <p className="text-xs text-muted-foreground">
-                Provide your OpenAI key and paste a job description to generate a tailored summary
-                and cover letter. Everything runs in your browser — no data is sent anywhere except
-                directly to OpenAI.
+                Provide your OpenAI API key to enable AI-powered generation of summaries, cover
+                letters, and experience highlights. Everything runs in your browser — no data is
+                sent anywhere except directly to OpenAI.
               </p>
               <Field data-invalid={errors.aiApiKey ? true : undefined}>
                 <FieldLabel htmlFor="aiApiKey">OpenAI API Key</FieldLabel>
@@ -146,6 +146,7 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
                     render={
                       <button
                         type="button"
+                        aria-label="How do I get an API key?"
                         className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                       />
                     }
@@ -168,23 +169,6 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
                 </Collapsible>
 
                 {errors.aiApiKey && <FieldError id="aiApiKey-error" errors={[errors.aiApiKey]} />}
-              </Field>
-
-              <Field data-invalid={errors.jobDescriptionText ? true : undefined}>
-                <FieldLabel htmlFor="jobDescriptionText">Job Description</FieldLabel>
-                <Textarea
-                  id="jobDescriptionText"
-                  {...register('jobDescriptionText')}
-                  rows={6}
-                  aria-invalid={errors.jobDescriptionText ? true : undefined}
-                  aria-describedby="jobDescriptionText-hint"
-                />
-                <p id="jobDescriptionText-hint" className="text-xs text-muted-foreground">
-                  The AI uses this to tailor your summary and cover letter to the specific role.
-                </p>
-                {errors.jobDescriptionText && (
-                  <FieldError id="jobDescriptionText-error" errors={[errors.jobDescriptionText]} />
-                )}
               </Field>
             </FieldGroup>
           </CardContent>

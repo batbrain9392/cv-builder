@@ -43,7 +43,7 @@ export function CoverLetterFields({
   onDismiss,
 }: CoverLetterFieldsProps) {
   const [open, setOpen] = useState(false);
-  const [promptOpen, setPromptOpen] = useState(false);
+  const [aiOpen, setAiOpen] = useState(false);
   const enabled = useWatch({ control, name: 'coverLetterEnabled' });
   const apiKey = useWatch({ control, name: 'aiApiKey' });
   const jdText = useWatch({ control, name: 'jobDescriptionText' });
@@ -57,6 +57,7 @@ export function CoverLetterFields({
             render={
               <button
                 type="button"
+                aria-label="Toggle cover letter"
                 className="flex w-full items-center justify-between text-left"
               />
             }
@@ -112,85 +113,84 @@ export function CoverLetterFields({
                     )}
                   </Field>
 
-                  <div className="flex items-center gap-2">
-                    <Button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      disabled={!canGenerate || generating}
-                      onClick={onGenerate}
-                      aria-busy={generating || undefined}
-                    >
-                      {generating ? (
-                        <Loader2Icon className="animate-spin" data-icon="inline-start" />
-                      ) : (
-                        <SparklesIcon data-icon="inline-start" />
-                      )}
-                      {generating ? 'Generating…' : 'Generate with AI'}
-                    </Button>
-                    {!canGenerate && (
-                      <span className="text-xs text-muted-foreground">
-                        Requires API key and job description
-                      </span>
-                    )}
-                  </div>
-
-                  {generatedText && (
-                    <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium text-muted-foreground">
-                          AI-generated cover letter
-                        </span>
-                        <div className="flex gap-1">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon-xs"
-                            onClick={() => onCopy(generatedText)}
-                            aria-label="Copy to clipboard"
-                          >
-                            <ClipboardIcon />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon-xs"
-                            onClick={onDismiss}
-                            aria-label="Dismiss"
-                          >
-                            <XIcon />
-                          </Button>
-                        </div>
-                      </div>
-                      <p className="whitespace-pre-wrap text-sm">{generatedText}</p>
-                      <Button type="button" variant="default" size="sm" onClick={onUse}>
-                        <CheckIcon data-icon="inline-start" />
-                        Use this cover letter
-                      </Button>
-                    </div>
-                  )}
-
-                  <Collapsible open={promptOpen} onOpenChange={setPromptOpen}>
+                  <Collapsible open={aiOpen} onOpenChange={setAiOpen}>
                     <CollapsibleTrigger
                       render={
                         <button
                           type="button"
+                          aria-label="Enhance cover letter with AI"
                           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
                         />
                       }
                     >
+                      <SparklesIcon className="size-3.5" />
                       <ChevronDownIcon
-                        className={
-                          'size-3.5 transition-transform' + (promptOpen ? ' rotate-180' : '')
-                        }
+                        className={'size-3.5 transition-transform' + (aiOpen ? ' rotate-180' : '')}
                       />
-                      Customize AI prompt
+                      Enhance with AI
                     </CollapsibleTrigger>
-                    <CollapsibleContent className="pt-2">
+
+                    <CollapsibleContent className="space-y-3 pt-2">
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          size="sm"
+                          disabled={!canGenerate || generating}
+                          onClick={onGenerate}
+                          aria-busy={generating || undefined}
+                        >
+                          {generating ? (
+                            <Loader2Icon className="animate-spin" data-icon="inline-start" />
+                          ) : (
+                            <SparklesIcon data-icon="inline-start" />
+                          )}
+                          {generating ? 'Generating…' : 'Generate with AI'}
+                        </Button>
+                        {!canGenerate && (
+                          <span className="text-xs text-muted-foreground">
+                            Requires API key and job description
+                          </span>
+                        )}
+                      </div>
+
+                      {generatedText && (
+                        <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-medium text-muted-foreground">
+                              AI-generated cover letter
+                            </span>
+                            <div className="flex gap-1">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon-xs"
+                                onClick={() => onCopy(generatedText)}
+                                aria-label="Copy to clipboard"
+                              >
+                                <ClipboardIcon />
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon-xs"
+                                onClick={onDismiss}
+                                aria-label="Dismiss"
+                              >
+                                <XIcon />
+                              </Button>
+                            </div>
+                          </div>
+                          <p className="whitespace-pre-wrap text-sm">{generatedText}</p>
+                          <Button type="button" variant="default" size="sm" onClick={onUse}>
+                            <CheckIcon data-icon="inline-start" />
+                            Use this cover letter
+                          </Button>
+                        </div>
+                      )}
+
                       <Field>
-                        <FieldLabel htmlFor="aiCoverLetterPrompt" className="sr-only">
-                          Cover letter AI prompt
-                        </FieldLabel>
+                        <FieldLabel htmlFor="aiCoverLetterPrompt">AI prompt</FieldLabel>
                         <Textarea
                           id="aiCoverLetterPrompt"
                           {...register('aiCoverLetterPrompt')}

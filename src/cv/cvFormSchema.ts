@@ -26,6 +26,7 @@ const experienceSchema = z.object({
   bullets: z.array(bulletSchema).min(1, 'At least one bullet is required'),
   tagsLabel: z.string().optional(),
   tags: z.array(z.string().min(1)).optional(),
+  aiHighlightsPrompt: z.string().optional(),
 });
 
 const educationSchema = z.object({
@@ -36,10 +37,14 @@ const educationSchema = z.object({
   endYear: z.string().optional(),
   location: z.string().min(1, 'Location is required'),
   bullets: z.array(bulletSchema),
+  aiHighlightsPrompt: z.string().optional(),
 });
 
 export const DEFAULT_SUMMARY_PROMPT =
   "You are an expert resume writer. Given the candidate's CV data and the job description below, rewrite the professional summary to highlight the most relevant experience and skills for this specific role. Keep it concise (3\u20135 sentences). If a manual summary is provided, use it as a starting point and tailor it to the job description.";
+
+export const DEFAULT_HIGHLIGHTS_PROMPT =
+  "You are an expert resume writer. Given the candidate's experience entry and the job description, rewrite the highlights to be concise, impactful, and aligned with the job requirements. Return one highlight per line, no bullet characters.";
 
 export const DEFAULT_COVER_LETTER_PROMPT =
   "You are an expert cover letter writer. Given the candidate's CV data and the job description below, write a professional cover letter tailored for this specific role. Keep it to one page, with a clear opening, body highlighting relevant experience, and a closing paragraph.";

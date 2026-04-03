@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 
 function Label({ className, ...props }: React.ComponentProps<'label'>) {
   return (
+    // eslint-disable-next-line jsx-a11y/label-has-associated-control, jsx-a11y/label-has-for -- htmlFor is passed at call sites, not here
     <label
       data-slot="label"
       className={cn(

@@ -12,8 +12,19 @@ import { Input } from '@/components/ui/input';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
+import { HighlightsAiEnhance } from './HighlightsAiEnhance.tsx';
 import { HighlightsInput } from './HighlightsInput.tsx';
 import { SectionToolbar } from './SectionToolbar.tsx';
+
+interface EducationAiProps {
+  canGenerate: boolean;
+  generatingHighlights: boolean;
+  generatedHighlights: string[] | null;
+  onGenerateHighlights: () => void;
+  onUseHighlights: () => void;
+  onCopyHighlights: () => void;
+  onDismissHighlights: () => void;
+}
 
 interface EducationFieldsProps {
   fields: FieldArrayWithId<CvFormData, 'education', 'id'>[];
@@ -25,6 +36,7 @@ interface EducationFieldsProps {
   toggleSignal?: { n: number; open: boolean };
   onCollapse: () => void;
   onExpand: () => void;
+  getAiProps?: (index: number) => EducationAiProps;
 }
 
 function EducationEntry({
@@ -34,6 +46,7 @@ function EducationEntry({
   errors,
   onRemove,
   toggleSignal,
+  ai,
 }: {
   index: number;
   register: UseFormRegister<CvFormData>;
@@ -41,6 +54,7 @@ function EducationEntry({
   errors?: FieldErrors<CvFormData>['education'];
   onRemove: () => void;
   toggleSignal?: { n: number; open: boolean };
+  ai?: EducationAiProps;
 }) {
   const [open, setOpen] = useState(true);
 
@@ -187,6 +201,20 @@ function EducationEntry({
                 id={`edu-highlights-${index}`}
                 label="Highlights"
               />
+
+              {ai && (
+                <HighlightsAiEnhance
+                  canGenerate={ai.canGenerate}
+                  generating={ai.generatingHighlights}
+                  generatedBullets={ai.generatedHighlights}
+                  onGenerate={ai.onGenerateHighlights}
+                  onUse={ai.onUseHighlights}
+                  onCopy={ai.onCopyHighlights}
+                  onDismiss={ai.onDismissHighlights}
+                  promptId={`edu-ai-prompt-${index}`}
+                  registerPrompt={register(`education.${index}.aiHighlightsPrompt`)}
+                />
+              )}
             </FieldGroup>
           </CardContent>
         </CollapsibleContent>
@@ -205,6 +233,7 @@ export function EducationFields({
   toggleSignal,
   onCollapse,
   onExpand,
+  getAiProps,
 }: EducationFieldsProps) {
   return (
     <div className="space-y-4">
@@ -226,6 +255,7 @@ export function EducationFields({
           errors={errors}
           onRemove={() => onRemove(index)}
           toggleSignal={toggleSignal}
+          ai={getAiProps?.(index)}
         />
       ))}
     </div>
