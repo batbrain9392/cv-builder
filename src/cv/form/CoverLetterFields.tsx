@@ -18,6 +18,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field
 import { Textarea } from '@/components/ui/textarea';
 import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
 
+import type { AiResult } from '../ai/generateWithAi.ts';
 import type { CvFormData } from '../cvFormSchema.ts';
 
 import { MarkdownHint } from './MarkdownHint.tsx';
@@ -27,7 +28,7 @@ interface CoverLetterFieldsProps {
   control: Control<CvFormData>;
   errors: FieldErrors<CvFormData>;
   generating: boolean;
-  generatedText: string | null;
+  generatedText: AiResult<string> | null;
   onGenerate: () => void;
   onUse: () => void;
   onCopy: (text: string) => void;
@@ -173,13 +174,16 @@ export function CoverLetterFields({
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-medium text-muted-foreground">
                               AI-generated cover letter
+                              {generatedText.reasoning && (
+                                <span className="block font-normal">{generatedText.reasoning}</span>
+                              )}
                             </span>
                             <div className="flex gap-1">
                               <Button
                                 type="button"
                                 variant="ghost"
                                 size="icon-xs"
-                                onClick={() => onCopy(generatedText)}
+                                onClick={() => onCopy(generatedText.content)}
                                 aria-label="Copy to clipboard"
                               >
                                 <ClipboardIcon />
@@ -195,7 +199,7 @@ export function CoverLetterFields({
                               </Button>
                             </div>
                           </div>
-                          <BlockMarkdown text={generatedText} className="text-sm" />
+                          <BlockMarkdown text={generatedText.content} className="text-sm" />
                           <Button type="button" variant="default" size="sm" onClick={onUse}>
                             <CheckIcon data-icon="inline-start" />
                             Use this cover letter

@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 
+import type { AiResult } from '@/cv/ai/generateWithAi.ts';
+
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field, FieldLabel } from '@/components/ui/field';
@@ -19,7 +21,7 @@ import { InlineMarkdown } from '@/cv/preview/Markdown.tsx';
 interface HighlightsAiEnhanceProps {
   canGenerate: boolean;
   generating: boolean;
-  generatedBullets: string[] | null;
+  generatedBullets: AiResult<string[]> | null;
   onGenerate: () => void;
   onUse: () => void;
   onCopy: () => void;
@@ -99,6 +101,9 @@ export function HighlightsAiEnhance({
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-muted-foreground">
                 AI-generated highlights
+                {generatedBullets.reasoning && (
+                  <span className="block font-normal">{generatedBullets.reasoning}</span>
+                )}
               </span>
               <div className="flex gap-1">
                 <Button
@@ -122,7 +127,7 @@ export function HighlightsAiEnhance({
               </div>
             </div>
             <ul className="list-disc space-y-1 pl-4 text-sm">
-              {generatedBullets.map((bullet, i) => (
+              {generatedBullets.content.map((bullet, i) => (
                 <li key={i}>
                   <InlineMarkdown text={bullet} />
                 </li>

@@ -2,6 +2,7 @@ import { MoonIcon, SunIcon } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import { Tooltip } from '@/components/ui/tooltip';
 
 function getInitialTheme(): 'light' | 'dark' {
   if (typeof window === 'undefined') return 'light';
@@ -22,14 +23,13 @@ export function ThemeToggle() {
     setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
   }, []);
 
+  const label = theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme';
+
   return (
-    <Button
-      variant="inverted"
-      size="icon-sm"
-      onClick={toggle}
-      aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
-    >
-      {theme === 'light' ? <MoonIcon /> : <SunIcon />}
-    </Button>
+    <Tooltip label={label}>
+      <Button variant="inverted" size="icon-sm" onClick={toggle} aria-label={label}>
+        {theme === 'light' ? <MoonIcon /> : <SunIcon />}
+      </Button>
+    </Tooltip>
   );
 }

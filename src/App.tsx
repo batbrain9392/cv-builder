@@ -23,6 +23,7 @@ import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
 import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 
+import type { AiResult } from './cv/ai/generateWithAi.ts';
 import type { CvFormData } from './cv/cvFormSchema.ts';
 
 import {
@@ -46,7 +47,7 @@ import { FormActions } from './cv/form/FormActions.tsx';
 import { JobDescriptionFields } from './cv/form/JobDescriptionFields.tsx';
 import { PersonalInfoFields } from './cv/form/PersonalInfoFields.tsx';
 import { SectionToolbar } from './cv/form/SectionToolbar.tsx';
-import { AI_FIELD_DEFAULTS } from './cv/loadDefaultValues.ts';
+import { AI_FIELD_DEFAULTS, backfillEntryPrompts } from './cv/loadDefaultValues.ts';
 import { CvPreviewPanel } from './cv/preview/CvPreviewPanel.tsx';
 
 const EMPTY_EXPERIENCE = {
@@ -74,9 +75,9 @@ const EMPTY_EDUCATION = {
 export function App({ defaultValues }: { defaultValues: CvFormData }) {
   const [exporting, setExporting] = useState(false);
   const [generatingSummary, setGeneratingSummary] = useState(false);
-  const [generatedSummary, setGeneratedSummary] = useState<string | null>(null);
+  const [generatedSummary, setGeneratedSummary] = useState<AiResult<string> | null>(null);
   const [generatingCoverLetter, setGeneratingCoverLetter] = useState(false);
-  const [generatedCoverLetter, setGeneratedCoverLetter] = useState<string | null>(null);
+  const [generatedCoverLetter, setGeneratedCoverLetter] = useState<AiResult<string> | null>(null);
   const [summaryAiOpen, setSummaryAiOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const togglePreview = useCallback(() => setPreviewOpen((o) => !o), []);
@@ -124,7 +125,7 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
       try {
         if (typeof reader.result !== 'string') return;
         const data = JSON.parse(reader.result);
-        const withDefaults = { ...AI_FIELD_DEFAULTS, ...data };
+        const withDefaults = backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...data });
         const parsed = cvFormSchema.safeParse(withDefaults);
         if (parsed.success) {
           reset(parsed.data);
@@ -209,7 +210,7 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
 
   const onUseSummary = () => {
     if (!generatedSummary) return;
-    setValue('summary', generatedSummary, { shouldValidate: true, shouldDirty: true });
+    setValue('summary', generatedSummary.content, { shouldValidate: true, shouldDirty: true });
     setGeneratedSummary(null);
     toast.success('Summary applied.');
   };
@@ -245,12 +246,18 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
 
   const onUseCoverLetter = () => {
     if (!generatedCoverLetter) return;
-    setValue('coverLetter', generatedCoverLetter, { shouldValidate: true, shouldDirty: true });
+    setValue('coverLetter', generatedCoverLetter.content, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
     setGeneratedCoverLetter(null);
     toast.success('Cover letter applied.');
   };
 
-  type HighlightsAiState = Record<string, { generating: boolean; result: string[] | null }>;
+  type HighlightsAiState = Record<
+    string,
+    { generating: boolean; result: AiResult<string[]> | null }
+  >;
   const [highlightsAi, setHighlightsAi] = useState<HighlightsAiState>({});
 
   const getHighlightsAiState = useCallback(
@@ -303,11 +310,11 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
       const opts = { shouldValidate: true, shouldDirty: true } as const;
 
       if (section === 'experience') {
-        setValue(`experience.${idx}.bullets`, state.result, opts);
+        setValue(`experience.${idx}.bullets`, state.result.content, opts);
       } else if (section === 'education') {
-        setValue(`education.${idx}.bullets`, state.result, opts);
+        setValue(`education.${idx}.bullets`, state.result.content, opts);
       } else {
-        setValue(`others.${idx}.bullets`, state.result, opts);
+        setValue(`others.${idx}.bullets`, state.result.content, opts);
       }
 
       setHighlightsAi((prev) => ({ ...prev, [path]: { generating: false, result: null } }));
@@ -325,7 +332,7 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
       const state = highlightsAi[path];
       if (!state?.result) return;
       try {
-        await navigator.clipboard.writeText(state.result.join('\n'));
+        await navigator.clipboard.writeText(state.result.content.join('\n'));
         toast.success('Copied to clipboard.');
       } catch {
         toast.error('Failed to copy.');
@@ -499,13 +506,18 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-medium text-muted-foreground">
                               AI-generated summary
+                              {generatedSummary.reasoning && (
+                                <span className="block font-normal">
+                                  {generatedSummary.reasoning}
+                                </span>
+                              )}
                             </span>
                             <div className="flex gap-1">
                               <Button
                                 type="button"
                                 variant="ghost"
                                 size="icon-xs"
-                                onClick={() => onCopyGenerated(generatedSummary)}
+                                onClick={() => onCopyGenerated(generatedSummary.content)}
                                 aria-label="Copy to clipboard"
                               >
                                 <ClipboardIcon />
@@ -521,7 +533,7 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
                               </Button>
                             </div>
                           </div>
-                          <BlockMarkdown text={generatedSummary} className="text-sm" />
+                          <BlockMarkdown text={generatedSummary.content} className="text-sm" />
                           <Button type="button" variant="default" size="sm" onClick={onUseSummary}>
                             <CheckIcon data-icon="inline-start" />
                             Use this summary

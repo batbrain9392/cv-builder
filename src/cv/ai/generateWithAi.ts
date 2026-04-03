@@ -2,9 +2,15 @@ import { GoogleGenAI } from '@google/genai';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
-import { DEFAULT_HIGHLIGHTS_PROMPT } from '../cvFormSchema.ts';
-
 const MODEL = 'gemini-2.5-flash';
+
+const REASONING_SUFFIX =
+  '\n\nAfter your main output, add a line "---REASONING---" followed by a 1–2 sentence explanation of what information you considered and why this version improves on the original.';
+
+export interface AiResult<T> {
+  content: T;
+  reasoning: string;
+}
 
 function buildCvContext(data: CvFormData): string {
   const { personalInfo, summary, experience, education, others } = data;
@@ -59,12 +65,22 @@ function buildCvContext(data: CvFormData): string {
   return lines.join('\n');
 }
 
+function splitReasoning(raw: string): { content: string; reasoning: string } {
+  const marker = '---REASONING---';
+  const idx = raw.indexOf(marker);
+  if (idx === -1) return { content: raw.trim(), reasoning: '' };
+  return {
+    content: raw.slice(0, idx).trim(),
+    reasoning: raw.slice(idx + marker.length).trim(),
+  };
+}
+
 async function generate(apiKey: string, instructions: string, input: string): Promise<string> {
   const ai = new GoogleGenAI({ apiKey });
 
   const response = await ai.models.generateContent({
     model: MODEL,
-    config: { systemInstruction: instructions },
+    config: { systemInstruction: instructions + REASONING_SUFFIX },
     contents: input,
   });
 
@@ -78,7 +94,7 @@ export async function generateSummary(
   prompt: string,
   cvData: CvFormData,
   jobDescriptionText: string,
-): Promise<string> {
+): Promise<AiResult<string>> {
   const input = [
     '--- Candidate CV ---',
     buildCvContext(cvData),
@@ -87,7 +103,8 @@ export async function generateSummary(
     jobDescriptionText,
   ].join('\n');
 
-  return generate(apiKey, prompt, input);
+  const raw = await generate(apiKey, prompt, input);
+  return splitReasoning(raw);
 }
 
 function buildEntryContext(
@@ -114,7 +131,7 @@ export async function generateHighlights(
   prompt: string,
   entry: CvFormData['experience'][number] | CvFormData['education'][number],
   jobDescriptionText: string,
-): Promise<string[]> {
+): Promise<AiResult<string[]>> {
   const input = [
     '--- Entry ---',
     buildEntryContext(entry),
@@ -124,45 +141,12 @@ export async function generateHighlights(
   ].join('\n');
 
   const raw = await generate(apiKey, prompt, input);
-  return raw
+  const { content, reasoning } = splitReasoning(raw);
+  const bullets = content
     .split('\n')
     .map((line) => line.replace(/^[\s•\-*]+/, '').trim())
     .filter(Boolean);
-}
-
-export type HighlightsResultMap = Map<string, string[]>;
-
-export async function generateAllHighlights(
-  apiKey: string,
-  cvData: CvFormData,
-  jobDescriptionText: string,
-): Promise<HighlightsResultMap> {
-  const results: HighlightsResultMap = new Map();
-
-  const tasks: {
-    path: string;
-    entry: CvFormData['experience'][number] | CvFormData['education'][number];
-  }[] = [];
-
-  cvData.experience.forEach((entry, i) => tasks.push({ path: `experience.${i}`, entry }));
-  cvData.education.forEach((entry, i) => tasks.push({ path: `education.${i}`, entry }));
-  cvData.others.forEach((entry, i) => tasks.push({ path: `others.${i}`, entry }));
-
-  const settled = await Promise.allSettled(
-    tasks.map(async ({ path, entry }) => {
-      const prompt = entry.aiHighlightsPrompt || DEFAULT_HIGHLIGHTS_PROMPT;
-      const bullets = await generateHighlights(apiKey, prompt, entry, jobDescriptionText);
-      return { path, bullets };
-    }),
-  );
-
-  for (const result of settled) {
-    if (result.status === 'fulfilled') {
-      results.set(result.value.path, result.value.bullets);
-    }
-  }
-
-  return results;
+  return { content: bullets, reasoning };
 }
 
 export async function generateCoverLetter(
@@ -170,7 +154,7 @@ export async function generateCoverLetter(
   prompt: string,
   cvData: CvFormData,
   jobDescriptionText: string,
-): Promise<string> {
+): Promise<AiResult<string>> {
   const input = [
     '--- Candidate CV ---',
     buildCvContext(cvData),
@@ -179,5 +163,6 @@ export async function generateCoverLetter(
     jobDescriptionText,
   ].join('\n');
 
-  return generate(apiKey, prompt, input);
+  const raw = await generate(apiKey, prompt, input);
+  return splitReasoning(raw);
 }

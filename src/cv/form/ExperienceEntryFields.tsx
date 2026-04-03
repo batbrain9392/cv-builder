@@ -30,7 +30,7 @@ interface ExperienceEntryFieldsProps {
   toggleSignal?: { n: number; open: boolean };
   canGenerate?: boolean;
   generatingHighlights?: boolean;
-  generatedHighlights?: string[] | null;
+  generatedHighlights?: import('@/cv/ai/generateWithAi.ts').AiResult<string[]> | null;
   onGenerateHighlights?: () => void;
   onUseHighlights?: () => void;
   onCopyHighlights?: () => void;

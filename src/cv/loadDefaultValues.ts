@@ -3,6 +3,7 @@ import type { CvFormData } from './cvFormSchema.ts';
 import {
   cvFormSchema,
   DEFAULT_COVER_LETTER_PROMPT,
+  DEFAULT_HIGHLIGHTS_PROMPT,
   DEFAULT_SUMMARY_PROMPT,
 } from './cvFormSchema.ts';
 
@@ -14,6 +15,27 @@ export const AI_FIELD_DEFAULTS: Partial<CvFormData> = {
   coverLetter: '',
   aiCoverLetterPrompt: DEFAULT_COVER_LETTER_PROMPT,
 };
+
+/**
+ * Backfill missing aiHighlightsPrompt on experience/education/other entries
+ * so prompts survive the export → import round-trip even for older JSON files.
+ */
+export function backfillEntryPrompts(data: Record<string, unknown>): Record<string, unknown> {
+  const patch = (entries: unknown) => {
+    if (!Array.isArray(entries)) return entries;
+    return entries.map((e) =>
+      typeof e === 'object' && e !== null && !('aiHighlightsPrompt' in e)
+        ? { ...e, aiHighlightsPrompt: DEFAULT_HIGHLIGHTS_PROMPT }
+        : e,
+    );
+  };
+  return {
+    ...data,
+    experience: patch(data.experience),
+    education: patch(data.education),
+    others: patch(data.others),
+  };
+}
 
 const EMPTY_DEFAULTS: CvFormData = {
   aiApiKey: '',
@@ -39,7 +61,7 @@ const EMPTY_DEFAULTS: CvFormData = {
 export async function loadDefaultValues(): Promise<CvFormData> {
   if (import.meta.env.DEV) {
     const seed = await import('../../data/seed.json');
-    return cvFormSchema.parse({ ...AI_FIELD_DEFAULTS, ...seed.default });
+    return cvFormSchema.parse(backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...seed.default }));
   }
   return EMPTY_DEFAULTS;
 }

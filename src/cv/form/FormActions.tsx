@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useRef } from 'react';
 
+import { InstallPwa } from '@/components/InstallPwa';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 
@@ -40,6 +41,7 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
       </h1>
 
       <nav aria-label="CV actions" className="flex items-center gap-2">
+        <InstallPwa />
         <ThemeToggle />
 
         {/* Mobile: overflow menu */}
