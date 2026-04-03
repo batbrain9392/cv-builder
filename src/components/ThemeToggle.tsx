@@ -24,9 +24,8 @@ export function ThemeToggle() {
 
   return (
     <Button
-      variant="ghost"
+      variant="inverted"
       size="icon-sm"
-      className="text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground"
       onClick={toggle}
       aria-label={theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'}
     >

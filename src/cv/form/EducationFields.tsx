@@ -1,6 +1,6 @@
 import type { UseFormRegister, Control, FieldArrayWithId, FieldErrors } from 'react-hook-form';
 
-import { ChevronsDownUpIcon, ChevronsUpDownIcon, PlusIcon, TrashIcon } from 'lucide-react';
+import { ChevronsDownUpIcon, ChevronsUpDownIcon, TrashIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import type { CvFormData } from '../cvFormSchema.ts';
 
 import { BulletsInput } from './BulletsInput.tsx';
+import { SectionToolbar } from './SectionToolbar.tsx';
 
 interface EducationFieldsProps {
   fields: FieldArrayWithId<CvFormData, 'education', 'id'>[];
@@ -207,48 +208,14 @@ export function EducationFields({
 }: EducationFieldsProps) {
   return (
     <div className="space-y-4 pt-2">
-      <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-primary">Education</h2>
-        <div className="flex items-center gap-2">
-          {fields.length > 0 && (
-            <>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                className="text-muted-foreground sm:size-auto sm:px-2.5"
-                aria-label="Collapse all"
-                onClick={onCollapse}
-              >
-                <ChevronsDownUpIcon />
-                <span className="sr-only sm:not-sr-only">Collapse All</span>
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                className="text-muted-foreground sm:size-auto sm:px-2.5"
-                aria-label="Expand all"
-                onClick={onExpand}
-              >
-                <ChevronsUpDownIcon />
-                <span className="sr-only sm:not-sr-only">Expand All</span>
-              </Button>
-            </>
-          )}
-          <Button
-            type="button"
-            variant="outline"
-            size="icon-sm"
-            className="border-primary/30 text-primary hover:bg-primary/10 sm:size-auto sm:px-2.5"
-            aria-label="Add education"
-            onClick={onAdd}
-          >
-            <PlusIcon />
-            <span className="sr-only sm:not-sr-only">Add Education</span>
-          </Button>
-        </div>
-      </div>
+      <SectionToolbar
+        title="Education"
+        count={fields.length}
+        onCollapse={onCollapse}
+        onExpand={onExpand}
+        onAdd={onAdd}
+        addLabel="Add Education"
+      />
 
       {fields.map((field, index) => (
         <EducationEntry

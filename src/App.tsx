@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ChevronsDownUpIcon, ChevronsUpDownIcon, EyeIcon, PlusIcon, XIcon } from 'lucide-react';
+import { EyeIcon, XIcon } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { useForm, useFieldArray, type SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -21,6 +21,7 @@ import { EducationFields } from './cv/form/EducationFields.tsx';
 import { ExperienceEntryFields } from './cv/form/ExperienceEntryFields.tsx';
 import { FormActions } from './cv/form/FormActions.tsx';
 import { PersonalInfoFields } from './cv/form/PersonalInfoFields.tsx';
+import { SectionToolbar } from './cv/form/SectionToolbar.tsx';
 import { CvPreviewPanel } from './cv/preview/CvPreviewPanel.tsx';
 
 const EMPTY_EXPERIENCE = {
@@ -212,48 +213,14 @@ export function App() {
 
           {/* Experience */}
           <div className="space-y-4 pt-2">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-primary">Experience</h2>
-              <div className="flex items-center gap-2">
-                {experience.fields.length > 0 && (
-                  <>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className="text-muted-foreground sm:size-auto sm:px-2.5"
-                      aria-label="Collapse all"
-                      onClick={() => setExpSignal((s) => ({ n: s.n + 1, open: false }))}
-                    >
-                      <ChevronsDownUpIcon />
-                      <span className="sr-only sm:not-sr-only">Collapse All</span>
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className="text-muted-foreground sm:size-auto sm:px-2.5"
-                      aria-label="Expand all"
-                      onClick={() => setExpSignal((s) => ({ n: s.n + 1, open: true }))}
-                    >
-                      <ChevronsUpDownIcon />
-                      <span className="sr-only sm:not-sr-only">Expand All</span>
-                    </Button>
-                  </>
-                )}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-sm"
-                  className="border-primary/30 text-primary hover:bg-primary/10 sm:size-auto sm:px-2.5"
-                  aria-label="Add experience"
-                  onClick={() => experience.insert(0, EMPTY_EXPERIENCE)}
-                >
-                  <PlusIcon />
-                  <span className="sr-only sm:not-sr-only">Add Experience</span>
-                </Button>
-              </div>
-            </div>
+            <SectionToolbar
+              title="Experience"
+              count={experience.fields.length}
+              onCollapse={() => setExpSignal((s) => ({ n: s.n + 1, open: false }))}
+              onExpand={() => setExpSignal((s) => ({ n: s.n + 1, open: true }))}
+              onAdd={() => experience.insert(0, EMPTY_EXPERIENCE)}
+              addLabel="Add Experience"
+            />
 
             {experience.fields.map((field, index) => (
               <ExperienceEntryFields
@@ -286,48 +253,14 @@ export function App() {
 
           {/* Others */}
           <div className="space-y-4 pt-2">
-            <div className="flex items-center justify-between">
-              <h2 className="text-base font-semibold text-primary">Others</h2>
-              <div className="flex items-center gap-2">
-                {others.fields.length > 0 && (
-                  <>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className="text-muted-foreground sm:size-auto sm:px-2.5"
-                      aria-label="Collapse all"
-                      onClick={() => setOthSignal((s) => ({ n: s.n + 1, open: false }))}
-                    >
-                      <ChevronsDownUpIcon />
-                      <span className="sr-only sm:not-sr-only">Collapse All</span>
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon-sm"
-                      className="text-muted-foreground sm:size-auto sm:px-2.5"
-                      aria-label="Expand all"
-                      onClick={() => setOthSignal((s) => ({ n: s.n + 1, open: true }))}
-                    >
-                      <ChevronsUpDownIcon />
-                      <span className="sr-only sm:not-sr-only">Expand All</span>
-                    </Button>
-                  </>
-                )}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon-sm"
-                  className="border-primary/30 text-primary hover:bg-primary/10 sm:size-auto sm:px-2.5"
-                  aria-label="Add other"
-                  onClick={() => others.insert(0, EMPTY_EXPERIENCE)}
-                >
-                  <PlusIcon />
-                  <span className="sr-only sm:not-sr-only">Add Other</span>
-                </Button>
-              </div>
-            </div>
+            <SectionToolbar
+              title="Others"
+              count={others.fields.length}
+              onCollapse={() => setOthSignal((s) => ({ n: s.n + 1, open: false }))}
+              onExpand={() => setOthSignal((s) => ({ n: s.n + 1, open: true }))}
+              onAdd={() => others.insert(0, EMPTY_EXPERIENCE)}
+              addLabel="Add Other"
+            />
 
             {others.fields.map((field, index) => (
               <ExperienceEntryFields

@@ -5,12 +5,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
 body {
   margin: 0;
 }

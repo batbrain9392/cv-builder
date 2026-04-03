@@ -43,9 +43,9 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
           <Menu.Trigger
             render={
               <Button
-                variant="ghost"
+                variant="inverted"
                 size="icon-sm"
-                className="text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground sm:hidden"
+                className="sm:hidden"
                 aria-label="Actions"
               />
             }
@@ -78,9 +78,9 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
 
         {/* Desktop: full buttons */}
         <Button
-          variant="outline"
+          variant="inverted"
           size="sm"
-          className="hidden border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground sm:inline-flex"
+          className="hidden sm:inline-flex"
           onClick={() => fileInputRef.current?.click()}
         >
           <UploadIcon data-icon="inline-start" />
@@ -88,9 +88,9 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
         </Button>
 
         <Button
-          variant="outline"
+          variant="inverted"
           size="sm"
-          className="hidden border-primary-foreground/30 bg-transparent text-primary-foreground hover:bg-primary-foreground/15 hover:text-primary-foreground sm:inline-flex"
+          className="hidden sm:inline-flex"
           onClick={onExportJson}
         >
           <DownloadIcon data-icon="inline-start" />
@@ -98,8 +98,9 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
         </Button>
 
         <Button
+          variant="inverted-fill"
           size="sm"
-          className="hidden bg-primary-foreground text-primary hover:bg-primary-foreground/90 sm:inline-flex"
+          className="hidden sm:inline-flex"
           onClick={onExportDocx}
           disabled={exporting}
           aria-busy={exporting || undefined}
