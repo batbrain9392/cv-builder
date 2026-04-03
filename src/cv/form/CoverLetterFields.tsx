@@ -16,8 +16,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Textarea } from '@/components/ui/textarea';
+import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
 
 import type { CvFormData } from '../cvFormSchema.ts';
+
+import { MarkdownHint } from './MarkdownHint.tsx';
 
 interface CoverLetterFieldsProps {
   register: UseFormRegister<CvFormData>;
@@ -105,9 +108,9 @@ export function CoverLetterFields({
                         'coverLetter-hint' + (errors.coverLetter ? ' coverLetter-error' : '')
                       }
                     />
-                    <p id="coverLetter-hint" className="text-xs text-muted-foreground">
+                    <MarkdownHint id="coverLetter-hint">
                       Write manually or generate with AI below.
-                    </p>
+                    </MarkdownHint>
                     {errors.coverLetter && (
                       <FieldError id="coverLetter-error" errors={[errors.coverLetter]} />
                     )}
@@ -181,7 +184,7 @@ export function CoverLetterFields({
                               </Button>
                             </div>
                           </div>
-                          <p className="whitespace-pre-wrap text-sm">{generatedText}</p>
+                          <BlockMarkdown text={generatedText} className="text-sm" />
                           <Button type="button" variant="default" size="sm" onClick={onUse}>
                             <CheckIcon data-icon="inline-start" />
                             Use this cover letter

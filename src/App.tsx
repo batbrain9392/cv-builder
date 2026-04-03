@@ -18,6 +18,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Toaster } from '@/components/ui/sonner';
 import { Textarea } from '@/components/ui/textarea';
+import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
+import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 
 import type { CvFormData } from './cv/cvFormSchema.ts';
@@ -367,15 +369,6 @@ export function App() {
               </p>
             </div>
 
-            {/* Personal Info */}
-            <PersonalInfoFields
-              register={register}
-              errors={errors.personalInfo}
-              linkFields={links.fields}
-              onAppendLink={() => links.append({ label: '', url: '' })}
-              onRemoveLink={links.remove}
-            />
-
             {/* AI Assist */}
             <AiSettingsFields register={register} errors={errors} />
 
@@ -393,6 +386,15 @@ export function App() {
               onUse={onUseCoverLetter}
               onCopy={onCopyGenerated}
               onDismiss={() => setGeneratedCoverLetter(null)}
+            />
+
+            {/* Personal Info */}
+            <PersonalInfoFields
+              register={register}
+              errors={errors.personalInfo}
+              linkFields={links.fields}
+              onAppendLink={() => links.append({ label: '', url: '' })}
+              onRemoveLink={links.remove}
             />
 
             {/* Professional Summary */}
@@ -413,9 +415,9 @@ export function App() {
                       aria-invalid={errors.summary ? true : undefined}
                       aria-describedby={'summary-hint' + (errors.summary ? ' summary-error' : '')}
                     />
-                    <p id="summary-hint" className="text-xs text-muted-foreground">
+                    <MarkdownHint id="summary-hint">
                       A concise professional summary highlighting your key strengths.
-                    </p>
+                    </MarkdownHint>
                     {errors.summary && <FieldError id="summary-error" errors={[errors.summary]} />}
                   </Field>
 
@@ -489,7 +491,7 @@ export function App() {
                               </Button>
                             </div>
                           </div>
-                          <p className="whitespace-pre-wrap text-sm">{generatedSummary}</p>
+                          <BlockMarkdown text={generatedSummary} className="text-sm" />
                           <Button type="button" variant="default" size="sm" onClick={onUseSummary}>
                             <CheckIcon data-icon="inline-start" />
                             Use this summary

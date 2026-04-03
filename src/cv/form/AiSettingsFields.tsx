@@ -107,11 +107,6 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
         <CollapsibleContent>
           <CardContent>
             <FieldGroup>
-              <p className="text-xs text-muted-foreground">
-                Provide your OpenAI API key to enable AI-powered generation of summaries, cover
-                letters, and experience highlights. Everything runs in your browser — no data is
-                sent anywhere except directly to OpenAI.
-              </p>
               <Field data-invalid={errors.aiApiKey ? true : undefined}>
                 <FieldLabel htmlFor="aiApiKey">OpenAI API Key</FieldLabel>
                 <Input

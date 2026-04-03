@@ -198,7 +198,7 @@ function entryParagraphs(
 function bodyParagraphs(text: string): Paragraph[] {
   return text.split('\n').map((line) => {
     return new Paragraph({
-      spacing: { after: CV_SPACING_PT.md * TWIP },
+      spacing: { after: CV_SIZE.body * TWIP },
       children: line.trim()
         ? [new TextRun({ text: line, size: CV_SIZE.body * PT, font: FONT })]
         : [],

@@ -53,7 +53,7 @@ export function JobDescriptionFields({ register, errors }: JobDescriptionFieldsP
                 picking up on keywords, required skills, and tone.
               </p>
               <Field data-invalid={errors.jobDescriptionText ? true : undefined}>
-                <FieldLabel htmlFor="jobDescriptionText">Job Posting Text</FieldLabel>
+                <FieldLabel htmlFor="jobDescriptionText">Job Description</FieldLabel>
                 <Textarea
                   id="jobDescriptionText"
                   {...register('jobDescriptionText')}

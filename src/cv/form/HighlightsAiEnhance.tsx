@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Textarea } from '@/components/ui/textarea';
+import { InlineMarkdown } from '@/cv/preview/Markdown.tsx';
 
 interface HighlightsAiEnhanceProps {
   canGenerate: boolean;
@@ -111,7 +112,9 @@ export function HighlightsAiEnhance({
             </div>
             <ul className="list-disc space-y-1 pl-4 text-sm">
               {generatedBullets.map((bullet, i) => (
-                <li key={i}>{bullet}</li>
+                <li key={i}>
+                  <InlineMarkdown text={bullet} />
+                </li>
               ))}
             </ul>
             <Button type="button" variant="default" size="sm" onClick={onUse}>

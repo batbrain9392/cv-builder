@@ -7,6 +7,8 @@ import { Textarea } from '@/components/ui/textarea';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
+import { MarkdownHint } from './MarkdownHint.tsx';
+
 type HighlightsPath =
   | `experience.${number}.bullets`
   | `education.${number}.bullets`
@@ -23,11 +25,11 @@ export function HighlightsInput({ control, name, id, label }: HighlightsInputPro
   const { field, fieldState } = useController({ control, name });
 
   const arr: string[] = Array.isArray(field.value) ? field.value : [];
-  const value = arr.join('\n');
+  const value = arr.map((b) => `- ${b}`).join('\n');
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const raw = e.target.value;
-    const lines = raw.split('\n');
+    const lines = raw.split('\n').map((l) => l.replace(/^[-*]\s?/, ''));
     field.onChange(lines.length > 0 ? lines : ['']);
   }
 
@@ -43,9 +45,9 @@ export function HighlightsInput({ control, name, id, label }: HighlightsInputPro
         aria-invalid={fieldState.invalid || undefined}
         aria-describedby={`${id}-hint` + (fieldState.invalid ? ` ${id}-error` : '')}
       />
-      <p id={`${id}-hint`} className="text-xs text-muted-foreground">
-        One highlight per line.
-      </p>
+      <MarkdownHint id={`${id}-hint`}>
+        One highlight per line, using markdown list format.
+      </MarkdownHint>
       {fieldState.invalid && <FieldError id={`${id}-error`} errors={[fieldState.error]} />}
     </Field>
   );

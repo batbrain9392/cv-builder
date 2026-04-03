@@ -112,11 +112,30 @@
   color: var(--cv-color-hint);
 }
 
-/* Summary */
+/* Summary (rendered markdown block) */
 .cv-preview-summary {
   font-size: var(--cv-body-size);
   margin: 0 0 var(--cv-gap-md);
-  white-space: pre-wrap;
+}
+
+.cv-preview-summary p {
+  margin: 0 0 var(--cv-gap-md);
+}
+
+.cv-preview-summary p:last-child {
+  margin-bottom: 0;
+}
+
+.cv-preview-summary ul {
+  list-style-type: disc;
+  margin: 0;
+  padding-left: 6mm;
+}
+
+.cv-preview-summary li {
+  display: list-item;
+  margin-bottom: 2px;
+  color: var(--cv-color-hint);
 }
 
 /* Multi-page wrapper */
@@ -129,9 +148,37 @@
 /* Cover letter page */
 .cv-preview-cover-letter-body {
   font-size: var(--cv-body-size);
-  white-space: pre-wrap;
   line-height: 1.5;
   margin: 0;
+}
+
+.cv-preview-cover-letter-body p {
+  margin: 0 0 1em;
+}
+
+.cv-preview-cover-letter-body p:last-child {
+  margin-bottom: 0;
+}
+
+.cv-preview-cover-letter-body ul {
+  list-style-type: disc;
+  margin: 0 0 0.5em;
+  padding-left: 6mm;
+}
+
+.cv-preview-cover-letter-body li {
+  display: list-item;
+}
+
+/* Inline markdown elements */
+.cv-preview a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.cv-preview code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
 }
 
 @media print {

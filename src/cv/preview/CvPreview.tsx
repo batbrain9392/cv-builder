@@ -3,6 +3,7 @@ import type { CvFormData } from '../cvFormSchema.ts';
 import { CV_CSS_VARS } from '../cvConstants.ts';
 import { formatDateRange, formatEntryMeta, formatLinksLine } from '../cvFormatters.ts';
 import './CvPreview.css';
+import { BlockMarkdown, InlineMarkdown } from './Markdown.tsx';
 
 interface HeaderProps {
   name: string;
@@ -49,7 +50,9 @@ function Entry({ title, meta, bullets, tagsLabel, tags }: EntryProps) {
       <div className="cv-preview-entry-meta">{meta}</div>
       <ul className="cv-preview-bullets">
         {bullets.map((b, i) => (
-          <li key={i}>{b}</li>
+          <li key={i}>
+            <InlineMarkdown text={b} />
+          </li>
         ))}
         {tags && tags.length > 0 && (
           <li className="cv-preview-hint">
@@ -81,7 +84,7 @@ function CoverLetterPage({ data }: CvPreviewProps) {
         contactLine={contactLine}
         linksLine={formatLinksLine(data.personalInfo.links)}
       />
-      <p className="cv-preview-cover-letter-body">{data.coverLetter}</p>
+      <BlockMarkdown text={data.coverLetter} className="cv-preview-cover-letter-body" />
     </div>
   );
 }
@@ -106,7 +109,7 @@ export function CvPreview({ data }: CvPreviewProps) {
         />
 
         <SectionHeading>Professional Summary</SectionHeading>
-        <p className="cv-preview-summary">{data.summary}</p>
+        <BlockMarkdown text={data.summary} className="cv-preview-summary" />
 
         <SectionHeading>Work Experience</SectionHeading>
         {data.experience.map((exp, i) => (
