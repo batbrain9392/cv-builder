@@ -1,27 +1,8 @@
-import type React from 'react';
-
 import type { CvFormData } from '../cvFormSchema.ts';
 
-import { CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT } from '../cvConstants.ts';
+import { CV_CSS_VARS } from '../cvConstants.ts';
 import { formatDateRange, formatEntryMeta, formatLinksLine } from '../cvFormatters.ts';
 import './CvPreview.css';
-
-const cssVars: React.CSSProperties = {
-  '--cv-font': CV_FONT.fallback,
-  '--cv-heading-size': `${CV_SIZE.heading}pt`,
-  '--cv-subheading-size': `${CV_SIZE.subheading}pt`,
-  '--cv-title-size': `${CV_SIZE.title}pt`,
-  '--cv-body-size': `${CV_SIZE.body}pt`,
-  '--cv-hint-size': `${CV_SIZE.hint}pt`,
-  '--cv-color-text': `#${CV_COLOR.text}`,
-  '--cv-color-hint': `#${CV_COLOR.hint}`,
-  '--cv-color-rule': `#${CV_COLOR.rule}`,
-  '--cv-gap-sm': `${CV_SPACING_PT.sm}pt`,
-  '--cv-gap-md': `${CV_SPACING_PT.md}pt`,
-  '--cv-gap-lg': `${CV_SPACING_PT.lg}pt`,
-  '--cv-header-after': `${CV_SPACING_PT.headerAfter}pt`,
-  '--cv-section-before': `${CV_SPACING_PT.sectionBefore}pt`,
-};
 
 interface HeaderProps {
   name: string;
@@ -87,7 +68,7 @@ interface CvPreviewProps {
 
 export function CvPreview({ data }: CvPreviewProps) {
   return (
-    <div className="cv-preview" style={cssVars}>
+    <div className="cv-preview" style={CV_CSS_VARS}>
       <Header
         name={data.personalInfo.name}
         title={data.personalInfo.title}

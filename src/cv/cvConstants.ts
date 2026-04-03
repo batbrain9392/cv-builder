@@ -2,7 +2,7 @@
  * CV design tokens shared by the web preview and DOCX export.
  *
  * All sizes are in typographic points (pt). Consumers convert as needed:
- * - CSS: values are injected as custom properties on the preview root element (see CvPreview.tsx).
+ * - CSS: values are injected as custom properties on the preview root element (see CV_CSS_VARS below).
  * - DOCX: font sizes use `* PT` (half-points), spacing uses `* TWIP` (twentieths of a point).
  */
 
@@ -49,3 +49,21 @@ export const CV_LAYOUT = {
   pageHeightMm: 297,
   marginMm: 15,
 } as const;
+
+/** CSS custom properties derived from the tokens above. Apply to the preview root element. */
+export const CV_CSS_VARS: Record<string, string> = {
+  '--cv-font': CV_FONT.fallback,
+  '--cv-heading-size': `${CV_SIZE.heading}pt`,
+  '--cv-subheading-size': `${CV_SIZE.subheading}pt`,
+  '--cv-title-size': `${CV_SIZE.title}pt`,
+  '--cv-body-size': `${CV_SIZE.body}pt`,
+  '--cv-hint-size': `${CV_SIZE.hint}pt`,
+  '--cv-color-text': `#${CV_COLOR.text}`,
+  '--cv-color-hint': `#${CV_COLOR.hint}`,
+  '--cv-color-rule': `#${CV_COLOR.rule}`,
+  '--cv-gap-sm': `${CV_SPACING_PT.sm}pt`,
+  '--cv-gap-md': `${CV_SPACING_PT.md}pt`,
+  '--cv-gap-lg': `${CV_SPACING_PT.lg}pt`,
+  '--cv-header-after': `${CV_SPACING_PT.headerAfter}pt`,
+  '--cv-section-before': `${CV_SPACING_PT.sectionBefore}pt`,
+};
