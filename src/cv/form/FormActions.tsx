@@ -32,7 +32,7 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
   };
 
   return (
-    <header className="z-40 flex shrink-0 items-center justify-between border-b border-primary/20 bg-primary px-4 py-3 text-primary-foreground lg:px-6 xl:px-8">
+    <header className="z-40 flex shrink-0 items-center justify-between bg-primary px-4 py-3 text-primary-foreground shadow-md lg:px-6 xl:px-8">
       <h1 className="text-lg font-semibold tracking-tight">CV Builder</h1>
 
       <nav aria-label="CV actions" className="flex items-center gap-2">
