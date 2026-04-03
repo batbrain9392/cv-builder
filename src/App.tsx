@@ -8,8 +8,6 @@ import seedData from '../content/cv.json';
 import { cvFormSchema } from './cv/cvFormSchema.ts';
 import { downloadBlob } from './cv/downloadBlob.ts';
 import { createCvDocxBlob } from './cv/export/CvDocxDocument.ts';
-import { BulletsTextarea } from './cv/form/BulletsTextarea.tsx';
-import { CertificationFields } from './cv/form/CertificationFields.tsx';
 import { EducationFields } from './cv/form/EducationFields.tsx';
 import { ExperienceEntryFields } from './cv/form/ExperienceEntryFields.tsx';
 import { FormActions } from './cv/form/FormActions.tsx';
@@ -33,16 +31,6 @@ const EMPTY_EDUCATION = {
   institutionUrl: '',
   startYear: '',
   location: '',
-  bullets: [''],
-};
-
-const EMPTY_CERTIFICATION = {
-  title: '',
-  issuer: '',
-  date: '',
-  location: '',
-  courseUrl: '',
-  certificateUrl: '',
   bullets: [''],
 };
 
@@ -75,7 +63,6 @@ export function App() {
   const links = useFieldArray({ control, name: 'personalInfo.links' });
   const experience = useFieldArray({ control, name: 'experience' });
   const education = useFieldArray({ control, name: 'education' });
-  const certifications = useFieldArray({ control, name: 'certifications' });
   const others = useFieldArray({ control, name: 'others' });
 
   const onImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -208,27 +195,6 @@ export function App() {
             errors={errors.education}
             onAdd={() => education.append(EMPTY_EDUCATION)}
             onRemove={education.remove}
-          />
-
-          <fieldset>
-            <legend>Technical Skills</legend>
-            <BulletsTextarea
-              control={control}
-              name="skills"
-              id="skills"
-              label="Skills (one per line)"
-              rows={6}
-              placeholder={'TypeScript\nReact\nAngular'}
-            />
-          </fieldset>
-
-          <CertificationFields
-            fields={certifications.fields}
-            register={register}
-            control={control}
-            errors={errors.certifications}
-            onAdd={() => certifications.append(EMPTY_CERTIFICATION)}
-            onRemove={certifications.remove}
           />
 
           <fieldset>

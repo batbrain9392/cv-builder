@@ -98,8 +98,3 @@
   margin-bottom: var(--cv-summary-after);
   white-space: pre-wrap;
 }
-
-/* Skills */
-.cv-preview-skills {
-  font-size: var(--cv-body-size);
-}

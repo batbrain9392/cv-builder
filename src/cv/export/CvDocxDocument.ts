@@ -224,35 +224,11 @@ export function createCvDocx(data: CvFormData): Document {
         edu.bullets,
       ),
     ),
-
-    sectionHeading('Technical Skills'),
-    new Paragraph({
-      children: [
-        new TextRun({
-          text: data.skills.join(', '),
-          size: CV_SIZE.body * PT,
-          font: FONT,
-        }),
-      ],
-    }),
   ];
-
-  if (data.certifications.length > 0) {
-    children.push(
-      sectionHeading('Certifications'),
-      ...data.certifications.flatMap((cert) =>
-        entryParagraphs(
-          `${cert.title}, ${cert.issuer}`,
-          formatEntryMeta(cert.date, cert.location),
-          cert.bullets,
-        ),
-      ),
-    );
-  }
 
   if (data.others.length > 0) {
     children.push(
-      sectionHeading('Other Experience'),
+      sectionHeading('Others'),
       ...data.others.flatMap((other) =>
         entryParagraphs(
           `${other.role}, ${other.company}`,

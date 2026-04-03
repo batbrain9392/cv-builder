@@ -37,26 +37,12 @@ const educationSchema = z.object({
   bullets: z.array(bulletSchema),
 });
 
-const certificationSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  issuer: z.string().min(1, 'Issuer is required'),
-  date: z.string().min(1, 'Date is required'),
-  location: z.string().optional(),
-  courseUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  certificateUrl: z.string().url('Must be a valid URL').optional().or(z.literal('')),
-  bullets: z.array(bulletSchema),
-});
-
 export const cvFormSchema = z.object({
   jobDescriptionUrl: z.url('Must be a valid URL').optional().or(z.literal('')),
   personalInfo: personalInfoSchema,
   summary: z.string().min(10, 'Summary should be at least 10 characters'),
   experience: z.array(experienceSchema).min(1, 'At least one experience entry is required'),
   education: z.array(educationSchema).min(1, 'At least one education entry is required'),
-  skills: z
-    .array(z.string().min(1, 'Skill cannot be empty'))
-    .min(1, 'At least one skill is required'),
-  certifications: z.array(certificationSchema),
   others: z.array(experienceSchema),
 });
 

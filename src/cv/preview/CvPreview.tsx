@@ -130,26 +130,9 @@ export function CvPreview({ data }: CvPreviewProps) {
         />
       ))}
 
-      <SectionHeading>Technical Skills</SectionHeading>
-      <div className="cv-preview-skills">{data.skills.join(', ')}</div>
-
-      {data.certifications.length > 0 && (
-        <div>
-          <SectionHeading>Certifications</SectionHeading>
-          {data.certifications.map((cert, i) => (
-            <Entry
-              key={i}
-              title={`${cert.title}, ${cert.issuer}`}
-              meta={formatEntryMeta(cert.date, cert.location)}
-              bullets={cert.bullets}
-            />
-          ))}
-        </div>
-      )}
-
       {data.others.length > 0 && (
         <div>
-          <SectionHeading>Other Experience</SectionHeading>
+          <SectionHeading>Others</SectionHeading>
           {data.others.map((other, i) => (
             <Entry
               key={i}
