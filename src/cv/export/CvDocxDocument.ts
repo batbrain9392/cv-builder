@@ -138,10 +138,10 @@ function entryMeta(text: string): Paragraph {
 function bulletParagraph(text: string): Paragraph {
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
-    indent: { left: convertMillimetersToTwip(CV_LAYOUT.indentMm) },
+    bullet: { level: 0 },
     children: [
       new TextRun({
-        text: `\u2022 ${text}`,
+        text,
         size: CV_SIZE.body * PT,
         font: FONT,
       }),
@@ -152,10 +152,10 @@ function bulletParagraph(text: string): Paragraph {
 function techStackBullet(text: string): Paragraph {
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
-    indent: { left: convertMillimetersToTwip(CV_LAYOUT.indentMm) },
+    bullet: { level: 0 },
     children: [
       new TextRun({
-        text: `\u2022 Tech: ${text}`,
+        text: `Tech: ${text}`,
         size: CV_SIZE.body * PT,
         font: FONT,
         color: CV_COLOR.hint,

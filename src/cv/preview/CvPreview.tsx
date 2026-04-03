@@ -2,7 +2,7 @@ import type React from 'react';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
-import { CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT, CV_LAYOUT } from '../cvConstants.ts';
+import { CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT } from '../cvConstants.ts';
 import { formatDateRange, formatEntryMeta, formatLinksLine } from '../cvFormatters.ts';
 import './CvPreview.css';
 
@@ -21,7 +21,6 @@ const cssVars: React.CSSProperties = {
   '--cv-gap-lg': `${CV_SPACING_PT.lg}pt`,
   '--cv-header-after': `${CV_SPACING_PT.headerAfter}pt`,
   '--cv-section-before': `${CV_SPACING_PT.sectionBefore}pt`,
-  '--cv-indent': `${CV_LAYOUT.indentMm}mm`,
 };
 
 interface HeaderProps {
@@ -66,18 +65,12 @@ function Entry({ title, meta, bullets, techStack }: EntryProps) {
     <>
       <div className="cv-preview-entry-title">{title}</div>
       <div className="cv-preview-entry-meta">{meta}</div>
-      {bullets.map((b, i) => (
-        <div key={i} className="cv-preview-bullet">
-          {'\u2022 '}
-          {b}
-        </div>
-      ))}
-      {techStack && (
-        <div className="cv-preview-bullet cv-preview-hint">
-          {'\u2022 '}
-          Tech: {techStack}
-        </div>
-      )}
+      <ul className="cv-preview-bullets">
+        {bullets.map((b, i) => (
+          <li key={i}>{b}</li>
+        ))}
+        {techStack && <li className="cv-preview-hint">Tech: {techStack}</li>}
+      </ul>
     </>
   );
 }

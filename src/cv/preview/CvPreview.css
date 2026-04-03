@@ -80,9 +80,14 @@
   margin-bottom: var(--cv-gap-sm);
 }
 
-.cv-preview-bullet {
+.cv-preview-bullets {
   font-size: var(--cv-body-size);
-  margin-left: var(--cv-indent);
+  list-style-type: disc;
+  margin: 0;
+  padding-left: 6mm;
+}
+
+.cv-preview-bullets li {
   margin-bottom: var(--cv-gap-sm);
 }
 

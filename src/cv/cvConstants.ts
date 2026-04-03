@@ -45,7 +45,6 @@ export const CV_SPACING_PT = {
 } as const;
 
 export const CV_LAYOUT = {
-  indentMm: 6,
   pageWidthMm: 210,
   pageHeightMm: 297,
   marginMm: 15,
