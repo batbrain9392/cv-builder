@@ -2,6 +2,7 @@ import type React from 'react';
 
 import { Menu } from '@base-ui/react/menu';
 import {
+  BotIcon,
   EllipsisVerticalIcon,
   FileDownIcon,
   FileOutputIcon,
@@ -33,7 +34,10 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
 
   return (
     <header className="z-40 flex shrink-0 items-center justify-between bg-primary px-4 py-3 text-primary-foreground shadow-md lg:px-6 xl:px-8">
-      <h1 className="text-lg font-semibold tracking-tight">CV Builder</h1>
+      <h1 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+        <BotIcon className="size-6" />
+        Bot-ter Than You
+      </h1>
 
       <nav aria-label="CV actions" className="flex items-center gap-2">
         <ThemeToggle />

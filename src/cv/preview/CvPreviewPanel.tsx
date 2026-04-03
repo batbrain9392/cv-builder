@@ -43,7 +43,8 @@ export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) 
       <div className="mb-8">
         <h2 className="text-xl font-bold tracking-tight">Preview</h2>
         <p className="text-sm text-muted-foreground">
-          Live preview of your CV. Export as DOCX or JSON when ready.
+          What you see is what recruiters get. Download DOCX (save as PDF from Word if needed), or
+          Export Data as JSON to pick up where you left off.
         </p>
       </div>
       <div ref={wrapperRef} className="flex justify-center">

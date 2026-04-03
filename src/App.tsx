@@ -383,7 +383,8 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
             <div>
               <h2 className="text-xl font-bold tracking-tight">Edit your CV</h2>
               <p className="text-sm text-muted-foreground">
-                Fill in the sections below. Changes are reflected in the preview instantly.
+                Let's face it: the AI writes better than you, works harder than you, and doesn't
+                need coffee. Use its superiority to convince a human to hire you.
               </p>
             </div>
 
