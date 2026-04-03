@@ -29,6 +29,9 @@ Thumbs.db
 # Test / coverage
 coverage/
 
+# Personal CV content (local only)
+content/
+
 # Exported files (local only; not source of truth)
 *.pdf
 *.docx
