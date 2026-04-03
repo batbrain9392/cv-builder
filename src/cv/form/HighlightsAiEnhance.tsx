@@ -60,6 +60,17 @@ export function HighlightsAiEnhance({
       </CollapsibleTrigger>
 
       <CollapsibleContent className="space-y-3 pt-2">
+        <Field>
+          <FieldLabel htmlFor={promptId}>AI prompt</FieldLabel>
+          <Textarea
+            id={promptId}
+            {...registerPrompt}
+            rows={4}
+            className="text-xs"
+            placeholder="Rewrite these highlights concisely, emphasising skills and achievements relevant to the job description."
+          />
+        </Field>
+
         <div className="flex items-center gap-2">
           <Button
             type="button"
@@ -123,11 +134,6 @@ export function HighlightsAiEnhance({
             </Button>
           </div>
         )}
-
-        <Field>
-          <FieldLabel htmlFor={promptId}>AI prompt</FieldLabel>
-          <Textarea id={promptId} {...registerPrompt} rows={4} className="text-xs" />
-        </Field>
       </CollapsibleContent>
     </Collapsible>
   );

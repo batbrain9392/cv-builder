@@ -1,3 +1,4 @@
+import { AlertDialog } from '@base-ui/react/alert-dialog';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   CheckIcon,
@@ -8,7 +9,7 @@ import {
   SparklesIcon,
   XIcon,
 } from 'lucide-react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useForm, useFieldArray, useWatch, type SubmitHandler } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -24,7 +25,6 @@ import { useMediaQuery } from '@/lib/useMediaQuery';
 
 import type { CvFormData } from './cv/cvFormSchema.ts';
 
-import seedData from '../content/cv.json';
 import {
   generateCoverLetter,
   generateHighlights,
@@ -46,6 +46,7 @@ import { FormActions } from './cv/form/FormActions.tsx';
 import { JobDescriptionFields } from './cv/form/JobDescriptionFields.tsx';
 import { PersonalInfoFields } from './cv/form/PersonalInfoFields.tsx';
 import { SectionToolbar } from './cv/form/SectionToolbar.tsx';
+import { AI_FIELD_DEFAULTS } from './cv/loadDefaultValues.ts';
 import { CvPreviewPanel } from './cv/preview/CvPreviewPanel.tsx';
 
 const EMPTY_EXPERIENCE = {
@@ -70,18 +71,7 @@ const EMPTY_EDUCATION = {
   aiHighlightsPrompt: DEFAULT_HIGHLIGHTS_PROMPT,
 };
 
-const AI_FIELD_DEFAULTS: Partial<CvFormData> = {
-  aiApiKey: '',
-  jobDescriptionText: '',
-  aiSummaryPrompt: DEFAULT_SUMMARY_PROMPT,
-  coverLetterEnabled: false,
-  coverLetter: '',
-  aiCoverLetterPrompt: DEFAULT_COVER_LETTER_PROMPT,
-};
-
-const defaultValues = cvFormSchema.parse(seedData);
-
-export function App() {
+export function App({ defaultValues }: { defaultValues: CvFormData }) {
   const [exporting, setExporting] = useState(false);
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [generatedSummary, setGeneratedSummary] = useState<string | null>(null);
@@ -149,12 +139,40 @@ export function App() {
     reader.readAsText(file);
   };
 
-  const onExportJson: SubmitHandler<CvFormData> = (data) => {
+  const [apiKeyWarningOpen, setApiKeyWarningOpen] = useState(false);
+  const pendingExportData = useRef<CvFormData | null>(null);
+
+  const doExportJson = (data: CvFormData) => {
     downloadBlob(
       new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
       'cv.json',
     );
     toast.success('JSON exported.');
+  };
+
+  const onExportJson: SubmitHandler<CvFormData> = (data) => {
+    if (data.aiApiKey) {
+      pendingExportData.current = data;
+      setApiKeyWarningOpen(true);
+    } else {
+      doExportJson(data);
+    }
+  };
+
+  const onExportJsonWithKey = () => {
+    if (pendingExportData.current) {
+      doExportJson(pendingExportData.current);
+      pendingExportData.current = null;
+    }
+    setApiKeyWarningOpen(false);
+  };
+
+  const onExportJsonWithoutKey = () => {
+    if (pendingExportData.current) {
+      doExportJson({ ...pendingExportData.current, aiApiKey: '' });
+      pendingExportData.current = null;
+    }
+    setApiKeyWarningOpen(false);
   };
 
   const onExportDocx: SubmitHandler<CvFormData> = async (data) => {
@@ -176,7 +194,7 @@ export function App() {
     try {
       const result = await generateSummary(
         values.aiApiKey,
-        values.aiSummaryPrompt ?? '',
+        values.aiSummaryPrompt || DEFAULT_SUMMARY_PROMPT,
         values,
         values.jobDescriptionText,
       );
@@ -212,7 +230,7 @@ export function App() {
     try {
       const result = await generateCoverLetter(
         values.aiApiKey,
-        values.aiCoverLetterPrompt ?? '',
+        values.aiCoverLetterPrompt || DEFAULT_COVER_LETTER_PROMPT,
         values,
         values.jobDescriptionText,
       );
@@ -441,6 +459,17 @@ export function App() {
                     </CollapsibleTrigger>
 
                     <CollapsibleContent className="space-y-3 pt-2">
+                      <Field>
+                        <FieldLabel htmlFor="aiSummaryPrompt">AI prompt</FieldLabel>
+                        <Textarea
+                          id="aiSummaryPrompt"
+                          {...register('aiSummaryPrompt')}
+                          rows={4}
+                          className="text-xs"
+                          placeholder="Rewrite the professional summary to highlight experience and skills most relevant to the job description. Keep it to 3–5 sentences."
+                        />
+                      </Field>
+
                       <div className="flex items-center gap-2">
                         <Button
                           type="button"
@@ -498,16 +527,6 @@ export function App() {
                           </Button>
                         </div>
                       )}
-
-                      <Field>
-                        <FieldLabel htmlFor="aiSummaryPrompt">AI prompt</FieldLabel>
-                        <Textarea
-                          id="aiSummaryPrompt"
-                          {...register('aiSummaryPrompt')}
-                          rows={4}
-                          className="text-xs"
-                        />
-                      </Field>
                     </CollapsibleContent>
                   </Collapsible>
                 </FieldGroup>
@@ -638,6 +657,53 @@ export function App() {
         {previewOpen ? <XIcon /> : <EyeIcon />}
         {previewOpen ? 'Close' : 'Preview'}
       </Button>
+
+      <AlertDialog.Root open={apiKeyWarningOpen} onOpenChange={setApiKeyWarningOpen}>
+        <AlertDialog.Portal>
+          <AlertDialog.Backdrop className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs" />
+          <AlertDialog.Popup className="fixed top-1/2 left-1/2 z-50 w-[90vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-popover p-6 text-popover-foreground shadow-lg">
+            <AlertDialog.Title className="text-base font-semibold">
+              Your export contains a Gemini API key
+            </AlertDialog.Title>
+            <AlertDialog.Description
+              render={<div />}
+              className="mt-3 space-y-3 text-sm text-muted-foreground"
+            >
+              <p>
+                The JSON file you&rsquo;re about to download includes your Gemini API key. Choose
+                how to proceed:
+              </p>
+              <ul className="space-y-2">
+                <li className="rounded-md border bg-muted/40 p-2.5">
+                  <strong className="text-foreground">Export without key</strong>
+                  <p className="mt-0.5">
+                    Strips the key from the file. Safe to share or commit. You&rsquo;ll need to
+                    re-enter the key next time you load this file.
+                  </p>
+                </li>
+                <li className="rounded-md border bg-muted/40 p-2.5">
+                  <strong className="text-foreground">Export with key</strong>
+                  <p className="mt-0.5">
+                    Keeps the key in the file for convenience. Do not share this file publicly —
+                    anyone with it can use your key.
+                  </p>
+                </li>
+              </ul>
+            </AlertDialog.Description>
+            <div className="mt-4 flex flex-wrap justify-end gap-2">
+              <AlertDialog.Close render={<Button variant="secondary" size="sm" />}>
+                Cancel
+              </AlertDialog.Close>
+              <Button variant="outline" size="sm" onClick={onExportJsonWithoutKey}>
+                Export without key
+              </Button>
+              <Button variant="default" size="sm" onClick={onExportJsonWithKey}>
+                Export with key
+              </Button>
+            </div>
+          </AlertDialog.Popup>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
 
       <Toaster position="bottom-left" />
     </div>

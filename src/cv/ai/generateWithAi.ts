@@ -1,8 +1,10 @@
-import OpenAI from 'openai';
+import { GoogleGenAI } from '@google/genai';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
-const MODEL = 'gpt-4.1-mini';
+import { DEFAULT_HIGHLIGHTS_PROMPT } from '../cvFormSchema.ts';
+
+const MODEL = 'gemini-2.5-flash';
 
 function buildCvContext(data: CvFormData): string {
   const { personalInfo, summary, experience, education, others } = data;
@@ -58,15 +60,17 @@ function buildCvContext(data: CvFormData): string {
 }
 
 async function generate(apiKey: string, instructions: string, input: string): Promise<string> {
-  const client = new OpenAI({ apiKey, dangerouslyAllowBrowser: true });
+  const ai = new GoogleGenAI({ apiKey });
 
-  const response = await client.responses.create({
+  const response = await ai.models.generateContent({
     model: MODEL,
-    instructions,
-    input,
+    config: { systemInstruction: instructions },
+    contents: input,
   });
 
-  return response.output_text;
+  const text = response.text;
+  if (!text) throw new Error('Gemini returned an empty response.');
+  return text;
 }
 
 export async function generateSummary(
@@ -146,7 +150,7 @@ export async function generateAllHighlights(
 
   const settled = await Promise.allSettled(
     tasks.map(async ({ path, entry }) => {
-      const prompt = entry.aiHighlightsPrompt || '';
+      const prompt = entry.aiHighlightsPrompt || DEFAULT_HIGHLIGHTS_PROMPT;
       const bullets = await generateHighlights(apiKey, prompt, entry, jobDescriptionText);
       return { path, bullets };
     }),

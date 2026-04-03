@@ -134,6 +134,17 @@ export function CoverLetterFields({
                     </CollapsibleTrigger>
 
                     <CollapsibleContent className="space-y-3 pt-2">
+                      <Field>
+                        <FieldLabel htmlFor="aiCoverLetterPrompt">AI prompt</FieldLabel>
+                        <Textarea
+                          id="aiCoverLetterPrompt"
+                          {...register('aiCoverLetterPrompt')}
+                          rows={4}
+                          className="text-xs"
+                          placeholder="Write a concise, professional cover letter tailored to the job description. One page max."
+                        />
+                      </Field>
+
                       <div className="flex items-center gap-2">
                         <Button
                           type="button"
@@ -191,16 +202,6 @@ export function CoverLetterFields({
                           </Button>
                         </div>
                       )}
-
-                      <Field>
-                        <FieldLabel htmlFor="aiCoverLetterPrompt">AI prompt</FieldLabel>
-                        <Textarea
-                          id="aiCoverLetterPrompt"
-                          {...register('aiCoverLetterPrompt')}
-                          rows={4}
-                          className="text-xs"
-                        />
-                      </Field>
                     </CollapsibleContent>
                   </Collapsible>
                 </>
