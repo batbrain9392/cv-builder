@@ -195,10 +195,44 @@ function entryParagraphs(
   return paragraphs;
 }
 
+function bodyParagraphs(text: string): Paragraph[] {
+  return text.split('\n').map((line) => {
+    return new Paragraph({
+      spacing: { after: CV_SPACING_PT.md * TWIP },
+      children: line.trim()
+        ? [new TextRun({ text: line, size: CV_SIZE.body * PT, font: FONT })]
+        : [],
+    });
+  });
+}
+
 function createCvDocx(data: CvFormData): Document {
   const margin = convertMillimetersToTwip(CV_LAYOUT.marginMm);
+  const pageProperties = {
+    page: {
+      size: {
+        width: convertMillimetersToTwip(CV_LAYOUT.pageWidthMm),
+        height: convertMillimetersToTwip(CV_LAYOUT.pageHeightMm),
+      },
+      margin: { top: margin, right: margin, bottom: margin, left: margin },
+    },
+  };
 
-  const children: Paragraph[] = [
+  const sections: { properties: typeof pageProperties; children: Paragraph[] }[] = [];
+
+  const showCoverLetter = data.coverLetterEnabled && data.coverLetter?.trim();
+  if (showCoverLetter) {
+    sections.push({
+      properties: pageProperties,
+      children: [
+        headerLine(data.personalInfo),
+        ...contactLines(data.personalInfo),
+        ...bodyParagraphs(data.coverLetter!),
+      ],
+    });
+  }
+
+  const cvChildren: Paragraph[] = [
     headerLine(data.personalInfo),
     ...contactLines(data.personalInfo),
 
@@ -227,7 +261,7 @@ function createCvDocx(data: CvFormData): Document {
   ];
 
   if (data.others.length > 0) {
-    children.push(
+    cvChildren.push(
       sectionHeading('Others'),
       ...data.others.flatMap((other) =>
         entryParagraphs(
@@ -241,22 +275,9 @@ function createCvDocx(data: CvFormData): Document {
     );
   }
 
-  return new Document({
-    sections: [
-      {
-        properties: {
-          page: {
-            size: {
-              width: convertMillimetersToTwip(CV_LAYOUT.pageWidthMm),
-              height: convertMillimetersToTwip(CV_LAYOUT.pageHeightMm),
-            },
-            margin: { top: margin, right: margin, bottom: margin, left: margin },
-          },
-        },
-        children,
-      },
-    ],
-  });
+  sections.push({ properties: pageProperties, children: cvChildren });
+
+  return new Document({ sections });
 }
 
 export async function createCvDocxBlob(data: CvFormData): Promise<Blob> {

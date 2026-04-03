@@ -118,3 +118,24 @@
   margin: 0 0 var(--cv-gap-md);
   white-space: pre-wrap;
 }
+
+/* Multi-page wrapper */
+.cv-preview-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Cover letter page */
+.cv-preview-cover-letter-body {
+  font-size: var(--cv-body-size);
+  white-space: pre-wrap;
+  line-height: 1.5;
+  margin: 0;
+}
+
+@media print {
+  .cv-preview-cover-letter {
+    break-after: page;
+  }
+}

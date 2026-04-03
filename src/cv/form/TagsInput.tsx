@@ -66,8 +66,11 @@ export function TagsInput({ control, name, id }: TagsInputProps) {
         onChange={(e) => setDraft(e.target.value)}
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
-        placeholder="Type and press Enter"
+        aria-describedby={`${id}-hint`}
       />
+      <p id={`${id}-hint`} className="text-xs text-muted-foreground">
+        Type and press Enter to add.
+      </p>
       {tags.length > 0 && (
         <ul className="flex flex-wrap gap-1.5">
           {tags.map((tag, i) => (

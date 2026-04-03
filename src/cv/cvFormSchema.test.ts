@@ -4,7 +4,12 @@ import { cvFormSchema } from './cvFormSchema';
 describe('cvFormSchema', () => {
   it('validates good data', () => {
     const goodData = {
-      jobDescriptionUrl: '',
+      aiApiKey: '',
+      jobDescriptionText: '',
+      aiSummaryPrompt: 'Write a summary.',
+      coverLetterEnabled: false,
+      coverLetter: '',
+      aiCoverLetterPrompt: 'Write a cover letter.',
       personalInfo: {
         name: 'Debmallya Bhattacharya',
         title: 'Senior Software Engineer',

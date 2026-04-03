@@ -66,63 +66,89 @@ interface CvPreviewProps {
   data: CvFormData;
 }
 
-export function CvPreview({ data }: CvPreviewProps) {
+function CoverLetterPage({ data }: CvPreviewProps) {
+  const contactLine = formatEntryMeta(
+    data.personalInfo.email,
+    data.personalInfo.phone,
+    data.personalInfo.location,
+  );
+
   return (
-    <div className="cv-preview" style={CV_CSS_VARS}>
+    <div className="cv-preview cv-preview-cover-letter" style={CV_CSS_VARS}>
       <Header
         name={data.personalInfo.name}
         title={data.personalInfo.title}
-        contactLine={formatEntryMeta(
-          data.personalInfo.email,
-          data.personalInfo.phone,
-          data.personalInfo.location,
-        )}
+        contactLine={contactLine}
         linksLine={formatLinksLine(data.personalInfo.links)}
       />
+      <p className="cv-preview-cover-letter-body">{data.coverLetter}</p>
+    </div>
+  );
+}
 
-      <SectionHeading>Professional Summary</SectionHeading>
-      <p className="cv-preview-summary">{data.summary}</p>
+export function CvPreview({ data }: CvPreviewProps) {
+  const showCoverLetter = data.coverLetterEnabled && data.coverLetter?.trim();
 
-      <SectionHeading>Work Experience</SectionHeading>
-      {data.experience.map((exp, i) => (
-        <Entry
-          key={i}
-          title={`${exp.role}, ${exp.company}`}
-          meta={formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location)}
-          bullets={exp.bullets}
-          tagsLabel={exp.tagsLabel}
-          tags={exp.tags}
+  return (
+    <div className="cv-preview-pages">
+      {showCoverLetter && <CoverLetterPage data={data} />}
+
+      <div className="cv-preview" style={CV_CSS_VARS}>
+        <Header
+          name={data.personalInfo.name}
+          title={data.personalInfo.title}
+          contactLine={formatEntryMeta(
+            data.personalInfo.email,
+            data.personalInfo.phone,
+            data.personalInfo.location,
+          )}
+          linksLine={formatLinksLine(data.personalInfo.links)}
         />
-      ))}
 
-      <SectionHeading>Education</SectionHeading>
-      {data.education.map((edu, i) => (
-        <Entry
-          key={i}
-          title={`${edu.degree}, ${edu.institution}`}
-          meta={formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location)}
-          bullets={edu.bullets}
-        />
-      ))}
+        <SectionHeading>Professional Summary</SectionHeading>
+        <p className="cv-preview-summary">{data.summary}</p>
 
-      {data.others.length > 0 && (
-        <>
-          <SectionHeading>Others</SectionHeading>
-          {data.others.map((other, i) => (
-            <Entry
-              key={i}
-              title={`${other.role}, ${other.company}`}
-              meta={formatEntryMeta(
-                formatDateRange(other.startDate, other.endDate),
-                other.location,
-              )}
-              bullets={other.bullets}
-              tagsLabel={other.tagsLabel}
-              tags={other.tags}
-            />
-          ))}
-        </>
-      )}
+        <SectionHeading>Work Experience</SectionHeading>
+        {data.experience.map((exp, i) => (
+          <Entry
+            key={i}
+            title={`${exp.role}, ${exp.company}`}
+            meta={formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location)}
+            bullets={exp.bullets}
+            tagsLabel={exp.tagsLabel}
+            tags={exp.tags}
+          />
+        ))}
+
+        <SectionHeading>Education</SectionHeading>
+        {data.education.map((edu, i) => (
+          <Entry
+            key={i}
+            title={`${edu.degree}, ${edu.institution}`}
+            meta={formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location)}
+            bullets={edu.bullets}
+          />
+        ))}
+
+        {data.others.length > 0 && (
+          <>
+            <SectionHeading>Others</SectionHeading>
+            {data.others.map((other, i) => (
+              <Entry
+                key={i}
+                title={`${other.role}, ${other.company}`}
+                meta={formatEntryMeta(
+                  formatDateRange(other.startDate, other.endDate),
+                  other.location,
+                )}
+                bullets={other.bullets}
+                tagsLabel={other.tagsLabel}
+                tags={other.tags}
+              />
+            ))}
+          </>
+        )}
+      </div>
     </div>
   );
 }

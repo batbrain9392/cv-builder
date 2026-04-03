@@ -38,10 +38,21 @@ const educationSchema = z.object({
   bullets: z.array(bulletSchema),
 });
 
+export const DEFAULT_SUMMARY_PROMPT =
+  "You are an expert resume writer. Given the candidate's CV data and the job description below, rewrite the professional summary to highlight the most relevant experience and skills for this specific role. Keep it concise (3\u20135 sentences). If a manual summary is provided, use it as a starting point and tailor it to the job description.";
+
+export const DEFAULT_COVER_LETTER_PROMPT =
+  "You are an expert cover letter writer. Given the candidate's CV data and the job description below, write a professional cover letter tailored for this specific role. Keep it to one page, with a clear opening, body highlighting relevant experience, and a closing paragraph.";
+
 export const cvFormSchema = z.object({
-  jobDescriptionUrl: z.url('Must be a valid URL').optional().or(z.literal('')),
+  aiApiKey: z.string(),
+  jobDescriptionText: z.string(),
+  aiSummaryPrompt: z.string(),
   personalInfo: personalInfoSchema,
   summary: z.string().min(10, 'Summary should be at least 10 characters'),
+  coverLetterEnabled: z.boolean(),
+  coverLetter: z.string(),
+  aiCoverLetterPrompt: z.string(),
   experience: z.array(experienceSchema).min(1, 'At least one experience entry is required'),
   education: z.array(educationSchema).min(1, 'At least one education entry is required'),
   others: z.array(experienceSchema),

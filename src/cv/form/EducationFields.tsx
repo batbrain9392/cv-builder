@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
-import { BulletsInput } from './BulletsInput.tsx';
+import { HighlightsInput } from './HighlightsInput.tsx';
 import { SectionToolbar } from './SectionToolbar.tsx';
 
 interface EducationFieldsProps {
@@ -55,8 +55,8 @@ function EducationEntry({
 
   return (
     <Card>
-      <Collapsible open={open} onOpenChange={setOpen}>
-        <div className="flex items-center justify-between px-4 py-2">
+      <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
+        <div className="flex items-center justify-between px-4">
           <CollapsibleTrigger
             render={<Button variant="ghost" className="flex-1 justify-start gap-2 text-left" />}
           >
@@ -80,7 +80,7 @@ function EducationEntry({
         </div>
 
         <CollapsibleContent>
-          <CardContent className="pt-4">
+          <CardContent>
             <FieldGroup>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field data-invalid={entryErrors?.degree ? true : undefined}>
@@ -181,11 +181,11 @@ function EducationEntry({
                 </Field>
               </div>
 
-              <BulletsInput
+              <HighlightsInput
                 control={control}
                 name={`education.${index}.bullets`}
-                id={`edu-bullets-${index}`}
-                label="Bullets"
+                id={`edu-highlights-${index}`}
+                label="Highlights"
               />
             </FieldGroup>
           </CardContent>
@@ -207,7 +207,7 @@ export function EducationFields({
   onExpand,
 }: EducationFieldsProps) {
   return (
-    <div className="space-y-4 pt-2">
+    <div className="space-y-4">
       <SectionToolbar
         title="Education"
         count={fields.length}

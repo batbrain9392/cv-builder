@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
-import { BulletsInput } from './BulletsInput.tsx';
+import { HighlightsInput } from './HighlightsInput.tsx';
 import { TagsInput } from './TagsInput.tsx';
 
 type ExperienceErrors = FieldErrors<CvFormData>['experience'];
@@ -53,8 +53,8 @@ export function ExperienceEntryFields({
 
   return (
     <Card>
-      <Collapsible open={open} onOpenChange={setOpen}>
-        <div className="flex items-center justify-between px-4 py-2">
+      <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
+        <div className="flex items-center justify-between px-4">
           <CollapsibleTrigger
             render={<Button variant="ghost" className="flex-1 justify-start gap-2 text-left" />}
           >
@@ -78,7 +78,7 @@ export function ExperienceEntryFields({
         </div>
 
         <CollapsibleContent>
-          <CardContent className="pt-4">
+          <CardContent>
             <FieldGroup>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field data-invalid={entryErrors?.role ? true : undefined}>
@@ -190,11 +190,11 @@ export function ExperienceEntryFields({
                 </Field>
               </div>
 
-              <BulletsInput
+              <HighlightsInput
                 control={control}
                 name={`${prefix}.bullets`}
-                id={`${idPrefix}-bullets-${index}`}
-                label="Bullets"
+                id={`${idPrefix}-highlights-${index}`}
+                label="Highlights"
               />
 
               <div className="grid gap-4 sm:grid-cols-[1fr_2fr]">
@@ -203,8 +203,14 @@ export function ExperienceEntryFields({
                   <Input
                     id={`${idPrefix}-tags-label-${index}`}
                     {...register(`${prefix}.tagsLabel`)}
-                    placeholder="e.g. Tech, Tools, Skills"
+                    aria-describedby={`${idPrefix}-tags-label-${index}-hint`}
                   />
+                  <p
+                    id={`${idPrefix}-tags-label-${index}-hint`}
+                    className="text-xs text-muted-foreground"
+                  >
+                    e.g. Tech, Tools, Skills
+                  </p>
                 </Field>
                 <Field>
                   <FieldLabel htmlFor={`${idPrefix}-tags-${index}`}>Tags</FieldLabel>
