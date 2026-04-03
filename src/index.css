@@ -5,8 +5,11 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html,
 body {
   margin: 0;
+  height: 100%;
+  overflow: hidden;
 }
 
 @theme inline {

@@ -219,7 +219,7 @@ export function App() {
   };
 
   return (
-    <div className="flex h-dvh flex-col bg-background text-foreground">
+    <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
       <a
         href="#cv-editor"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg"
@@ -233,228 +233,230 @@ export function App() {
         exporting={exporting}
       />
 
-      <main className="min-h-0 flex-1 overflow-hidden lg:flex">
+      <main className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
         {/* Form panel - full width on mobile, half on desktop */}
-        <form
-          id="cv-editor"
-          aria-label="CV editor"
-          className="h-full space-y-8 overflow-y-auto p-4 pb-20 lg:flex-1 lg:p-6 lg:pb-6 xl:p-8 xl:pb-8"
-        >
-          <div>
-            <h2 className="text-xl font-bold tracking-tight">Edit your CV</h2>
-            <p className="text-sm text-muted-foreground">
-              Fill in the sections below. Changes are reflected in the preview instantly.
-            </p>
-          </div>
+        <div className="min-h-0 flex-1 overscroll-contain overflow-y-auto lg:flex-1">
+          <form
+            id="cv-editor"
+            aria-label="CV editor"
+            className="space-y-8 p-4 pb-20 lg:p-6 lg:pb-6 xl:p-8 xl:pb-8"
+          >
+            <div>
+              <h2 className="text-xl font-bold tracking-tight">Edit your CV</h2>
+              <p className="text-sm text-muted-foreground">
+                Fill in the sections below. Changes are reflected in the preview instantly.
+              </p>
+            </div>
 
-          {/* Personal Info */}
-          <PersonalInfoFields
-            register={register}
-            errors={errors.personalInfo}
-            linkFields={links.fields}
-            onAppendLink={() => links.append({ label: '', url: '' })}
-            onRemoveLink={links.remove}
-          />
+            {/* Personal Info */}
+            <PersonalInfoFields
+              register={register}
+              errors={errors.personalInfo}
+              linkFields={links.fields}
+              onAppendLink={() => links.append({ label: '', url: '' })}
+              onRemoveLink={links.remove}
+            />
 
-          {/* AI Settings */}
-          <AiSettingsFields register={register} errors={errors} />
+            {/* AI Settings */}
+            <AiSettingsFields register={register} errors={errors} />
 
-          {/* Cover Letter */}
-          <CoverLetterFields
-            register={register}
-            control={control}
-            errors={errors}
-            generating={generatingCoverLetter}
-            generatedText={generatedCoverLetter}
-            onGenerate={onGenerateCoverLetter}
-            onUse={onUseCoverLetter}
-            onCopy={onCopyGenerated}
-            onDismiss={() => setGeneratedCoverLetter(null)}
-          />
+            {/* Cover Letter */}
+            <CoverLetterFields
+              register={register}
+              control={control}
+              errors={errors}
+              generating={generatingCoverLetter}
+              generatedText={generatedCoverLetter}
+              onGenerate={onGenerateCoverLetter}
+              onUse={onUseCoverLetter}
+              onCopy={onCopyGenerated}
+              onDismiss={() => setGeneratedCoverLetter(null)}
+            />
 
-          {/* Professional Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Professional Summary</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <FieldGroup>
-                <Field data-invalid={errors.summary ? true : undefined}>
-                  <FieldLabel htmlFor="summary" className="sr-only">
-                    Summary
-                  </FieldLabel>
-                  <Textarea
-                    id="summary"
-                    {...register('summary')}
-                    rows={6}
-                    aria-invalid={errors.summary ? true : undefined}
-                    aria-describedby={'summary-hint' + (errors.summary ? ' summary-error' : '')}
-                  />
-                  <p id="summary-hint" className="text-xs text-muted-foreground">
-                    A concise professional summary highlighting your key strengths.
-                  </p>
-                  {errors.summary && <FieldError id="summary-error" errors={[errors.summary]} />}
-                </Field>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    disabled={!canGenerate || generatingSummary}
-                    onClick={onGenerateSummary}
-                    aria-busy={generatingSummary || undefined}
-                  >
-                    {generatingSummary ? (
-                      <Loader2Icon className="animate-spin" data-icon="inline-start" />
-                    ) : (
-                      <SparklesIcon data-icon="inline-start" />
-                    )}
-                    {generatingSummary ? 'Generating…' : 'Generate with AI'}
-                  </Button>
-                  {!canGenerate && (
-                    <span className="text-xs text-muted-foreground">
-                      Requires API key and job description
-                    </span>
-                  )}
-                </div>
-
-                {generatedSummary && (
-                  <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-medium text-muted-foreground">
-                        AI-generated summary
-                      </span>
-                      <div className="flex gap-1">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-xs"
-                          onClick={() => onCopyGenerated(generatedSummary)}
-                          aria-label="Copy to clipboard"
-                        >
-                          <ClipboardIcon />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon-xs"
-                          onClick={() => setGeneratedSummary(null)}
-                          aria-label="Dismiss"
-                        >
-                          <XIcon />
-                        </Button>
-                      </div>
-                    </div>
-                    <p className="whitespace-pre-wrap text-sm">{generatedSummary}</p>
-                    <Button type="button" variant="default" size="sm" onClick={onUseSummary}>
-                      <CheckIcon data-icon="inline-start" />
-                      Use this summary
-                    </Button>
-                  </div>
-                )}
-
-                <Collapsible open={summaryPromptOpen} onOpenChange={setSummaryPromptOpen}>
-                  <CollapsibleTrigger
-                    render={
-                      <button
-                        type="button"
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
-                      />
-                    }
-                  >
-                    <ChevronDownIcon
-                      className={
-                        'size-3.5 transition-transform' + (summaryPromptOpen ? ' rotate-180' : '')
-                      }
+            {/* Professional Summary */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Professional Summary</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <FieldGroup>
+                  <Field data-invalid={errors.summary ? true : undefined}>
+                    <FieldLabel htmlFor="summary" className="sr-only">
+                      Summary
+                    </FieldLabel>
+                    <Textarea
+                      id="summary"
+                      {...register('summary')}
+                      rows={6}
+                      aria-invalid={errors.summary ? true : undefined}
+                      aria-describedby={'summary-hint' + (errors.summary ? ' summary-error' : '')}
                     />
-                    Customize AI prompt
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-2">
-                    <Field>
-                      <FieldLabel htmlFor="aiSummaryPrompt" className="sr-only">
-                        Summary AI prompt
-                      </FieldLabel>
-                      <Textarea
-                        id="aiSummaryPrompt"
-                        {...register('aiSummaryPrompt')}
-                        rows={4}
-                        className="text-xs"
+                    <p id="summary-hint" className="text-xs text-muted-foreground">
+                      A concise professional summary highlighting your key strengths.
+                    </p>
+                    {errors.summary && <FieldError id="summary-error" errors={[errors.summary]} />}
+                  </Field>
+
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      disabled={!canGenerate || generatingSummary}
+                      onClick={onGenerateSummary}
+                      aria-busy={generatingSummary || undefined}
+                    >
+                      {generatingSummary ? (
+                        <Loader2Icon className="animate-spin" data-icon="inline-start" />
+                      ) : (
+                        <SparklesIcon data-icon="inline-start" />
+                      )}
+                      {generatingSummary ? 'Generating…' : 'Generate with AI'}
+                    </Button>
+                    {!canGenerate && (
+                      <span className="text-xs text-muted-foreground">
+                        Requires API key and job description
+                      </span>
+                    )}
+                  </div>
+
+                  {generatedSummary && (
+                    <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-muted-foreground">
+                          AI-generated summary
+                        </span>
+                        <div className="flex gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-xs"
+                            onClick={() => onCopyGenerated(generatedSummary)}
+                            aria-label="Copy to clipboard"
+                          >
+                            <ClipboardIcon />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-xs"
+                            onClick={() => setGeneratedSummary(null)}
+                            aria-label="Dismiss"
+                          >
+                            <XIcon />
+                          </Button>
+                        </div>
+                      </div>
+                      <p className="whitespace-pre-wrap text-sm">{generatedSummary}</p>
+                      <Button type="button" variant="default" size="sm" onClick={onUseSummary}>
+                        <CheckIcon data-icon="inline-start" />
+                        Use this summary
+                      </Button>
+                    </div>
+                  )}
+
+                  <Collapsible open={summaryPromptOpen} onOpenChange={setSummaryPromptOpen}>
+                    <CollapsibleTrigger
+                      render={
+                        <button
+                          type="button"
+                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                        />
+                      }
+                    >
+                      <ChevronDownIcon
+                        className={
+                          'size-3.5 transition-transform' + (summaryPromptOpen ? ' rotate-180' : '')
+                        }
                       />
-                    </Field>
-                  </CollapsibleContent>
-                </Collapsible>
-              </FieldGroup>
-            </CardContent>
-          </Card>
+                      Customize AI prompt
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="pt-2">
+                      <Field>
+                        <FieldLabel htmlFor="aiSummaryPrompt" className="sr-only">
+                          Summary AI prompt
+                        </FieldLabel>
+                        <Textarea
+                          id="aiSummaryPrompt"
+                          {...register('aiSummaryPrompt')}
+                          rows={4}
+                          className="text-xs"
+                        />
+                      </Field>
+                    </CollapsibleContent>
+                  </Collapsible>
+                </FieldGroup>
+              </CardContent>
+            </Card>
 
-          {/* Experience */}
-          <div className="space-y-4">
-            <SectionToolbar
-              title="Experience"
-              count={experience.fields.length}
-              onCollapse={() => setExpSignal((s) => ({ n: s.n + 1, open: false }))}
-              onExpand={() => setExpSignal((s) => ({ n: s.n + 1, open: true }))}
-              onAdd={() => experience.insert(0, EMPTY_EXPERIENCE)}
-              addLabel="Add Experience"
+            {/* Experience */}
+            <div className="space-y-4">
+              <SectionToolbar
+                title="Experience"
+                count={experience.fields.length}
+                onCollapse={() => setExpSignal((s) => ({ n: s.n + 1, open: false }))}
+                onExpand={() => setExpSignal((s) => ({ n: s.n + 1, open: true }))}
+                onAdd={() => experience.insert(0, EMPTY_EXPERIENCE)}
+                addLabel="Add Experience"
+              />
+
+              {experience.fields.map((field, index) => (
+                <ExperienceEntryFields
+                  key={field.id}
+                  index={index}
+                  prefix={`experience.${index}`}
+                  idPrefix="exp"
+                  register={register}
+                  control={control}
+                  errors={errors.experience}
+                  onRemove={() => experience.remove(index)}
+                  removeLabel="Remove Experience"
+                  toggleSignal={expSignal}
+                />
+              ))}
+            </div>
+
+            {/* Education */}
+            <EducationFields
+              fields={education.fields}
+              register={register}
+              control={control}
+              errors={errors.education}
+              onAdd={() => education.append(EMPTY_EDUCATION)}
+              onRemove={education.remove}
+              toggleSignal={eduSignal}
+              onCollapse={() => setEduSignal((s) => ({ n: s.n + 1, open: false }))}
+              onExpand={() => setEduSignal((s) => ({ n: s.n + 1, open: true }))}
             />
 
-            {experience.fields.map((field, index) => (
-              <ExperienceEntryFields
-                key={field.id}
-                index={index}
-                prefix={`experience.${index}`}
-                idPrefix="exp"
-                register={register}
-                control={control}
-                errors={errors.experience}
-                onRemove={() => experience.remove(index)}
-                removeLabel="Remove Experience"
-                toggleSignal={expSignal}
+            {/* Others */}
+            <div className="space-y-4">
+              <SectionToolbar
+                title="Others"
+                count={others.fields.length}
+                onCollapse={() => setOthSignal((s) => ({ n: s.n + 1, open: false }))}
+                onExpand={() => setOthSignal((s) => ({ n: s.n + 1, open: true }))}
+                onAdd={() => others.insert(0, EMPTY_EXPERIENCE)}
+                addLabel="Add Other"
               />
-            ))}
-          </div>
 
-          {/* Education */}
-          <EducationFields
-            fields={education.fields}
-            register={register}
-            control={control}
-            errors={errors.education}
-            onAdd={() => education.append(EMPTY_EDUCATION)}
-            onRemove={education.remove}
-            toggleSignal={eduSignal}
-            onCollapse={() => setEduSignal((s) => ({ n: s.n + 1, open: false }))}
-            onExpand={() => setEduSignal((s) => ({ n: s.n + 1, open: true }))}
-          />
-
-          {/* Others */}
-          <div className="space-y-4">
-            <SectionToolbar
-              title="Others"
-              count={others.fields.length}
-              onCollapse={() => setOthSignal((s) => ({ n: s.n + 1, open: false }))}
-              onExpand={() => setOthSignal((s) => ({ n: s.n + 1, open: true }))}
-              onAdd={() => others.insert(0, EMPTY_EXPERIENCE)}
-              addLabel="Add Other"
-            />
-
-            {others.fields.map((field, index) => (
-              <ExperienceEntryFields
-                key={field.id}
-                index={index}
-                prefix={`others.${index}`}
-                idPrefix="other"
-                register={register}
-                control={control}
-                errors={errors.others}
-                onRemove={() => others.remove(index)}
-                removeLabel="Remove"
-                toggleSignal={othSignal}
-              />
-            ))}
-          </div>
-        </form>
+              {others.fields.map((field, index) => (
+                <ExperienceEntryFields
+                  key={field.id}
+                  index={index}
+                  prefix={`others.${index}`}
+                  idPrefix="other"
+                  register={register}
+                  control={control}
+                  errors={errors.others}
+                  onRemove={() => others.remove(index)}
+                  removeLabel="Remove"
+                  toggleSignal={othSignal}
+                />
+              ))}
+            </div>
+          </form>
+        </div>
 
         {/* Preview panel — always in DOM, slides in on mobile */}
         {previewOpen && (
