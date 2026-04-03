@@ -6,7 +6,7 @@ import { CV_FONT, CV_SIZE, CV_COLOR, CV_SPACING_PT, CV_LAYOUT } from '../cvConst
 import { formatDateRange, formatEntryMeta, formatLinksLine } from '../cvFormatters.ts';
 import './CvPreview.css';
 
-const cssVars = {
+const cssVars: React.CSSProperties = {
   '--cv-font': CV_FONT.fallback,
   '--cv-name-size': `${CV_SIZE.name}pt`,
   '--cv-section-heading-size': `${CV_SIZE.sectionHeading}pt`,
@@ -31,7 +31,7 @@ const cssVars = {
   '--cv-summary-after': `${CV_SPACING_PT.summaryAfter}pt`,
   '--cv-tech-before': `${CV_SPACING_PT.techStackBefore}pt`,
   '--cv-rule-gap': `${CV_SPACING_PT.ruleGap}pt`,
-} as React.CSSProperties;
+};
 
 interface HeaderProps {
   name: string;

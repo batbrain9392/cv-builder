@@ -6,10 +6,6 @@
  * - DOCX: font sizes use `* PT` (half-points), spacing uses `* TWIP` (twentieths of a point).
  */
 
-export function stripProtocol(url: string): string {
-  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
-}
-
 export const CV_FONT = {
   family: 'Helvetica',
   fallback: 'Helvetica, Arial, sans-serif',

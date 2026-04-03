@@ -4,7 +4,9 @@
 
 import type { CvFormData } from './cvFormSchema.ts';
 
-import { stripProtocol } from './cvConstants.ts';
+export function stripProtocol(url: string): string {
+  return url.replace(/^https?:\/\//, '').replace(/\/$/, '');
+}
 
 export function formatDateRange(start?: string, end?: string): string {
   return [start, end].filter(Boolean).join(' \u2013 ');
