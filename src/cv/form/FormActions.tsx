@@ -52,12 +52,8 @@ export function FormActions({
         </Link>
 
         <nav aria-label="CV actions" className="flex items-center gap-2">
-          <div className="hidden sm:flex">
-            <InstallPwa />
-          </div>
-          <div className="hidden sm:flex">
-            <ShareButton />
-          </div>
+          <InstallPwa />
+          <ShareButton />
           <ThemeToggle className="hidden sm:inline-flex" />
 
           <Link

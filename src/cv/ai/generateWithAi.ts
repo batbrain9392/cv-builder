@@ -12,7 +12,7 @@ export interface AiResult<T> {
   reasoning: string;
 }
 
-function buildCvContext(data: CvFormData): string {
+export function buildCvContext(data: CvFormData): string {
   const { personalInfo, summary, experience, education, others } = data;
 
   const lines: string[] = [
@@ -65,7 +65,7 @@ function buildCvContext(data: CvFormData): string {
   return lines.join('\n');
 }
 
-function splitReasoning(raw: string): { content: string; reasoning: string } {
+export function splitReasoning(raw: string): { content: string; reasoning: string } {
   const marker = '---REASONING---';
   const idx = raw.indexOf(marker);
   if (idx === -1) return { content: raw.trim(), reasoning: '' };

@@ -1,3 +1,5 @@
+import type React from 'react';
+
 import { ArrowLeftIcon, BotIcon, BrainIcon, ExternalLinkIcon, SendIcon } from 'lucide-react';
 import { type FormEvent, useRef, useState } from 'react';
 import { Link } from 'react-router';
@@ -11,7 +13,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { isInStandaloneMode } from '@/lib/pwa';
 
 const GITHUB_REPO = 'https://github.com/batbrain9392/cv-builder';
 const LINKEDIN_URL = 'https://www.linkedin.com/in/batbrain9392/';
@@ -134,6 +135,20 @@ function BuiltWithCard({
   );
 }
 
+function InstallCardRow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-3 rounded-lg border bg-muted/40 px-4 py-3">
+      <div className="flex-1">
+        <p className="text-xs font-medium">Install on this device</p>
+        <p className="text-xs text-muted-foreground">
+          No app store needed — installs directly from your browser.
+        </p>
+      </div>
+      {children}
+    </div>
+  );
+}
+
 export default function AboutPage() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
@@ -143,6 +158,7 @@ export default function AboutPage() {
           BioBot
         </Link>
         <nav aria-label="Page navigation" className="flex items-center gap-2">
+          <InstallPwa />
           <ShareButton />
           <Link
             to="/"
@@ -428,17 +444,12 @@ export default function AboutPage() {
                 <li>📱 Add to home screen on any device</li>
                 <li>🔄 Always up to date — no manual updates</li>
               </ul>
-              {!isInStandaloneMode() && (
-                <div className="flex items-center gap-3 rounded-lg border bg-muted/40 px-4 py-3">
-                  <div className="flex-1">
-                    <p className="text-xs font-medium">Install BioBot on this device</p>
-                    <p className="text-xs text-muted-foreground">
-                      No app store needed — installs directly from your browser.
-                    </p>
-                  </div>
-                  <InstallPwa variant="default" size="default" label="Install" />
-                </div>
-              )}
+              <InstallPwa
+                variant="default"
+                size="default"
+                label="Install BioBot"
+                wrapper={InstallCardRow}
+              />
             </CardContent>
           </Card>
         </div>

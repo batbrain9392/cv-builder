@@ -1,10 +1,10 @@
+import type React from 'react';
+
 import { Popover } from '@base-ui/react/popover';
-import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
-
-type PromptFn = () => Promise<{ outcome: 'accepted' | 'dismissed' }>;
+import { useInstallPwa } from '@/lib/useInstallPwa';
 
 function PwaIcon({ className }: { className?: string }) {
   return (
@@ -28,85 +28,38 @@ function PwaIcon({ className }: { className?: string }) {
   );
 }
 
-function isIos(): boolean {
-  return /iPad|iPhone|iPod/.test(navigator.userAgent) && !('MSStream' in window);
-}
-
-import { isInStandaloneMode } from '@/lib/pwa';
-
 interface InstallPwaProps {
   variant?: 'inverted' | 'default' | 'outline' | 'secondary' | 'ghost';
   size?: 'icon-sm' | 'icon' | 'sm' | 'default';
   label?: string;
+  wrapper?: React.ComponentType<{ children: React.ReactNode }>;
 }
 
 export function InstallPwa({
   variant = 'inverted',
   size = 'icon-sm',
   label,
+  wrapper: Wrapper,
 }: InstallPwaProps = {}) {
-  const [canInstall, setCanInstall] = useState(false);
-  const [showIosHint, setShowIosHint] = useState(false);
-  const promptRef = useRef<PromptFn | null>(null);
+  const { state, handleInstall } = useInstallPwa();
 
-  useEffect(() => {
-    if (isInStandaloneMode()) return;
+  if (state === 'standalone' || state === 'hidden') return null;
 
-    if (isIos()) {
-      setShowIosHint(true);
-      return;
-    }
+  const wrap = (node: React.ReactNode) => (Wrapper ? <Wrapper>{node}</Wrapper> : node);
 
-    const handler = (e: Event) => {
-      e.preventDefault();
-      if ('prompt' in e) {
-        const p = e.prompt;
-        if (typeof p === 'function') {
-          promptRef.current = () => p.call(e);
-          setCanInstall(true);
-        }
-      }
-    };
-
-    const installedHandler = () => {
-      promptRef.current = null;
-      setCanInstall(false);
-    };
-
-    window.addEventListener('beforeinstallprompt', handler);
-    window.addEventListener('appinstalled', installedHandler);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
-      window.removeEventListener('appinstalled', installedHandler);
-    };
-  }, []);
-
-  const handleInstall = useCallback(async () => {
-    const prompt = promptRef.current;
-    if (!prompt) return;
-    const { outcome } = await prompt();
-    if (outcome === 'accepted') {
-      promptRef.current = null;
-      setCanInstall(false);
-    }
-  }, []);
-
-  if (isInStandaloneMode()) return null;
-
-  if (canInstall) {
-    return (
+  if (state === 'installable') {
+    return wrap(
       <Tooltip label="Install app">
         <Button variant={variant} size={size} onClick={handleInstall} aria-label="Install app">
           <PwaIcon />
           {label && <span>{label}</span>}
         </Button>
-      </Tooltip>
+      </Tooltip>,
     );
   }
 
-  if (showIosHint) {
-    return (
+  if (state === 'ios') {
+    return wrap(
       <Popover.Root>
         <Popover.Trigger render={<Button variant={variant} size={size} aria-label="Install app" />}>
           <PwaIcon />
@@ -127,22 +80,18 @@ export function InstallPwa({
             </Popover.Popup>
           </Popover.Positioner>
         </Popover.Portal>
-      </Popover.Root>
+      </Popover.Root>,
     );
   }
 
-  if (!import.meta.env.PROD) {
-    return (
-      <Tooltip label="Install app (dev only)">
-        <Button variant={variant} size={size} aria-label="Install app (dev)" disabled>
-          <PwaIcon />
-          {label && <span>{label}</span>}
-        </Button>
-      </Tooltip>
-    );
-  }
-
-  return null;
+  return wrap(
+    <Tooltip label="Install app (dev only)">
+      <Button variant={variant} size={size} aria-label="Install app (dev)" disabled>
+        <PwaIcon />
+        {label && <span>{label}</span>}
+      </Button>
+    </Tooltip>,
+  );
 }
 
 function ShareIcon({ className }: { className?: string }) {

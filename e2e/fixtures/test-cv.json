@@ -1,0 +1,38 @@
+{
+  "personalInfo": {
+    "name": "Test User",
+    "title": "Test Engineer",
+    "location": "Test City",
+    "email": "test@example.com",
+    "phone": "+1 000 000 0000",
+    "links": []
+  },
+  "coverLetterEnabled": false,
+  "coverLetter": "",
+  "summary": "A test summary with enough characters to pass validation.",
+  "experience": [
+    {
+      "role": "Test Engineer",
+      "company": "Test Corp",
+      "url": "",
+      "startDate": "Jan 2020",
+      "endDate": "Present",
+      "location": "Test City",
+      "bullets": ["Wrote end-to-end tests for the CV builder app."],
+      "tagsLabel": "Tech",
+      "tags": ["Playwright"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.Sc. Testing",
+      "institution": "Test University",
+      "institutionUrl": "",
+      "startYear": "2016",
+      "endYear": "2020",
+      "location": "Test City",
+      "bullets": ["Graduated with test honours."]
+    }
+  ],
+  "others": []
+}
