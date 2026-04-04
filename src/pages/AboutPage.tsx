@@ -3,7 +3,6 @@ import { type FormEvent, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
 import { GEMINI_LOGO_URL } from '@/components/GeminiIcon';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -140,13 +139,13 @@ export default function AboutPage() {
           Bot-ter Than You
         </Link>
         <nav aria-label="Page navigation" className="flex items-center gap-2">
-          <ThemeToggle />
           <Link
             to="/"
+            aria-label="Back to editor"
             className="inline-flex items-center gap-1 rounded-lg border border-primary-foreground/30 px-2.5 py-1 text-[0.8rem] font-medium text-primary-foreground hover:bg-primary-foreground/15"
           >
             <ArrowLeftIcon className="size-3.5" />
-            Back to editor
+            <span className="hidden sm:inline">Back to editor</span>
           </Link>
         </nav>
       </header>

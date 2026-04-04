@@ -7,12 +7,15 @@ import {
   EllipsisVerticalIcon,
   FileDownIcon,
   FolderOpenIcon,
+  MoonIcon,
+  SunIcon,
 } from 'lucide-react';
 import { Link } from 'react-router';
 
 import { InstallPwa } from '@/components/InstallPwa';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
+import { useTheme } from '@/lib/useTheme';
 
 interface FormActionsProps {
   onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -30,6 +33,8 @@ export function FormActions({
   onOpenDownloadDialog,
   fileInputRef,
 }: FormActionsProps) {
+  const { theme, toggle: toggleTheme } = useTheme();
+
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     onImport(e);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -44,8 +49,10 @@ export function FormActions({
         </Link>
 
         <nav aria-label="CV actions" className="flex items-center gap-2">
-          <InstallPwa />
-          <ThemeToggle />
+          <div className="hidden sm:flex">
+            <InstallPwa />
+          </div>
+          <ThemeToggle className="hidden sm:inline-flex" />
 
           <Link
             to="/behind-the-bot"
@@ -72,6 +79,14 @@ export function FormActions({
             <Menu.Portal>
               <Menu.Positioner align="end" sideOffset={12}>
                 <Menu.Popup className="z-50 min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
+                  <Menu.Item className={menuItemClass} onClick={toggleTheme}>
+                    {theme === 'light' ? (
+                      <MoonIcon className="size-4" />
+                    ) : (
+                      <SunIcon className="size-4" />
+                    )}
+                    {theme === 'light' ? 'Dark mode' : 'Light mode'}
+                  </Menu.Item>
                   <Menu.Item className={menuItemClass} render={<Link to="/behind-the-bot" />}>
                     <BrainIcon className="size-4" />
                     Behind the Bot
