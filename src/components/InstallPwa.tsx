@@ -29,7 +29,7 @@ function PwaIcon({ className }: { className?: string }) {
 }
 
 interface InstallPwaProps {
-  variant?: 'inverted' | 'default' | 'outline' | 'secondary' | 'ghost';
+  variant?: 'inverted' | 'inverted-fill' | 'default' | 'outline' | 'secondary' | 'ghost';
   size?: 'icon-sm' | 'icon' | 'sm' | 'default';
   label?: string;
   wrapper?: React.ComponentType<{ children: React.ReactNode }>;

@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test('app boots with starter data and preview updates on edit', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#/app');
 
   const nameInput = page.locator('#name');
   await expect(nameInput).toHaveValue('Jane Doe');
@@ -20,7 +20,7 @@ test('app boots with starter data and preview updates on edit', async ({ page })
 });
 
 test('import JSON file populates the form', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#/app');
 
   const fileInput = page.locator('input[aria-label="Import CV JSON"]');
   await fileInput.setInputFiles(path.resolve(__dirname, 'fixtures/test-cv.json'));
@@ -34,7 +34,7 @@ test('import JSON file populates the form', async ({ page }) => {
 });
 
 test('clear all resets the form after confirmation', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#/app');
 
   await expect(page.locator('#name')).toHaveValue('Jane Doe');
 
@@ -49,7 +49,7 @@ test('clear all resets the form after confirmation', async ({ page }) => {
 });
 
 test('DOCX download triggers a file download', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/#/app');
 
   const preview = page.locator('#cv-preview-panel-desktop');
   await preview.getByRole('button', { name: 'Download CV' }).click();
@@ -63,14 +63,20 @@ test('DOCX download triggers a file download', async ({ page }) => {
   expect(download.suggestedFilename()).toBe('cv.docx');
 });
 
-test('About page navigation works', async ({ page }) => {
+test('Landing page is the default route', async ({ page }) => {
   await page.goto('/');
 
-  await page.getByRole('link', { name: 'Behind the Bot' }).first().click();
+  await expect(page.getByRole('heading', { name: /optimized for the machines/i })).toBeVisible();
 
-  await expect(page.getByRole('heading', { name: 'Behind the Bot' })).toBeVisible();
-
-  await page.getByRole('link', { name: 'Back to editor' }).first().click();
+  await page.getByRole('link', { name: 'Build your CV' }).first().click();
 
   await expect(page.locator('form[aria-label="CV editor"]')).toBeVisible();
+});
+
+test('Editor links back to landing page', async ({ page }) => {
+  await page.goto('/#/app');
+
+  await page.getByRole('link', { name: 'Why BioBot?' }).first().click();
+
+  await expect(page.getByRole('heading', { name: /optimized for the machines/i })).toBeVisible();
 });

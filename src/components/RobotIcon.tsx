@@ -2,13 +2,14 @@ import type { SVGProps } from 'react';
 
 /**
  * Document-robot icon matching the app branding (filled style with knockout details).
- * ViewBox frames the page body; antenna extends above via overflow: visible.
+ * ViewBox frames the page rectangle; antenna overflows above via overflow: visible.
  */
 export function RobotIcon(props: SVGProps<SVGSVGElement>) {
-  // Page: x=146 y=141 w=220 h=270 with r=24, fold=36
+  // Page body: x=146 y=141 w=220 h=270 (r=24, fold=36)
+  // Antenna extends above y=141 and is visible via overflow:visible
   return (
     <svg
-      viewBox="136 76 240 340"
+      viewBox="136 141 240 270"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{ overflow: 'visible' }}

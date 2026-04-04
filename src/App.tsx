@@ -48,7 +48,7 @@ import { CvPreviewPanel } from './cv/preview/CvPreviewPanel.tsx';
 import { useAiGeneration } from './cv/useAiGeneration.ts';
 import { useCvExport } from './cv/useCvExport.ts';
 
-const AboutPage = lazy(() => import('./pages/AboutPage.tsx'));
+const LandingPage = lazy(() => import('./pages/LandingPage.tsx'));
 
 const EMPTY_ENTRY = {
   role: '',
@@ -75,9 +75,8 @@ const EMPTY_EDUCATION = {
 export function App({ defaultValues }: { defaultValues: CvFormData }) {
   return (
     <Routes>
-      <Route index element={<CvEditorPage defaultValues={defaultValues} />} />
       <Route
-        path="behind-the-bot"
+        index
         element={
           <Suspense
             fallback={
@@ -86,10 +85,11 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
               </div>
             }
           >
-            <AboutPage />
+            <LandingPage />
           </Suspense>
         }
       />
+      <Route path="app" element={<CvEditorPage defaultValues={defaultValues} />} />
     </Routes>
   );
 }

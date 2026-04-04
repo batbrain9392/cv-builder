@@ -12,7 +12,7 @@ export function Tooltip({ label, children }: TooltipProps) {
     <TooltipPrimitive.Root>
       <TooltipPrimitive.Trigger delay={400} render={children} />
       <TooltipPrimitive.Portal>
-        <TooltipPrimitive.Positioner sideOffset={8}>
+        <TooltipPrimitive.Positioner sideOffset={8} className="z-50">
           <TooltipPrimitive.Popup className="rounded-md bg-foreground px-2.5 py-1 text-xs text-background shadow-md">
             {label}
           </TooltipPrimitive.Popup>
