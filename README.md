@@ -8,13 +8,19 @@ AI-powered CV and cover letter builder that runs entirely in your browser.
 
 **[🚀 Live demo](https://batbrain9392.github.io/cv-builder/)**
 
+<a href="https://batbrain9392.github.io/cv-builder/">
+  <img src="https://raw.githubusercontent.com/webmaxru/progressive-web-apps-logo/master/pwalogo.svg" alt="Install as Progressive Web App" width="80" />
+</a>
+
+Install it on your phone or desktop — works offline, no app store needed.
+
 ## ✨ Features
 
 - ✏️ Build and edit a CV with a **live side-by-side preview**
 - 🤖 **AI-powered generation** of professional summary, cover letter, and experience bullet points using Google Gemini
 - 📄 Export to **DOCX** or **JSON** — import from JSON to pick up where you left off
 - 📝 **Markdown** support in text fields for rich formatting
-- 📲 Installable **PWA** with offline caching
+- 📲 Installable **[Progressive Web App](https://web.dev/explore/progressive-web-apps)** — works offline with service worker caching
 
 ## 🧑‍💻 Using the AI features
 
@@ -44,7 +50,7 @@ AI-powered CV and cover letter builder that runs entirely in your browser.
 | 📝  | [marked](https://marked.js.org)                                              | Markdown rendering        |
 | 🌐  | Fully client-side                                                            | No backend required       |
 
-📲 The app is a PWA with a service worker (`public/sw.js`) and web manifest (`public/manifest.json`) for offline support and home screen installation.
+📲 The app is a [Progressive Web App](https://web.dev/explore/progressive-web-apps) with a service worker (`public/sw.js`) and web manifest (`public/manifest.json`) for offline support and home screen installation.
 
 ## 🛠️ Built with
 

@@ -32,12 +32,19 @@ function isIos(): boolean {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !('MSStream' in window);
 }
 
-function isInStandaloneMode(): boolean {
-  if (window.matchMedia('(display-mode: standalone)').matches) return true;
-  return 'standalone' in navigator && navigator.standalone === true;
+import { isInStandaloneMode } from '@/lib/pwa';
+
+interface InstallPwaProps {
+  variant?: 'inverted' | 'default' | 'outline' | 'secondary' | 'ghost';
+  size?: 'icon-sm' | 'icon' | 'sm' | 'default';
+  label?: string;
 }
 
-export function InstallPwa() {
+export function InstallPwa({
+  variant = 'inverted',
+  size = 'icon-sm',
+  label,
+}: InstallPwaProps = {}) {
   const [canInstall, setCanInstall] = useState(false);
   const [showIosHint, setShowIosHint] = useState(false);
   const promptRef = useRef<PromptFn | null>(null);
@@ -90,8 +97,9 @@ export function InstallPwa() {
   if (canInstall) {
     return (
       <Tooltip label="Install app">
-        <Button variant="inverted" size="icon-sm" onClick={handleInstall} aria-label="Install app">
+        <Button variant={variant} size={size} onClick={handleInstall} aria-label="Install app">
           <PwaIcon />
+          {label && <span>{label}</span>}
         </Button>
       </Tooltip>
     );
@@ -100,10 +108,9 @@ export function InstallPwa() {
   if (showIosHint) {
     return (
       <Popover.Root>
-        <Popover.Trigger
-          render={<Button variant="inverted" size="icon-sm" aria-label="Install app" />}
-        >
+        <Popover.Trigger render={<Button variant={variant} size={size} aria-label="Install app" />}>
           <PwaIcon />
+          {label && <span>{label}</span>}
         </Popover.Trigger>
         <Popover.Portal>
           <Popover.Positioner align="end" sideOffset={12}>
@@ -127,8 +134,9 @@ export function InstallPwa() {
   if (!import.meta.env.PROD) {
     return (
       <Tooltip label="Install app (dev only)">
-        <Button variant="inverted" size="icon-sm" aria-label="Install app (dev)" disabled>
+        <Button variant={variant} size={size} aria-label="Install app (dev)" disabled>
           <PwaIcon />
+          {label && <span>{label}</span>}
         </Button>
       </Tooltip>
     );

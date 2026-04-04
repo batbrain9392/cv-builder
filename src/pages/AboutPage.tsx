@@ -3,12 +3,14 @@ import { type FormEvent, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
 import { GEMINI_LOGO_URL } from '@/components/GeminiIcon';
+import { InstallPwa } from '@/components/InstallPwa';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { isInStandaloneMode } from '@/lib/pwa';
 
 const GITHUB_REPO = 'https://github.com/batbrain9392/cv-builder';
 const LINKEDIN_URL = 'https://www.linkedin.com/in/batbrain9392/';
@@ -174,6 +176,21 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
+
+          {/* Install as app — full width, hidden when already installed */}
+          {!isInStandaloneMode() && (
+            <Card className="lg:col-span-2">
+              <CardContent className="flex flex-col items-center gap-3 py-6 sm:flex-row sm:justify-between">
+                <div className="text-center sm:text-left">
+                  <p className="text-sm font-medium">📲 Install as an app</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    Works offline on your phone or desktop — no app store needed.
+                  </p>
+                </div>
+                <InstallPwa variant="default" size="default" label="Install app" />
+              </CardContent>
+            </Card>
+          )}
 
           {/* Features & tips — left */}
           <Card>
