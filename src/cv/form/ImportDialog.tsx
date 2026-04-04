@@ -367,7 +367,7 @@ function DoneStep() {
     <div className="space-y-4 py-4">
       <div className="space-y-3 text-center">
         <div className="mx-auto flex size-12 items-center justify-center rounded-full bg-primary/10">
-          <SparklesIcon className="size-6 text-primary" />
+          <SparklesIcon className="size-6 text-primary-text" />
         </div>
         <p className="text-sm font-medium">Your CV has been imported.</p>
         <p className="text-sm text-muted-foreground">

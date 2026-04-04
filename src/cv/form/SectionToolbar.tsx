@@ -23,7 +23,7 @@ export function SectionToolbar({
 }: SectionToolbarProps) {
   return (
     <div className="flex items-center justify-between">
-      <h2 id={id} className="flex items-center gap-1.5 text-base font-semibold text-primary">
+      <h2 id={id} className="flex items-center gap-1.5 text-base font-semibold text-primary-text">
         {title}
       </h2>
       <div className="flex items-center gap-2">
@@ -55,7 +55,7 @@ export function SectionToolbar({
           type="button"
           variant="outline"
           size="icon-sm"
-          className="border-primary/30 text-primary hover:bg-primary/10 sm:size-auto sm:px-2.5"
+          className="border-primary/30 text-primary-text hover:bg-primary/10 sm:size-auto sm:px-2.5"
           aria-label={addLabel}
           onClick={onAdd}
         >

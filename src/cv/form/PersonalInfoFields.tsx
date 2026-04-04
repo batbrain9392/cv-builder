@@ -139,7 +139,7 @@ export function PersonalInfoFields({
             type="button"
             variant="outline"
             size="sm"
-            className="self-start border-primary/30 text-primary hover:bg-primary/10"
+            className="self-start border-primary/30 text-primary-text hover:bg-primary/10"
             onClick={onAppendLink}
           >
             <PlusIcon data-icon="inline-start" />

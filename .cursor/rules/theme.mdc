@@ -1,0 +1,11 @@
+---
+description: Enforces the use of CSS variables for theming and colors instead of handcoded values.
+globs: **/*.tsx, **/*.ts, **/*.css
+---
+# Theme and Styling Guidelines
+
+- **Always use CSS variables** for handling light/dark theme related styles everywhere.
+- **No handcoding colors** (e.g. avoid hardcoding hex codes, rgb, or specific utility colors like `bg-gray-100` if it depends on the theme).
+- **No manual class toggles** for theming when CSS variables can handle it.
+- Rely on Tailwind utility classes that reference the OKLCH CSS variables defined in `src/index.css`.
+- Theming is controlled by the `.dark` class on the `<html>` element, which swaps the CSS variable values.

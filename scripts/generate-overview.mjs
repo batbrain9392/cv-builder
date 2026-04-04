@@ -71,6 +71,24 @@ function countLines(relPath) {
   }
 }
 
+/**
+ * Renders a Markdown table with columns padded to equal width.
+ * @param {string[]} headers
+ * @param {string[][]} rows - each row is an array of cell strings
+ */
+function markdownTable(headers, rows) {
+  const cols = headers.length;
+  const widths = headers.map((h, i) =>
+    Math.max(h.length, ...rows.map((r) => (r[i] ?? '').length)),
+  );
+  const pad = (str, w) => str + ' '.repeat(w - str.length);
+  const line = (cells) =>
+    '| ' + cells.map((c, i) => pad(c, widths[i])).join(' | ') + ' |';
+  const sep =
+    '| ' + widths.map((w) => '-'.repeat(w)).join(' | ') + ' |';
+  return [line(headers), sep, ...rows.map((r) => line(r))].join('\n');
+}
+
 function gitInfo() {
   try {
     const branch = execSync('git branch --show-current', { cwd: ROOT, encoding: 'utf-8' }).trim();
@@ -127,30 +145,36 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 
 ## Tech stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| UI framework | React + TypeScript | ${pkg.dependencies.react}, TS ${pkg.devDependencies.typescript} |
-| Build tool | Vite | ${pkg.dependencies.vite || pkg.devDependencies.vite} |
-| Styling | Tailwind CSS v4 + shadcn (base-nova) | ${pkg.dependencies.tailwindcss} |
-| Form state | react-hook-form + Zod v4 | RHF ${pkg.dependencies['react-hook-form']}, Zod ${pkg.dependencies.zod} |
-| Routing | react-router (HashRouter) | ${pkg.dependencies['react-router']} |
-| AI | @google/genai (Gemini, client-side) | ${pkg.dependencies['@google/genai']} |
-| DOCX export | docx.js | ${pkg.dependencies.docx} |
-| Markdown | marked | ${pkg.dependencies.marked} |
-| Icons | lucide-react | ${pkg.dependencies['lucide-react']} |
-| Toasts | sonner | ${pkg.dependencies.sonner} |
-| Font | Geist Variable | @fontsource-variable/geist |
+${markdownTable(
+  ['Layer', 'Technology', 'Version'],
+  [
+    ['UI framework', 'React + TypeScript', `${pkg.dependencies.react}, TS ${pkg.devDependencies.typescript}`],
+    ['Build tool', 'Vite', `${pkg.dependencies.vite || pkg.devDependencies.vite}`],
+    ['Styling', 'Tailwind CSS v4 + shadcn (base-nova)', `${pkg.dependencies.tailwindcss}`],
+    ['Form state', 'react-hook-form + Zod v4', `RHF ${pkg.dependencies['react-hook-form']}, Zod ${pkg.dependencies.zod}`],
+    ['Routing', 'react-router (HashRouter)', `${pkg.dependencies['react-router']}`],
+    ['AI', '@google/genai (Gemini, client-side)', `${pkg.dependencies['@google/genai']}`],
+    ['DOCX export', 'docx.js', `${pkg.dependencies.docx}`],
+    ['Markdown', 'marked', `${pkg.dependencies.marked}`],
+    ['Icons', 'lucide-react', `${pkg.dependencies['lucide-react']}`],
+    ['Toasts', 'sonner', `${pkg.dependencies.sonner}`],
+    ['Font', 'Geist Variable', '@fontsource-variable/geist'],
+  ],
+)}
 
 ### Dev tooling
 
-| Tool | Purpose |
-|------|---------|
-| ESLint 9 (flat config) | Linting with TS, React hooks, import sorting, a11y, **no type assertions** |
-| Prettier | Formatting (single quotes, trailing commas, 100 print width) |
-| Vitest | Unit tests (Node) + component tests (happy-dom + Testing Library) |
-| Playwright | E2E tests (Chromium, against preview build) |
-| Husky + lint-staged | Pre-commit: ESLint --fix + Prettier on staged files |
-| GitHub Actions | CI: lint → typecheck → test → build → Playwright |
+${markdownTable(
+  ['Tool', 'Purpose'],
+  [
+    ['ESLint 9 (flat config)', 'Linting with TS, React hooks, import sorting, a11y, **no type assertions**'],
+    ['Prettier', 'Formatting (single quotes, trailing commas, 100 print width)'],
+    ['Vitest', 'Unit tests (Node) + component tests (happy-dom + Testing Library)'],
+    ['Playwright', 'E2E tests (Chromium, against preview build)'],
+    ['Husky + lint-staged', 'Pre-commit: ESLint --fix + Prettier on staged files'],
+    ['GitHub Actions', 'CI: lint → typecheck → test → build → Playwright'],
+  ],
+)}
 
 ---
 
@@ -164,28 +188,34 @@ ${tree(ROOT).trimEnd()}
 
 #### \`src/\` layout
 
-| Directory | Purpose |
-|-----------|---------|
-| \`src/components/\` | Shared app-shell components (AppHeader, ErrorBoundary, icons, PWA, theme, share) |
-| \`src/components/ui/\` | shadcn-style primitives (button, card, field, input, textarea, etc.) |
-| \`src/cv/\` | CV domain: schema, hooks, constants, formatters, export logic |
-| \`src/cv/form/\` | Form section components (PersonalInfo, Experience, Education, AI settings, dialogs) |
-| \`src/cv/preview/\` | Live preview panel, markdown rendering, preview CSS |
-| \`src/cv/ai/\` | AI generation helpers (Gemini calls, CV text parsing) |
-| \`src/cv/export/\` | DOCX document builder |
-| \`src/lib/\` | Utilities, custom hooks (theme, PWA install, media queries, viewport) |
-| \`src/pages/\` | Route-level page components (LandingPage, CvEditorPage) |
+${markdownTable(
+  ['Directory', 'Purpose'],
+  [
+    ['\`src/components/\`', 'Shared app-shell components (AppHeader, ErrorBoundary, icons, PWA, theme, share)'],
+    ['\`src/components/ui/\`', 'shadcn-style primitives (button, card, field, input, textarea, etc.)'],
+    ['\`src/cv/\`', 'CV domain: schema, hooks, constants, formatters, export logic'],
+    ['\`src/cv/form/\`', 'Form section components (PersonalInfo, Experience, Education, AI settings, dialogs)'],
+    ['\`src/cv/preview/\`', 'Live preview panel, markdown rendering, preview CSS'],
+    ['\`src/cv/ai/\`', 'AI generation helpers (Gemini calls, CV text parsing)'],
+    ['\`src/cv/export/\`', 'DOCX document builder'],
+    ['\`src/lib/\`', 'Utilities, custom hooks (theme, PWA install, media queries, viewport)'],
+    ['\`src/pages/\`', 'Route-level page components (LandingPage, CvEditorPage)'],
+  ],
+)}
 
 #### Key entry points
 
-| File | Role |
-|------|------|
-| \`src/main.tsx\` | App bootstrap: HashRouter, loadDefaultValues(), service worker registration |
-| \`src/App.tsx\` | Route definitions (landing page + editor) |
-| \`src/pages/CvEditorPage.tsx\` | Main CV editor UI (form, preview, dialogs, AI wiring) |
-| \`src/index.css\` | Global Tailwind imports, CSS variables, theme tokens (OKLCH) |
-| \`src/cv/cvFormSchema.ts\` | Zod schema and TypeScript types for the entire CV form |
-| \`src/cv/loadDefaultValues.ts\` | Merges starter data with schema defaults |
+${markdownTable(
+  ['File', 'Role'],
+  [
+    ['\`src/main.tsx\`', 'App bootstrap: HashRouter, loadDefaultValues(), service worker registration'],
+    ['\`src/App.tsx\`', 'Route definitions (landing page + editor)'],
+    ['\`src/pages/CvEditorPage.tsx\`', 'Main CV editor UI (form, preview, dialogs, AI wiring)'],
+    ['\`src/index.css\`', 'Global Tailwind imports, CSS variables, theme tokens (OKLCH)'],
+    ['\`src/cv/cvFormSchema.ts\`', 'Zod schema and TypeScript types for the entire CV form'],
+    ['\`src/cv/loadDefaultValues.ts\`', 'Merges starter data with schema defaults'],
+  ],
+)}
 
 ---
 
@@ -210,6 +240,7 @@ ${tree(ROOT).trimEnd()}
 
 - **Utility-first** with Tailwind CSS v4 (via \`@tailwindcss/vite\` plugin).
 - **shadcn base-nova** style for UI primitives, with OKLCH CSS variables for theming.
+- **Always use CSS variables** for handling light/dark theme related styles everywhere. No handcoding colors or manual class toggles.
 - **Colocated CSS** only where Tailwind is insufficient (e.g. \`CvPreview.css\` for print-specific layout).
 - **No CSS Modules** in the broader app.
 - **Dark mode** via \`.dark\` class on \`<html>\`, toggled by \`useTheme\` hook.
@@ -328,18 +359,21 @@ ${JSON.stringify(componentsJson, null, 2)}
 
 ## NPM scripts
 
-| Script | Command | Purpose |
-|--------|---------|---------|
-| \`dev\` | \`vite\` | Local dev server |
-| \`build\` | \`tsc --noEmit && vite build\` | Type-check + production build |
-| \`preview\` | \`vite preview\` | Serve production build locally |
-| \`lint\` | \`eslint .\` | Run ESLint |
-| \`typecheck\` | \`tsc --noEmit\` | TypeScript compiler checks |
-| \`test\` | \`vitest run\` | Run unit + component tests |
-| \`test:e2e\` | \`playwright test\` | Run Playwright e2e tests |
-| \`generate:icons\` | \`node scripts/generate-icons.mjs\` | Regenerate PWA icons and favicon |
-| \`generate:og\` | \`node scripts/generate-og-image.mjs\` | Regenerate OG image |
-| \`generate:overview\` | \`node scripts/generate-overview.mjs\` | Regenerate this document |
+${markdownTable(
+  ['Script', 'Command', 'Purpose'],
+  [
+    ['\`dev\`', '\`vite\`', 'Local dev server'],
+    ['\`build\`', '\`tsc --noEmit && vite build\`', 'Type-check + production build'],
+    ['\`preview\`', '\`vite preview\`', 'Serve production build locally'],
+    ['\`lint\`', '\`eslint .\`', 'Run ESLint'],
+    ['\`typecheck\`', '\`tsc --noEmit\`', 'TypeScript compiler checks'],
+    ['\`test\`', '\`vitest run\`', 'Run unit + component tests'],
+    ['\`test:e2e\`', '\`playwright test\`', 'Run Playwright e2e tests'],
+    ['\`generate:icons\`', '\`node scripts/generate-icons.mjs\`', 'Regenerate PWA icons and favicon'],
+    ['\`generate:og\`', '\`node scripts/generate-og-image.mjs\`', 'Regenerate OG image'],
+    ['\`generate:overview\`', '\`node scripts/generate-overview.mjs\`', 'Regenerate this document'],
+  ],
+)}
 
 ---
 
@@ -351,21 +385,27 @@ The app has several generated image assets that depend on branding or UI. When t
 
 The app logo is a document-robot SVG defined inline in \`src/components/RobotIcon.tsx\`. The PWA/favicon icons are **canvas-drawn replicas** of the same design in \`scripts/generate-icons.mjs\`.
 
-| Asset | Generated by | Output path(s) | Consumed in |
-|-------|-------------|-----------------|-------------|
-| \`RobotIcon\` (inline SVG) | Hand-coded component | \`src/components/RobotIcon.tsx\` | \`AppLogo.tsx\`, \`LandingPage.tsx\` |
-| \`favicon-32.png\` | \`npm run generate:icons\` | \`public/favicon-32.png\` | \`index.html\` (\`<link rel="icon">\`) |
-| \`icon-192.png\` | \`npm run generate:icons\` | \`public/icon-192.png\` | \`index.html\` (\`<link rel="apple-touch-icon">\`), \`manifest.json\` |
-| \`icon-512.png\` | \`npm run generate:icons\` | \`public/icon-512.png\` | \`manifest.json\` |
-| \`icon-maskable.png\` | \`npm run generate:icons\` | \`public/icon-maskable.png\` | \`manifest.json\` |
+${markdownTable(
+  ['Asset', 'Generated by', 'Output path(s)', 'Consumed in'],
+  [
+    ['\`RobotIcon\` (inline SVG)', 'Hand-coded component', '\`src/components/RobotIcon.tsx\`', '\`AppLogo.tsx\`, \`LandingPage.tsx\`'],
+    ['\`favicon-32.png\`', '\`npm run generate:icons\`', '\`public/favicon-32.png\`', '\`index.html\` (\`<link rel="icon">\`)'],
+    ['\`icon-192.png\`', '\`npm run generate:icons\`', '\`public/icon-192.png\`', '\`index.html\` (\`<link rel="apple-touch-icon">\`), \`manifest.json\`'],
+    ['\`icon-512.png\`', '\`npm run generate:icons\`', '\`public/icon-512.png\`', '\`manifest.json\`'],
+    ['\`icon-maskable.png\`', '\`npm run generate:icons\`', '\`public/icon-maskable.png\`', '\`manifest.json\`'],
+  ],
+)}
 
 **If you change \`RobotIcon.tsx\`:** you must also update the canvas replica in \`scripts/generate-icons.mjs\` and re-run \`npm run generate:icons\` to keep favicons in sync.
 
 ### OG image (social sharing)
 
-| Asset | Generated by | Output path | Consumed in |
-|-------|-------------|-------------|-------------|
-| \`og-image.png\` | \`npm run generate:og\` | \`public/og-image.png\` | \`index.html\` (\`<meta property="og:image">\`, \`<meta name="twitter:image">\`) |
+${markdownTable(
+  ['Asset', 'Generated by', 'Output path', 'Consumed in'],
+  [
+    ['\`og-image.png\`', '\`npm run generate:og\`', '\`public/og-image.png\`', '\`index.html\` (\`<meta property="og:image">\`, \`<meta name="twitter:image">\`)'],
+  ],
+)}
 
 The OG image is a 1200×630 composite built by \`scripts/generate-og-image.mjs\`. It launches a Playwright browser against the built app, takes screenshots of the editor form + preview, and composites them onto a branded canvas using the app's dark-mode palette (\`#1c1c1c\`, \`#3dc78c\`, etc.) and Geist font.
 
@@ -377,12 +417,15 @@ The OG image is a 1200×630 composite built by \`scripts/generate-og-image.mjs\`
 
 ### Regeneration cheat sheet
 
-| Trigger | Command |
-|---------|---------|
-| Logo/icon design changed | Update \`RobotIcon.tsx\` + \`scripts/generate-icons.mjs\`, then \`npm run generate:icons\` |
-| Color palette or theme changed | \`npm run generate:icons\` + \`npm run generate:og\` |
-| Editor/preview UI layout changed | \`npm run generate:og\` |
-| Project structure changed | \`npm run generate:overview\` |
+${markdownTable(
+  ['Trigger', 'Command'],
+  [
+    ['Logo/icon design changed', 'Update \`RobotIcon.tsx\` + \`scripts/generate-icons.mjs\`, then \`npm run generate:icons\`'],
+    ['Color palette or theme changed', '\`npm run generate:icons\` + \`npm run generate:og\`'],
+    ['Editor/preview UI layout changed', '\`npm run generate:og\`'],
+    ['Project structure changed', '\`npm run generate:overview\`'],
+  ],
+)}
 
 ---
 

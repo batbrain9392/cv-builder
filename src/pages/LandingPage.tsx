@@ -152,7 +152,7 @@ function HeroSection({
       ref={sectionRef}
       className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-primary px-4 text-primary-foreground"
     >
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,oklch(0.65_0.08_155/0.25),transparent_70%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--hero-glow),transparent_70%)]" />
 
       <div className="relative z-10 flex max-w-3xl flex-col items-center text-center">
         <RobotIcon
@@ -213,8 +213,8 @@ function AtsExplainerSection() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5 dark:bg-destructive/10">
-          <p className="mb-3 text-sm font-semibold text-destructive">
+        <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-5 dark:bg-destructive/20">
+          <p className="mb-3 text-sm font-semibold text-destructive-text">
             What ATS sees from a fancy CV
           </p>
           <ul className="space-y-1.5 text-sm text-muted-foreground">
@@ -233,8 +233,8 @@ function AtsExplainerSection() {
           </ul>
         </div>
 
-        <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 dark:bg-primary/10">
-          <p className="mb-3 text-sm font-semibold text-primary">
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-5 dark:bg-primary/20">
+          <p className="mb-3 text-sm font-semibold text-primary-text">
             What ATS reads from BioBot&rsquo;s export
           </p>
           <ul className="space-y-1.5 text-sm text-muted-foreground">
@@ -281,7 +281,7 @@ function AtsSectionsGrid() {
             key={title}
             className="rounded-xl border bg-card p-5 text-card-foreground ring-1 ring-foreground/5"
           >
-            <Icon className="mb-2 size-5 text-primary" aria-hidden="true" />
+            <Icon className="mb-2 size-5 text-primary-text" aria-hidden="true" />
             <p className="mb-1 text-sm font-semibold">{title}</p>
             <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
           </div>
@@ -558,7 +558,7 @@ function BehindTheScenesSection() {
                   href={LINKEDIN_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-0.5 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                  className="mt-0.5 inline-flex items-center gap-1 text-xs text-primary-text hover:underline"
                 >
                   <ExternalLinkIcon className="size-3" aria-hidden="true" />
                   LinkedIn
@@ -573,7 +573,7 @@ function BehindTheScenesSection() {
                 href={GITHUB_REPO}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+                className="inline-flex items-center gap-1.5 text-xs text-primary-text hover:underline"
               >
                 <ExternalLinkIcon className="size-3" aria-hidden="true" />
                 github.com/batbrain9392/cv-builder
@@ -594,7 +594,7 @@ function BehindTheScenesSection() {
                 href={`${GITHUB_REPO}/issues`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                className="inline-flex items-center gap-1.5 text-sm text-primary-text hover:underline"
               >
                 <ExternalLinkIcon className="size-3.5" aria-hidden="true" />
                 GitHub Issues
@@ -604,7 +604,7 @@ function BehindTheScenesSection() {
                 href={LINKEDIN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                className="inline-flex items-center gap-1.5 text-sm text-primary-text hover:underline"
               >
                 <ExternalLinkIcon className="size-3.5" aria-hidden="true" />
                 LinkedIn Messages
@@ -686,7 +686,7 @@ function LandingFooter({ ref }: { ref: React.RefObject<HTMLElement | null> }) {
           <ArrowRightIcon className="size-4" />
         </Link>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-primary-foreground/70">
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-footer-text">
           <a
             href={GITHUB_REPO}
             target="_blank"
@@ -711,7 +711,7 @@ function LandingFooter({ ref }: { ref: React.RefObject<HTMLElement | null> }) {
           </a>
         </div>
 
-        <div className="flex items-center gap-2 text-xs text-primary-foreground/50">
+        <div className="flex items-center gap-2 text-xs text-footer-text-subtle">
           <img
             src={AVATAR_URL}
             alt=""
@@ -722,7 +722,7 @@ function LandingFooter({ ref }: { ref: React.RefObject<HTMLElement | null> }) {
           <span>Made by Debmallya Bhattacharya &middot; {new Date().getFullYear()}</span>
         </div>
 
-        <p className="text-[0.65rem] text-primary-foreground/40">100% vibe-coded with AI ✨</p>
+        <p className="text-[0.65rem] text-footer-text-faint">100% vibe-coded with AI ✨</p>
       </div>
     </footer>
   );

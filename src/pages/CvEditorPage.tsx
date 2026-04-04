@@ -241,7 +241,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                     <button
                       type="button"
                       onClick={() => setImportDialogOpen(true)}
-                      className="inline font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+                      className="inline font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
                     >
                       load a previous backup
                     </button>{' '}

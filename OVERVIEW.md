@@ -1,6 +1,6 @@
 # BioBot — Project Overview for AI Agents
 
-> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-04 (main@8a5fdbc).
+> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-04 (main@61415cc).
 > Re-run with `npm run generate:overview` after structural changes.
 
 ---
@@ -51,6 +51,8 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 
 ```
 ├── .cursor/
+│   ├── rules/
+│   │   └── theme.mdc
 │   └── mcp.json
 ├── .github/
 │   └── workflows/
@@ -231,6 +233,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 
 - **Utility-first** with Tailwind CSS v4 (via `@tailwindcss/vite` plugin).
 - **shadcn base-nova** style for UI primitives, with OKLCH CSS variables for theming.
+- **Always use CSS variables** for handling light/dark theme related styles everywhere. No handcoding colors or manual class toggles.
 - **Colocated CSS** only where Tailwind is insufficient (e.g. `CvPreview.css` for print-specific layout).
 - **No CSS Modules** in the broader app.
 - **Dark mode** via `.dark` class on `<html>`, toggled by `useTheme` hook.
@@ -483,7 +486,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/lib/useIsKeyboardOpen.ts` (45 lines)
 - `src/lib/useIsScrolledPast.ts` (13 lines)
 - `src/lib/useMediaQuery.ts` (17 lines)
-- `src/lib/useTheme.ts` (26 lines)
+- `src/lib/useTheme.ts` (29 lines)
 - `src/lib/utils.ts` (7 lines)
 - `src/test-setup.ts` (2 lines)
 - `src/vite-env.d.ts` (10 lines)
@@ -528,7 +531,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/preview/Markdown.tsx` (21 lines)
 - `src/main.tsx` (57 lines)
 - `src/pages/CvEditorPage.tsx` (678 lines)
-- `src/pages/LandingPage.tsx` (741 lines)
+- `src/pages/LandingPage.tsx` (759 lines)
 
 ### Test files (10)
 
@@ -539,7 +542,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/export/parseInlineSegments.test.ts` (50 lines)
 - `src/cv/loadDefaultValues.test.ts` (60 lines)
 - `src/cv/preview/parseMarkdown.test.ts` (76 lines)
-- `src/cv/form/HighlightsInput.test.tsx` (60 lines)
+- `src/cv/form/HighlightsInput.test.tsx` (65 lines)
 - `src/cv/form/ImportDialog.test.tsx` (146 lines)
 - `src/cv/form/TagsInput.test.tsx` (98 lines)
 
