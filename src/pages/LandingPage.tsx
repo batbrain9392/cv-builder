@@ -3,25 +3,27 @@ import type React from 'react';
 import {
   ArrowRightIcon,
   BriefcaseIcon,
+  ClipboardPasteIcon,
   ExternalLinkIcon,
   FileTextIcon,
   GraduationCapIcon,
-  PrinterIcon,
   KeyRoundIcon,
   LayoutListIcon,
   LockIcon,
   MonitorSmartphoneIcon,
   PenLineIcon,
+  PrinterIcon,
   SendIcon,
   ShieldCheckIcon,
   SparklesIcon,
   UserIcon,
+  WandSparklesIcon,
 } from 'lucide-react';
 import { type FormEvent, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
 import { AppLogo } from '@/components/AppLogo';
-import { GEMINI_LOGO_URL } from '@/components/GeminiIcon';
+import { GeminiIcon, GEMINI_LOGO_URL } from '@/components/GeminiIcon';
 import { InstallPwa } from '@/components/InstallPwa';
 import { RobotIcon } from '@/components/RobotIcon';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -65,7 +67,7 @@ const ATS_SECTIONS = [
   {
     icon: BriefcaseIcon,
     title: 'Work experience',
-    desc: 'Clear role, company, dates, and bullet points with measurable achievements — the format every ATS expects.',
+    desc: 'Clear role, company, dates, and measurable achievements — the format every ATS expects.',
   },
   {
     icon: LayoutListIcon,
@@ -83,7 +85,7 @@ const FEATURES = [
   {
     icon: SparklesIcon,
     title: 'AI-powered tailoring',
-    desc: 'Paste a job description and let Gemini rewrite your bullets with matching keywords — in seconds.',
+    desc: 'Paste a job description and let Gemini rewrite your experience highlights with matching keywords — in seconds.',
   },
   {
     icon: FileTextIcon,
@@ -166,7 +168,8 @@ function HeroSection({
 
         <p className="mt-4 max-w-xl text-base text-primary-foreground/80 sm:text-lg">
           Most CVs are rejected by applicant tracking systems before a human ever sees them. BioBot
-          helps you build an ATS-friendly CV — tailored to each job with AI.
+          helps you build an ATS-friendly CV — and optionally lets AI tailor your achievements to
+          the job description.
         </p>
 
         <Link
@@ -230,6 +233,12 @@ function AtsExplainerSection() {
             <li className="flex gap-2">
               ❌ <span>Header/footer text &rarr; often skipped entirely</span>
             </li>
+            <li className="flex gap-2">
+              ❌ <span>Generic experience missing job description keywords</span>
+            </li>
+            <li className="flex gap-2">
+              ❌ <span>No cover letter to reinforce your fit for the role</span>
+            </li>
           </ul>
         </div>
 
@@ -245,10 +254,16 @@ function AtsExplainerSection() {
               ✅ <span>Plain-text contact details at the top</span>
             </li>
             <li className="flex gap-2">
-              ✅ <span>Keywords in bullet points, easy to score</span>
+              ✅ <span>Keywords woven into achievements, easy to score</span>
             </li>
             <li className="flex gap-2">
               ✅ <span>Clean DOCX that every parser handles</span>
+            </li>
+            <li className="flex gap-2">
+              ✅ <span>Experience rewritten to match job description keywords</span>
+            </li>
+            <li className="flex gap-2">
+              ✅ <span>Optional tailored cover letter included</span>
             </li>
           </ul>
         </div>
@@ -292,12 +307,84 @@ function AtsSectionsGrid() {
 }
 
 // ---------------------------------------------------------------------------
+// AI tailoring (opt-in)
+// ---------------------------------------------------------------------------
+
+const AI_STEPS = [
+  {
+    step: 1,
+    icon: ClipboardPasteIcon,
+    title: 'Paste the job description',
+    desc: 'Drop in the full job posting. The AI uses it to identify the keywords, skills, and tone the employer is looking for.',
+  },
+  {
+    step: 2,
+    icon: KeyRoundIcon,
+    title: 'Add your free Gemini API key',
+    desc: 'Get a key from Google AI Studio in seconds — no billing required. Your key stays in your browser.',
+  },
+  {
+    step: 3,
+    icon: WandSparklesIcon,
+    title: 'AI rewrites to match',
+    desc: 'Gemini rewrites your experience highlights, professional summary, and cover letter with the right keywords — ready in seconds.',
+  },
+] as const;
+
+function AiTailoringSection() {
+  return (
+    <SectionWrapper className="bg-background text-foreground" id="ai-tailoring">
+      <div className="mx-auto max-w-3xl text-center">
+        <div className="mb-4 flex items-center justify-center gap-2.5">
+          <GeminiIcon className="size-6" />
+          <Badge variant="outline" className="text-xs">
+            Optional &middot; Bring your own key
+          </Badge>
+        </div>
+
+        <SectionHeading>Tailor your CV in seconds with AI</SectionHeading>
+
+        <p className="mx-auto -mt-4 mb-10 max-w-2xl text-sm text-muted-foreground sm:text-base">
+          The core CV builder works perfectly on its own. Opt in to AI and let Google Gemini rewrite
+          your content to match each job description — experience highlights, summary, and cover
+          letter.
+        </p>
+      </div>
+
+      <div className="mx-auto grid max-w-4xl gap-5 sm:grid-cols-3">
+        {AI_STEPS.map(({ step, icon: Icon, title, desc }) => (
+          <div
+            key={step}
+            className="relative rounded-xl border bg-card p-5 text-card-foreground ring-1 ring-foreground/5"
+          >
+            <span className="absolute -top-3 left-4 flex size-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+              {step}
+            </span>
+            <Icon className="mb-3 size-5 text-primary-text" aria-hidden="true" />
+            <p className="mb-1 text-sm font-semibold">{title}</p>
+            <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-8 flex items-start justify-center gap-2 text-center text-xs text-muted-foreground">
+        <ShieldCheckIcon className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
+        <span>
+          Your data never touches a server. Gemini calls go directly from your browser to Google
+          using your own API key.
+        </span>
+      </div>
+    </SectionWrapper>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // How BioBot helps
 // ---------------------------------------------------------------------------
 
 function FeaturesSection() {
   return (
-    <SectionWrapper className="bg-background text-foreground">
+    <SectionWrapper className="bg-secondary text-secondary-foreground">
       <SectionHeading>How BioBot helps you land the interview</SectionHeading>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -747,6 +834,7 @@ export default function LandingPage() {
         <HeroSection ctaRef={ctaRef} sectionRef={heroRef} />
         <AtsExplainerSection />
         <AtsSectionsGrid />
+        <AiTailoringSection />
         <FeaturesSection />
         <InstallBanner />
         <BehindTheScenesSection />

@@ -2,7 +2,7 @@
 
 AI-powered CV and cover letter builder that runs entirely in your browser.
 
-✍️ Writing a CV is hard. 🎯 Tailoring it for every job you apply to is even harder. This app lets you load your full career history once, paste a job description, let AI reshape your bullets and summary to match, then tweak the result before you export. 📋 The Word (DOCX) output uses clean, structured formatting designed to be parsed correctly by most applicant tracking systems (ATS).
+✍️ Writing a CV is hard. 🎯 Tailoring it for every job you apply to is even harder. This app lets you load your full career history once, paste a job description, let AI reshape your experience highlights and summary to match, then tweak the result before you export. 📋 The Word (DOCX) output uses clean, structured formatting designed to be parsed correctly by most applicant tracking systems (ATS).
 
 [![CI](https://github.com/batbrain9392/cv-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/batbrain9392/cv-builder/actions/workflows/ci.yml)
 [![Deploy](https://github.com/batbrain9392/cv-builder/actions/workflows/deploy.yml/badge.svg)](https://github.com/batbrain9392/cv-builder/actions/workflows/deploy.yml)
@@ -14,16 +14,18 @@ AI-powered CV and cover letter builder that runs entirely in your browser.
 ## ✨ Features
 
 - ✏️ Build and edit a CV with a **live side-by-side preview**
-- 🤖 **AI-powered generation** of professional summary, cover letter, and experience bullet points using Google Gemini
+- 🤖 **AI-powered generation** of professional summary, cover letter, and experience highlights using Google Gemini
 - 📄 Export to **DOCX** or **JSON** — import from JSON to pick up where you left off
 - 📝 **Markdown** support in text fields for rich formatting
 - 📲 Installable **Progressive Web App** with service worker caching
 
-## 🧑‍💻 Using the AI features
+## 🧑‍💻 Using the AI features (optional)
+
+The core CV builder works perfectly without AI — you can build, preview, and export without ever enabling it. AI tailoring is an **opt-in** feature that uses Google Gemini to rewrite your content to match a specific job description. You bring your own API key (free tier, no billing required).
 
 1. 👤 Fill in all your details — personal info, experience, education, skills — or **import a JSON** you exported earlier
 2. 📋 Paste a **job description** into the Job Description section and add your free [Gemini API key](https://aistudio.google.com/apikey)
-3. 🤖 Hit **Enhance with AI** to tailor bullet points, summary, and cover letter to the job, then tweak anything that still feels off
+3. 🤖 Hit **Enhance with AI** to tailor your experience highlights, summary, and cover letter to the job, then tweak anything that still feels off
 4. 💾 Export as DOCX for submission, or JSON to save progress
 5. 📄 Need a PDF? Open the DOCX in Word, Google Docs, or LibreOffice and print to PDF
 

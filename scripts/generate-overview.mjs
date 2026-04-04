@@ -132,7 +132,7 @@ const doc = `# BioBot — Project Overview for AI Agents
 
 ## What is this app?
 
-BioBot is an **AI-powered CV and cover letter builder** that runs entirely in the browser. Users load their career data, paste a job description, let Google Gemini reshape their bullets/summary to match the role, then export a polished DOCX. There is **no backend** — all data stays in browser memory unless explicitly exported.
+BioBot is an **AI-powered CV and cover letter builder** that runs entirely in the browser. Users load their career data, paste a job description, let Google Gemini reshape their experience highlights and summary to match the role, then export a polished DOCX. There is **no backend** — all data stays in browser memory unless explicitly exported.
 
 ### Core product goals
 

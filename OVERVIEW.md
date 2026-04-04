@@ -1,13 +1,13 @@
 # BioBot — Project Overview for AI Agents
 
-> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-04 (main@9868646).
+> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-04 (main@ffc2605).
 > Re-run with `npm run generate:overview` after structural changes.
 
 ---
 
 ## What is this app?
 
-BioBot is an **AI-powered CV and cover letter builder** that runs entirely in the browser. Users load their career data, paste a job description, let Google Gemini reshape their bullets/summary to match the role, then export a polished DOCX. There is **no backend** — all data stays in browser memory unless explicitly exported.
+BioBot is an **AI-powered CV and cover letter builder** that runs entirely in the browser. Users load their career data, paste a job description, let Google Gemini reshape their experience highlights and summary to match the role, then export a polished DOCX. There is **no backend** — all data stays in browser memory unless explicitly exported.
 
 ### Core product goals
 
@@ -77,8 +77,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 ├── scripts/
 │   ├── generate-icons.mjs
 │   ├── generate-og-image.mjs
-│   ├── generate-overview.mjs
-│   └── temp-color.mjs
+│   └── generate-overview.mjs
 ├── src/
 │   ├── components/
 │   │   ├── ui/
@@ -532,7 +531,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/preview/Markdown.tsx` (21 lines)
 - `src/main.tsx` (57 lines)
 - `src/pages/CvEditorPage.tsx` (678 lines)
-- `src/pages/LandingPage.tsx` (759 lines)
+- `src/pages/LandingPage.tsx` (846 lines)
 
 ### Test files (10)
 
