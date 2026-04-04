@@ -4,6 +4,7 @@ import { Link } from 'react-router';
 
 import { GEMINI_LOGO_URL } from '@/components/GeminiIcon';
 import { InstallPwa } from '@/components/InstallPwa';
+import { ShareButton } from '@/components/ShareButton';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -142,6 +143,7 @@ export default function AboutPage() {
           BioBot
         </Link>
         <nav aria-label="Page navigation" className="flex items-center gap-2">
+          <ShareButton />
           <Link
             to="/"
             aria-label="Back to editor"

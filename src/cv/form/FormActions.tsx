@@ -8,13 +8,16 @@ import {
   FileDownIcon,
   FolderOpenIcon,
   MoonIcon,
+  Share2Icon,
   SunIcon,
 } from 'lucide-react';
 import { Link } from 'react-router';
 
 import { InstallPwa } from '@/components/InstallPwa';
+import { ShareButton } from '@/components/ShareButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
+import { shareApp } from '@/lib/share';
 import { useTheme } from '@/lib/useTheme';
 
 interface FormActionsProps {
@@ -51,6 +54,9 @@ export function FormActions({
         <nav aria-label="CV actions" className="flex items-center gap-2">
           <div className="hidden sm:flex">
             <InstallPwa />
+          </div>
+          <div className="hidden sm:flex">
+            <ShareButton />
           </div>
           <ThemeToggle className="hidden sm:inline-flex" />
 
@@ -94,6 +100,10 @@ export function FormActions({
                   <Menu.Item className={menuItemClass} onClick={onOpenImportDialog}>
                     <FolderOpenIcon className="size-4" />
                     Load data
+                  </Menu.Item>
+                  <Menu.Item className={menuItemClass} onClick={shareApp}>
+                    <Share2Icon className="size-4" />
+                    Share
                   </Menu.Item>
                 </Menu.Popup>
               </Menu.Positioner>
