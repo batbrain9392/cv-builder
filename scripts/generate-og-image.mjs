@@ -9,6 +9,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = resolve(__dirname, '..');
 const DIST = resolve(ROOT, 'dist');
 const OUT = resolve(ROOT, 'public', 'og-image.png');
+const DOCS = resolve(ROOT, 'docs');
 
 const W = 1200;
 const H = 630;
@@ -85,19 +86,25 @@ function startPreviewServer() {
 
 async function captureScreenshots() {
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await page.goto(BASE_URL, { waitUntil: 'networkidle' });
-  await page.waitForTimeout(500);
 
-  const formShot = await page.screenshot({ type: 'png' });
+  // Mobile screenshots
+  const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await mobilePage.goto(BASE_URL, { waitUntil: 'networkidle' });
+  await mobilePage.waitForTimeout(500);
+  const formShot = await mobilePage.screenshot({ type: 'png' });
 
-  // Open the preview panel via the mobile FAB
-  await page.click('button[aria-label="Open preview"]');
-  await page.waitForTimeout(600);
-  const previewShot = await page.screenshot({ type: 'png' });
+  await mobilePage.click('button[aria-label="Open preview"]');
+  await mobilePage.waitForTimeout(600);
+  const previewShot = await mobilePage.screenshot({ type: 'png' });
+
+  // Desktop screenshot (form + preview side by side)
+  const desktopPage = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  await desktopPage.goto(BASE_URL, { waitUntil: 'networkidle' });
+  await desktopPage.waitForTimeout(500);
+  const desktopShot = await desktopPage.screenshot({ type: 'png' });
 
   await browser.close();
-  return { formShot, previewShot };
+  return { formShot, previewShot, desktopShot };
 }
 
 // ---------------------------------------------------------------------------
@@ -377,8 +384,15 @@ console.log('Preview server ready.');
 
 try {
   console.log('Capturing screenshots…');
-  const { formShot, previewShot } = await captureScreenshots();
-  console.log(`Form: ${formShot.byteLength} bytes, Preview: ${previewShot.byteLength} bytes.`);
+  const { formShot, previewShot, desktopShot } = await captureScreenshots();
+  console.log(`Form: ${formShot.byteLength}, Preview: ${previewShot.byteLength}, Desktop: ${desktopShot.byteLength} bytes.`);
+
+  // Save individual screenshots for README
+  for (const [name, buf] of [['screenshot-form.png', formShot], ['screenshot-preview.png', previewShot], ['screenshot-desktop.png', desktopShot]]) {
+    const p = resolve(DOCS, name);
+    writeFileSync(p, buf);
+    console.log(`Saved ${p}`);
+  }
 
   console.log('Compositing OG image…');
   const png = await composite(formShot, previewShot);

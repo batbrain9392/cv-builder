@@ -1,4 +1,4 @@
-# 🤖 BioBot
+# 🤖 BioBot &nbsp;<a href="https://batbrain9392.github.io/cv-builder/"><img src="https://img.shields.io/badge/Live_demo-visit-blue" alt="Live demo" /></a>
 
 AI-powered CV and cover letter builder that runs entirely in your browser.
 
@@ -6,13 +6,9 @@ AI-powered CV and cover letter builder that runs entirely in your browser.
 
 [![Deploy](https://github.com/batbrain9392/cv-builder/actions/workflows/deploy.yml/badge.svg)](https://github.com/batbrain9392/cv-builder/actions/workflows/deploy.yml)
 
-**[🚀 Live demo](https://batbrain9392.github.io/cv-builder/)**
+<img src="docs/screenshot-desktop.png" alt="Desktop view" height="280" /> &nbsp; <img src="docs/screenshot-form.png" alt="Mobile editor" height="280" /> &nbsp; <img src="docs/screenshot-preview.png" alt="Mobile preview" height="280" />
 
-<a href="https://batbrain9392.github.io/cv-builder/">
-  <img src="https://raw.githubusercontent.com/webmaxru/progressive-web-apps-logo/master/pwalogo.svg" alt="Install as Progressive Web App" width="80" />
-</a>
-
-Install it on your phone or desktop — works offline, no app store needed.
+📲 Installable as a [Progressive Web App](https://web.dev/explore/progressive-web-apps) — works offline on phone or desktop, no app store needed.
 
 ## ✨ Features
 
@@ -82,14 +78,15 @@ npm ci
 npm run dev
 ```
 
-| Script              | Purpose                         |
-| ------------------- | ------------------------------- |
-| `npm run dev`       | Start local dev server          |
-| `npm run build`     | Type-check and production build |
-| `npm run preview`   | Preview the production build    |
-| `npm run lint`      | Run ESLint                      |
-| `npm run typecheck` | Run TypeScript compiler checks  |
-| `npm run test`      | Run tests with Vitest           |
+| Script                | Purpose                                                              |
+| --------------------- | -------------------------------------------------------------------- |
+| `npm run dev`         | Start local dev server                                               |
+| `npm run build`       | Type-check and production build                                      |
+| `npm run preview`     | Preview the production build                                         |
+| `npm run lint`        | Run ESLint                                                           |
+| `npm run typecheck`   | Run TypeScript compiler checks                                       |
+| `npm run test`        | Run tests with Vitest                                                |
+| `npm run generate:og` | Regenerate OG image and screenshots (requires `npm run build` first) |
 
 ## 💬 Feedback
 

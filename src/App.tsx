@@ -529,6 +529,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
 
         {/* Desktop preview — static flex child, hidden on mobile */}
         <aside
+          id="cv-preview-panel"
           aria-label="CV preview"
           className="hidden min-h-0 overflow-y-auto border-l bg-muted lg:block lg:w-1/2"
         >
