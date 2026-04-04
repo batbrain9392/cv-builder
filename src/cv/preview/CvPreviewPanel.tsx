@@ -88,7 +88,7 @@ export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) 
   }, [updateScale]);
 
   return (
-    <div className="p-4 lg:p-6 xl:p-8">
+    <div className="px-4 py-8 lg:p-6 xl:p-8">
       <div className="mb-8 space-y-2">
         <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
           <FileTextIcon className="size-5" aria-hidden="true" /> Preview

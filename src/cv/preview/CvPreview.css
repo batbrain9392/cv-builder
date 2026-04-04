@@ -50,6 +50,7 @@
 }
 
 .cv-preview-contact {
+  font-style: normal;
   font-size: var(--cv-hint-size);
   color: var(--cv-color-text);
   margin-bottom: var(--cv-gap-sm);

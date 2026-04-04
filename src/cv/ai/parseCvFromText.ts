@@ -78,6 +78,7 @@ RULES:
 - "summary": extract a professional summary. If none exists in the source text, leave as "".
 - "personalInfo.links": extract LinkedIn, GitHub, portfolio, or other profile URLs if present. Each link needs a "label" and a "url".
 - Do not invent claims, metrics, or information not present in the source text. Extract faithfully. If information for an optional field is missing, leave it blank ("" or []).
+- Strip out any complex markdown formatting (like headings, tables, or blockquotes) from the extracted text. Keep only **bold** and *italic* markers.
 - Sort entries within each section (experience, education, others) by start date descending — most recent first. This is the standard reverse chronological order expected by ATS systems.
 - Return ONLY the JSON object. No markdown fences, no explanation.`;
 

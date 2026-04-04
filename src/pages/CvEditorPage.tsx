@@ -10,13 +10,14 @@ import {
   Trash2Icon,
   XIcon,
 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { EmojiIcon } from '@/components/EmojiIcon';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { GeminiIcon } from '@/components/GeminiIcon';
+import { ScrollToTopFab } from '@/components/ScrollToTopFab.tsx';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,6 +28,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
 import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
 import { clearCv, saveCv } from '@/lib/cvStorage.ts';
+import { useIsInView } from '@/lib/useIsInView';
+import { useIsScrolledPast } from '@/lib/useIsScrolledPast.ts';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 
 import type { CvFormData } from '../cv/cvFormSchema.ts';
@@ -71,9 +74,20 @@ const EMPTY_EDUCATION = {
 };
 
 export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
+  const topRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const mobilePreviewRef = useRef<HTMLDivElement>(null);
+  const isTopScrolledPast = useIsScrolledPast(topRef);
+  const isPreviewInView = useIsInView(mobilePreviewRef);
+
+  const scrollToTop = () => {
+    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  const scrollToPreview = () => {
+    mobilePreviewRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   const [summaryAiOpen, setSummaryAiOpen] = useState(false);
-  const [previewOpen, setPreviewOpen] = useState(false);
-  const togglePreview = useCallback(() => setPreviewOpen((o) => !o), []);
   const [expSignal, setExpSignal] = useState({ n: 0, open: true });
   const [eduSignal, setEduSignal] = useState({ n: 0, open: true });
   const [othSignal, setOthSignal] = useState({ n: 0, open: true });
@@ -85,15 +99,6 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const [showBackupBanner, setShowBackupBanner] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    if (!previewOpen) return;
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setPreviewOpen(false);
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [previewOpen]);
 
   const {
     register,
@@ -188,8 +193,9 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       </a>
 
       <main className="mx-auto flex min-h-0 w-full max-w-[1728px] flex-1 overflow-hidden lg:flex-row">
-        {/* Form panel — hidden on mobile when preview is open */}
-        <div className={'min-h-0 flex-1 overflow-y-auto' + (previewOpen ? ' hidden lg:block' : '')}>
+        {/* Form panel */}
+        <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto scroll-smooth">
+          <div ref={topRef} />
           <ErrorBoundary
             fallback={(reset) => (
               <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
@@ -207,7 +213,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               id="cv-editor"
               aria-label="CV editor"
               onSubmit={(e) => e.preventDefault()}
-              className="space-y-8 p-4 pb-32 lg:p-6 lg:pb-6 xl:p-8 xl:pb-8"
+              className="px-4 py-8 lg:p-6 xl:p-8 space-y-8"
             >
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -513,29 +519,36 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               </section>
             </form>
           </ErrorBoundary>
-        </div>
 
-        {/* Mobile preview — shown when preview is open, hidden on desktop */}
-        {previewOpen && (
-          <aside
-            id="cv-preview-panel-mobile"
-            aria-label="CV preview"
-            className="min-h-0 flex-1 overflow-y-auto bg-muted pb-32 lg:hidden"
-          >
-            <ErrorBoundary
-              fallback={(reset) => (
-                <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
-                  <p>Preview could not be rendered. Check your form data for issues.</p>
-                  <Button variant="outline" size="sm" onClick={reset}>
-                    Try again
-                  </Button>
-                </div>
-              )}
+          {/* Mobile preview — shown below form on mobile, hidden on desktop */}
+          {!isDesktop && (
+            <div
+              ref={mobilePreviewRef}
+              id="cv-preview-panel-mobile"
+              aria-label="CV preview"
+              className="border-t bg-muted pb-32 lg:hidden"
             >
-              <CvPreviewPanel control={control} defaultValues={defaultValues} />
-            </ErrorBoundary>
-          </aside>
-        )}
+              <ErrorBoundary
+                fallback={(reset) => (
+                  <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
+                    <p>Preview could not be rendered. Check your form data for issues.</p>
+                    <Button variant="outline" size="sm" onClick={reset}>
+                      Try again
+                    </Button>
+                  </div>
+                )}
+              >
+                <CvPreviewPanel control={control} defaultValues={defaultValues} />
+              </ErrorBoundary>
+            </div>
+          )}
+
+          <ScrollToTopFab
+            visible={isTopScrolledPast}
+            onClick={scrollToTop}
+            className="bottom-28 right-4 lg:bottom-6 lg:right-[calc(50%+1.5rem)] xl:right-[calc(50%+2.5rem)]"
+          />
+        </div>
 
         {/* Desktop preview — only mounted on lg+ to avoid duplicate useWatch + renders on mobile */}
         {isDesktop && (
@@ -566,17 +579,20 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         onDownload={() => setDownloadDialogOpen(true)}
       />
 
-      {/* Mobile FAB — toggle preview panel */}
+      {/* Mobile FAB — jump to preview */}
       <Button
         size="lg"
-        className="fixed right-4 bottom-16 z-50 gap-2 shadow-lg lg:hidden"
-        onClick={togglePreview}
-        aria-label={previewOpen ? 'Close preview' : 'Open preview'}
-        aria-expanded={previewOpen}
-        aria-controls={previewOpen ? 'cv-preview-panel-mobile' : undefined}
+        className={
+          'fixed right-4 bottom-16 z-50 gap-2 shadow-lg transition-all duration-300 lg:hidden' +
+          (isPreviewInView
+            ? ' translate-y-24 opacity-0 pointer-events-none'
+            : ' translate-y-0 opacity-100')
+        }
+        onClick={scrollToPreview}
+        aria-label="Scroll to preview"
       >
-        {previewOpen ? <XIcon /> : <EyeIcon />}
-        {previewOpen ? 'Close' : 'Preview'}
+        <EyeIcon />
+        Preview
       </Button>
 
       <AlertDialog.Root open={apiKeyWarningOpen} onOpenChange={setApiKeyWarningOpen}>

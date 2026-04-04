@@ -61,8 +61,8 @@ export function AppHeader({ children, mobileMenuItems }: AppHeaderProps) {
               <EllipsisVerticalIcon />
             </Menu.Trigger>
             <Menu.Portal>
-              <Menu.Positioner align="end" side="top" sideOffset={12}>
-                <Menu.Popup className="z-50 min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
+              <Menu.Positioner className="z-[60]" align="end" side="top" sideOffset={12}>
+                <Menu.Popup className="min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
                   {installState !== 'standalone' && (
                     <Menu.Item
                       className={menuItemClass}

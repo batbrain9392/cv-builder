@@ -26,6 +26,7 @@ import { AppLogo } from '@/components/AppLogo';
 import { GeminiIcon, GEMINI_LOGO_URL } from '@/components/GeminiIcon';
 import { InstallPwa } from '@/components/InstallPwa';
 import { RobotIcon } from '@/components/RobotIcon';
+import { ScrollToTopFab } from '@/components/ScrollToTopFab';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -820,6 +821,7 @@ function LandingFooter({ ref }: { ref: React.RefObject<HTMLElement | null> }) {
 // ---------------------------------------------------------------------------
 
 export default function LandingPage() {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const footerRef = useRef<HTMLElement>(null);
@@ -827,8 +829,12 @@ export default function LandingPage() {
   const heroScrolledPast = useIsScrolledPast(heroRef);
   const footerInView = useIsInView(footerRef);
 
+  const scrollToTop = () => {
+    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <div className="h-dvh overflow-y-auto bg-background text-foreground">
+    <div ref={scrollContainerRef} className="h-dvh overflow-y-auto bg-background text-foreground">
       <LandingNav shadow={heroScrolledPast} />
       <main>
         <HeroSection ctaRef={ctaRef} sectionRef={heroRef} />
@@ -841,6 +847,11 @@ export default function LandingPage() {
       </main>
       <LandingFooter ref={footerRef} />
       <FloatingCta visible={ctaScrolledPast && !footerInView} />
+      <ScrollToTopFab
+        visible={heroScrolledPast}
+        onClick={scrollToTop}
+        className="bottom-20 right-6"
+      />
     </div>
   );
 }

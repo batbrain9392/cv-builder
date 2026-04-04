@@ -1,0 +1,11 @@
+---
+description: Enforces strict synchronization between CV preview in React and DOCX export
+globs: ["src/cv/preview/**/*.tsx", "src/cv/preview/**/*.css", "src/cv/export/**/*.ts"]
+---
+# Preview and DOCX Synchronization (STRICT)
+
+**CRITICAL RULE:** Any modification made to the CV preview (`src/cv/preview/*`) MUST be perfectly synced with the DOCX export (`src/cv/export/CvDocxDocument.ts`).
+
+- **Decline if impossible:** If a proposed formatting or layout change in the preview CANNOT be implemented identically in the DOCX generator (due to DOCX format limitations), you must **TOTALLY DECLINE** doing it in the preview.
+- **No visual-only flourishes:** The preview must be a strict reflection of the DOCX output.
+- **Check both places:** Always check both `CvPreview` components/CSS and `CvDocxDocument` generation when adding or modifying layout, styles, or data mapping.
