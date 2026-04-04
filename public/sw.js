@@ -1,4 +1,4 @@
-const CACHE_NAME = 'biobot-v2';
+const CACHE_NAME = 'biobot-__BUILD_VERSION__';
 
 const PRECACHE_URLS = ['/cv-builder/', '/cv-builder/manifest.json'];
 

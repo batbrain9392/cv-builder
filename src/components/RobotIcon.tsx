@@ -1,35 +1,89 @@
 import type { SVGProps } from 'react';
 
 /**
- * Custom robot icon matching the app branding.
- * The viewBox frames the head so it center-aligns with adjacent text;
- * the antenna extends above via overflow: visible.
+ * Document-robot icon matching the app branding.
+ * ViewBox frames the page body; antenna extends above via overflow: visible.
  */
 export function RobotIcon(props: SVGProps<SVGSVGElement>) {
-  // Head rect: x=136 y=186 w=240 h=180, stroke=10 → visual bounds 131..381 x 181..371
-  // ViewBox is set to the head bounds so the head aligns with text baseline.
+  // Page: x=146 y=141 w=220 h=270, stroke=10 → visual bounds ~141..371 x ~136..416
+  // ViewBox covers the page body so it center-aligns with adjacent text.
   return (
     <svg
-      viewBox="131 181 250 190"
+      viewBox="136 136 240 280"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       style={{ overflow: 'visible' }}
       {...props}
     >
-      <rect
-        x="136"
-        y="186"
-        width="240"
-        height="180"
-        rx="32"
+      {/* Page outline with folded corner */}
+      <path
+        d="M334 141 L166 141 A20 20 0 0 0 146 161 L146 391 A20 20 0 0 0 166 411 L346 411 A20 20 0 0 0 366 391 L366 173 Z"
         stroke="currentColor"
         strokeWidth="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
-      <circle cx="220" cy="262" r="24" fill="currentColor" />
-      <circle cx="292" cy="262" r="24" fill="currentColor" />
-      <line x1="208" y1="316" x2="304" y2="316" stroke="currentColor" strokeWidth="10" />
-      <line x1="256" y1="186" x2="256" y2="131" stroke="currentColor" strokeWidth="10" />
-      <circle cx="256" cy="124" r="14" fill="currentColor" />
+      {/* Fold */}
+      <path
+        d="M334 141 L334 173 L366 173"
+        stroke="currentColor"
+        strokeWidth="10"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      {/* Eyes */}
+      <circle cx="223" cy="228" r="22" fill="currentColor" />
+      <circle cx="289" cy="228" r="22" fill="currentColor" />
+      {/* Mouth */}
+      <line
+        x1="216"
+        y1="271"
+        x2="296"
+        y2="271"
+        stroke="currentColor"
+        strokeWidth="10"
+        strokeLinecap="round"
+      />
+      {/* Text lines */}
+      <line
+        x1="176"
+        y1="308"
+        x2="336"
+        y2="308"
+        stroke="currentColor"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
+      <line
+        x1="176"
+        y1="338"
+        x2="336"
+        y2="338"
+        stroke="currentColor"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
+      <line
+        x1="176"
+        y1="368"
+        x2="296"
+        y2="368"
+        stroke="currentColor"
+        strokeWidth="7"
+        strokeLinecap="round"
+      />
+      {/* Antenna */}
+      <line
+        x1="256"
+        y1="141"
+        x2="256"
+        y2="96"
+        stroke="currentColor"
+        strokeWidth="10"
+        strokeLinecap="round"
+      />
+      <circle cx="256" cy="89" r="12" fill="currentColor" />
     </svg>
   );
 }

@@ -21,45 +21,72 @@ function drawIcon(size, maskable = false) {
     ctx.fill();
   }
 
-  // Robot icon centered
-  const iconW = 240 * s;
-  const iconH = 200 * s;
-  const cx = size / 2;
-  const cy = size / 2;
-  const rx = cx - iconW / 2;
-  const ry = cy - iconH / 2 + 20 * s;
+  // Document-robot icon centered
+  const pw = 220 * s;
+  const ph = 270 * s;
+  const px = (size - pw) / 2;
+  const py = (size - ph) / 2 + 20 * s;
+  const r = 20 * s;
+  const fold = 32 * s;
 
   ctx.strokeStyle = '#3dc78c';
   ctx.lineWidth = 10 * s;
   ctx.fillStyle = '#3dc78c';
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
 
-  // Head
-  const headW = iconW;
-  const headH = 180 * s;
+  // Page outline with folded top-right corner
   ctx.beginPath();
-  ctx.roundRect(rx, ry, headW, headH, 32 * s);
+  ctx.moveTo(px + pw - fold, py);
+  ctx.lineTo(px + r, py);
+  ctx.arcTo(px, py, px, py + r, r);
+  ctx.lineTo(px, py + ph - r);
+  ctx.arcTo(px, py + ph, px + r, py + ph, r);
+  ctx.lineTo(px + pw - r, py + ph);
+  ctx.arcTo(px + pw, py + ph, px + pw, py + ph - r, r);
+  ctx.lineTo(px + pw, py + fold);
+  ctx.closePath();
+  ctx.stroke();
+
+  // Fold line
+  ctx.beginPath();
+  ctx.moveTo(px + pw - fold, py);
+  ctx.lineTo(px + pw - fold, py + fold);
+  ctx.lineTo(px + pw, py + fold);
   ctx.stroke();
 
   // Eyes
-  const eyeR = 24 * s;
+  const eyeR = 22 * s;
+  const eyeY = py + ph * 0.32;
   ctx.beginPath();
-  ctx.arc(rx + headW * 0.35, ry + headH * 0.42, eyeR, 0, Math.PI * 2);
-  ctx.arc(rx + headW * 0.65, ry + headH * 0.42, eyeR, 0, Math.PI * 2);
+  ctx.arc(px + pw * 0.35, eyeY, eyeR, 0, Math.PI * 2);
+  ctx.arc(px + pw * 0.65, eyeY, eyeR, 0, Math.PI * 2);
   ctx.fill();
 
   // Mouth
   ctx.beginPath();
-  ctx.moveTo(rx + headW * 0.3, ry + headH * 0.72);
-  ctx.lineTo(rx + headW * 0.7, ry + headH * 0.72);
+  ctx.moveTo(px + pw * 0.32, py + ph * 0.48);
+  ctx.lineTo(px + pw * 0.68, py + ph * 0.48);
   ctx.stroke();
 
+  // Text lines
+  ctx.lineWidth = 7 * s;
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    ctx.moveTo(px + 30 * s, py + ph * 0.62 + i * 30 * s);
+    ctx.lineTo(px + pw - 30 * s - (i === 2 ? 40 * s : 0), py + ph * 0.62 + i * 30 * s);
+    ctx.stroke();
+  }
+  ctx.lineWidth = 10 * s;
+
   // Antenna
+  const cx = px + pw / 2;
   ctx.beginPath();
-  ctx.moveTo(cx, ry);
-  ctx.lineTo(cx, ry - 55 * s);
+  ctx.moveTo(cx, py);
+  ctx.lineTo(cx, py - 45 * s);
   ctx.stroke();
   ctx.beginPath();
-  ctx.arc(cx, ry - 62 * s, 14 * s, 0, Math.PI * 2);
+  ctx.arc(cx, py - 52 * s, 12 * s, 0, Math.PI * 2);
   ctx.fill();
 
   return canvas.toBuffer('image/png');
