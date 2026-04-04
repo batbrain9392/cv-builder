@@ -1,6 +1,6 @@
-const CACHE_NAME = 'cv-builder-v1';
+const CACHE_NAME = 'cv-builder-v2';
 
-const PRECACHE_URLS = ['/', '/manifest.json'];
+const PRECACHE_URLS = ['/cv-builder/', '/cv-builder/manifest.json'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(PRECACHE_URLS)));
