@@ -2,6 +2,8 @@
 
 AI-powered CV and cover letter builder that runs entirely in your browser.
 
+Writing a CV is hard. Tailoring it for every job you apply to is even harder. This app lets you load your full career history once, paste a job description, let AI reshape your bullets and summary to match, then tweak the result before you export. The Word (DOCX) output uses clean, structured formatting designed to be parsed correctly by most applicant tracking systems (ATS).
+
 [![Deploy](https://github.com/batbrain9392/cv-builder/actions/workflows/deploy.yml/badge.svg)](https://github.com/batbrain9392/cv-builder/actions/workflows/deploy.yml)
 
 **[Live demo](https://batbrain9392.github.io/cv-builder/)**
@@ -16,9 +18,9 @@ AI-powered CV and cover letter builder that runs entirely in your browser.
 
 ## Using the AI features
 
-1. Paste a **job description** into the sidebar and add your free [Gemini API key](https://aistudio.google.com/apikey)
-2. Fill in your personal info, experience, and education
-3. Hit **Enhance with AI** to tailor bullet points, summary, and cover letter to the job
+1. Fill in all your details — personal info, experience, education, skills — or **import a JSON** you exported earlier
+2. Paste a **job description** into the sidebar and add your free [Gemini API key](https://aistudio.google.com/apikey)
+3. Hit **Enhance with AI** to tailor bullet points, summary, and cover letter to the job, then tweak anything that still feels off
 4. Export as DOCX for submission, or JSON to save progress
 5. Need a PDF? Open the DOCX in Word, Google Docs, or LibreOffice and print to PDF
 
@@ -52,6 +54,15 @@ Code written in **[Cursor](https://cursor.com)** with **[Claude Opus](https://an
 
 Deployed automatically to **GitHub Pages** on every push to `main` via [GitHub Actions](.github/workflows/deploy.yml).
 
+### GitHub repository “About” box
+
+The short blurb and website link at the top of the repo are configured in GitHub, not in a file. As the owner, open **Settings → General** (or click the ⚙️ next to **About** on the repo home page) and set:
+
+- **Description:** AI-powered CV and cover letter builder that runs entirely in your browser.
+- **Website:** https://batbrain9392.github.io/cv-builder/
+
+The same values live in `package.json` as `description` and `homepage` for tooling and forks.
+
 To enable on a fresh fork: go to **Settings > Pages** and set the source to **GitHub Actions**.
 
 The app is served under a `/cv-builder/` subpath and uses `HashRouter` for client-side routing, so in-app URLs look like `/#/about`.
@@ -77,3 +88,5 @@ npm run dev
 ## Feedback
 
 Found a bug or have a feature idea? [Open an issue](https://github.com/batbrain9392/cv-builder/issues) or send a message on [LinkedIn](https://www.linkedin.com/in/batbrain9392/).
+
+**Design tips:** If you looked at this UI and your eye started twitching — first, I’m sorry; second, I would genuinely love your help. I can center a div _sometimes_, but I cannot be trusted with vibes. Suggestions, mockups, or gentle roasts with actionable fixes are all welcome in issues or DMs. You’ll have my eternal gratitude and, if you want it, a footnote in the commit history that says “the colors stopped screaming.”

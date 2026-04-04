@@ -153,51 +153,65 @@ export default function AboutPage() {
 
       <main className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto grid max-w-4xl gap-5 p-4 pb-16 [&>[data-slot=card]]:h-full lg:grid-cols-2 lg:p-6 xl:p-8">
-          {/* Hero heading — full width */}
+          {/* Hero heading + motivation — full width */}
           <div className="lg:col-span-2">
             <h1 className="text-2xl font-bold tracking-tight">🤖 Behind the Bot</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Everything you wanted to know about this app (and some things you didn&rsquo;t).
             </p>
+            <div className="mt-4 max-w-3xl space-y-2 text-sm leading-relaxed">
+              <p>
+                Writing a CV is hard. Tailoring it for every job you apply to is even harder. This
+                app exists so you can load your full career history once, paste a job description,
+                let AI reshape your bullets and summary to match, then tweak the result before you
+                export.
+              </p>
+              <p className="text-muted-foreground">
+                The exported Word document uses clean, structured formatting designed to be parsed
+                correctly by most applicant tracking systems (ATS).
+              </p>
+            </div>
           </div>
 
-          {/* What this app does — left */}
+          {/* Features & tips — left */}
           <Card>
             <CardHeader>
-              <CardTitle>🤖 What this app does</CardTitle>
+              <CardTitle>✨ Features</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm">
-                <li>✏️ Build and edit a CV with a live side-by-side preview</li>
-                <li>
-                  ✨ AI-powered generation of professional summary, cover letter, and bullet points
-                  using Google Gemini
-                </li>
-                <li>📄 Export to DOCX or JSON — import from JSON to pick up where you left off</li>
-                <li>📝 Supports Markdown in text fields for rich formatting</li>
-              </ul>
+            <CardContent className="space-y-3 text-sm">
+              <p>
+                ✏️ <strong>Live side-by-side preview</strong> as you edit. 📝 Markdown support in
+                text fields for rich formatting.
+              </p>
+              <p>
+                📄 Export to <strong>DOCX</strong> or <strong>JSON</strong> — import from JSON to
+                pick up where you left off.
+              </p>
+              <p>
+                📄 Need a PDF? Open the DOCX in Word, Google Docs, or LibreOffice and use{' '}
+                <strong>File → Save as PDF</strong> / <strong>Print → Save as PDF</strong>.
+              </p>
             </CardContent>
           </Card>
 
-          {/* How to best use it — right */}
+          {/* Tips — right */}
           <Card>
             <CardHeader>
-              <CardTitle>🚀 How to best use it</CardTitle>
+              <CardTitle>💡 Tips</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ol className="list-inside list-decimal space-y-2 text-sm">
-                <li>
-                  📋 Paste a <strong>job description</strong> and add your free{' '}
-                  <strong>Gemini API key</strong>
-                </li>
-                <li>👤 Fill in your personal info, experience, and education</li>
-                <li>🤖 Hit &ldquo;Enhance with AI&rdquo; to tailor bullets to the job</li>
-                <li>💾 Export as DOCX for submission, or JSON to save your progress</li>
-                <li>
-                  📄 Need a PDF? Open the DOCX in Word, Google Docs, or LibreOffice and use{' '}
-                  <strong>File → Save as PDF</strong> / <strong>Print → Save as PDF</strong>
-                </li>
-              </ol>
+            <CardContent className="space-y-3 text-sm">
+              <p>
+                👤 Already have a JSON export from a previous session? <strong>Import it</strong> to
+                skip re-entering everything.
+              </p>
+              <p>
+                🔑 You&rsquo;ll need a free <strong>Gemini API key</strong> for the AI features —
+                grab one from Google AI Studio.
+              </p>
+              <p>
+                🤖 After AI enhances your CV, <strong>always review and tweak</strong> the result.
+                You know your career better than any model does.
+              </p>
             </CardContent>
           </Card>
 
@@ -206,26 +220,20 @@ export default function AboutPage() {
             <CardHeader>
               <CardTitle>🔒 Cookies &amp; Data Privacy</CardTitle>
             </CardHeader>
-            <CardContent>
-              <ul className="space-y-2 text-sm">
-                <li>🍪 No cookies are used — at all.</li>
-                <li>
-                  🚫 No data is sent to any server. Gemini API calls go directly from your browser
-                  to Google using your own API key.
-                </li>
-                <li>
-                  💡 The only <code className="rounded bg-muted px-1 text-xs">localStorage</code>{' '}
-                  usage is for the light/dark theme preference.
-                </li>
-                <li>
-                  🧠 CV data lives entirely in browser memory during the session. Nothing is
-                  persisted unless you explicitly export.
-                </li>
-                <li>
-                  🔑 Your Gemini API key is never stored server-side. It only appears in the
-                  exported JSON if you choose to include it.
-                </li>
-              </ul>
+            <CardContent className="space-y-3 text-sm">
+              <p>
+                🍪 No cookies are used — at all. 🚫 No data is sent to any server. Gemini API calls
+                go directly from your browser to Google using your own API key.
+              </p>
+              <p>
+                💡 The only <code className="rounded bg-muted px-1 text-xs">localStorage</code>{' '}
+                usage is for the light/dark theme preference. 🧠 CV data lives entirely in browser
+                memory during the session. Nothing is persisted unless you explicitly export.
+              </p>
+              <p>
+                🔑 Your Gemini API key is never stored server-side. It only appears in the exported
+                JSON if you choose to include it.
+              </p>
             </CardContent>
           </Card>
 
