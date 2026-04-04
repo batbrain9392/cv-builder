@@ -10,19 +10,22 @@ function drawIcon(size, maskable = false) {
   const ctx = canvas.getContext('2d');
   const s = size / 512;
 
+  const primary = '#557c62';
+  const white = '#ffffff';
+
   // Background
   if (maskable) {
-    ctx.fillStyle = '#1c1c1c';
+    ctx.fillStyle = primary;
     ctx.fillRect(0, 0, size, size);
   } else {
-    ctx.fillStyle = '#1c1c1c';
+    ctx.fillStyle = primary;
     ctx.beginPath();
-    ctx.roundRect(0, 0, size, size, 80 * s);
+    ctx.arc(size / 2, size / 2, size / 2, 0, Math.PI * 2);
     ctx.fill();
   }
 
-  const green = '#3dc78c';
-  const bg = '#1c1c1c';
+  const green = white;
+  const bg = primary;
 
   const pw = 220 * s;
   const ph = 270 * s;

@@ -407,7 +407,7 @@ ${markdownTable(
   ],
 )}
 
-The OG image is a 1200×630 composite built by \`scripts/generate-og-image.mjs\`. It launches a Playwright browser against the built app, takes screenshots of the editor form + preview, and composites them onto a branded canvas using the app's dark-mode palette (\`#1c1c1c\`, \`#3dc78c\`, etc.) and Geist font.
+The OG image is a 1200×630 composite built by \`scripts/generate-og-image.mjs\`. It launches a Playwright browser against the built app, takes screenshots of the editor form + preview, and composites them onto a branded canvas using the app's light-mode palette (\`#ffffff\`, \`#557c62\`, etc.) and Geist font.
 
 **If you change:** the color palette (\`src/index.css\` theme tokens), the editor layout (\`CvEditorPage.tsx\`), or the preview styling (\`CvPreview.css\`) — re-run \`npm run generate:og\` to update the social image.
 

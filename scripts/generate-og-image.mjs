@@ -13,14 +13,14 @@ const DOCS = resolve(ROOT, 'docs');
 
 const W = 1200;
 const H = 630;
-const BASE_URL = 'http://localhost:4173/cv-builder/';
+const BASE_URL = 'http://localhost:4173/cv-builder/#/app';
 
-// App dark-mode palette (from src/index.css)
-const BG = '#1c1c1c';
-const FG = '#fafafa';
-const MUTED_FG = '#d4d4d8';
-const PRIMARY = '#3dc78c';
-const MUTED_BG = '#343836';
+// App light-mode palette (from src/index.css)
+const BG = '#ffffff';
+const FG = '#252525';
+const MUTED_FG = '#818181';
+const PRIMARY = '#557c62';
+const MUTED_BG = '#ececec';
 
 GlobalFonts.registerFromPath(
   resolve(ROOT, 'node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2'),
@@ -88,7 +88,10 @@ async function captureScreenshots() {
   const browser = await chromium.launch({ headless: true });
 
   // Mobile screenshots
-  const mobilePage = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  const mobilePage = await browser.newPage({ 
+    viewport: { width: 390, height: 844 },
+    colorScheme: 'light'
+  });
   await mobilePage.goto(BASE_URL, { waitUntil: 'networkidle' });
   await mobilePage.waitForTimeout(500);
   const formShot = await mobilePage.screenshot({ type: 'png' });
@@ -98,7 +101,10 @@ async function captureScreenshots() {
   const previewShot = await mobilePage.screenshot({ type: 'png' });
 
   // Desktop screenshot (form + preview side by side)
-  const desktopPage = await browser.newPage({ viewport: { width: 1440, height: 900 } });
+  const desktopPage = await browser.newPage({ 
+    viewport: { width: 1440, height: 900 },
+    colorScheme: 'light'
+  });
   await desktopPage.goto(BASE_URL, { waitUntil: 'networkidle' });
   await desktopPage.waitForTimeout(500);
   const desktopShot = await desktopPage.screenshot({ type: 'png' });
@@ -197,11 +203,11 @@ function drawRobot(ctx, left, centerY, height) {
 }
 
 // Draw a download-arrow icon (↓ with tray) at the given position.
-function drawDownloadIcon(ctx, x, centerY, size) {
+function drawDownloadIcon(ctx, x, centerY, size, color = PRIMARY) {
   const half = size / 2;
   const lw = Math.max(2, size * 0.14);
   ctx.save();
-  ctx.strokeStyle = PRIMARY;
+  ctx.strokeStyle = color;
   ctx.lineWidth = lw;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
@@ -321,14 +327,14 @@ async function composite(formBuf, previewBuf) {
   const pillW = pillPadX + iconSize + iconGap + pillMetrics.width + pillPadX;
   const pillCenterY = y + pillH / 2;
 
-  ctx.fillStyle = MUTED_BG;
+  ctx.fillStyle = PRIMARY;
   ctx.beginPath();
   ctx.roundRect(TEXT_X, y, pillW, pillH, pillH / 2);
   ctx.fill();
 
-  drawDownloadIcon(ctx, TEXT_X + pillPadX, pillCenterY, iconSize);
+  drawDownloadIcon(ctx, TEXT_X + pillPadX, pillCenterY, iconSize, BG);
 
-  ctx.fillStyle = PRIMARY;
+  ctx.fillStyle = BG;
   ctx.textBaseline = 'middle';
   ctx.fillText(pillLabel, TEXT_X + pillPadX + iconSize + iconGap, pillCenterY);
 
