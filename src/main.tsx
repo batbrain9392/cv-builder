@@ -15,12 +15,10 @@ if (!el) {
   throw new Error('Root element #root not found');
 }
 
-loadDefaultValues().then((defaultValues) => {
-  createRoot(el).render(
-    <StrictMode>
-      <HashRouter>
-        <App defaultValues={defaultValues} />
-      </HashRouter>
-    </StrictMode>,
-  );
-});
+createRoot(el).render(
+  <StrictMode>
+    <HashRouter>
+      <App defaultValues={loadDefaultValues()} />
+    </HashRouter>
+  </StrictMode>,
+);

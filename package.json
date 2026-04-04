@@ -2,6 +2,15 @@
   "name": "cv-builder",
   "private": true,
   "version": "0.0.1",
+  "description": "AI-powered CV and cover letter builder that runs entirely in your browser.",
+  "homepage": "https://batbrain9392.github.io/cv-builder/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/batbrain9392/cv-builder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/batbrain9392/cv-builder/issues"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",

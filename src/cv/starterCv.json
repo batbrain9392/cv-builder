@@ -1,0 +1,61 @@
+{
+  "personalInfo": {
+    "name": "Jane Doe",
+    "title": "Senior Software Engineer",
+    "location": "San Francisco, CA",
+    "email": "jane.doe@example.com",
+    "phone": "+1 555 012 3456",
+    "links": [
+      { "label": "LinkedIn", "url": "https://www.linkedin.com/in/example/" },
+      { "label": "GitHub", "url": "https://github.com/example" }
+    ]
+  },
+  "coverLetterEnabled": false,
+  "coverLetter": "Dear Hiring Manager,\n\nI am writing to express my interest in the [Role] position at [Company]. With over eight years of experience building and scaling web applications, I bring a strong foundation in front-end architecture, cross-functional collaboration, and delivering high-quality software on tight timelines.\n\nIn my current role at Acme Corp, I led a team of four engineers to redesign the customer dashboard, improving page load performance by 40% and increasing user engagement. Previously at Widgets Inc., I built the real-time notification system that now serves two million daily active users.\n\nI would welcome the opportunity to discuss how my background aligns with your team's goals.\n\nJane Doe",
+  "summary": "8+ years of experience building performant, accessible web applications. Skilled in leading small teams, owning features end-to-end, and collaborating across product, design, and backend.\n\n- Core: TypeScript, React, Next.js, Node.js, HTML, CSS\n- Testing: Jest, Playwright, React Testing Library\n- Tooling: Git, Docker, CI/CD, Vite, Turborepo",
+  "experience": [
+    {
+      "role": "Senior Software Engineer",
+      "company": "Acme Corp",
+      "url": "https://www.example.com/",
+      "startDate": "Mar 2021",
+      "endDate": "Present",
+      "location": "San Francisco, CA",
+      "bullets": [
+        "Led a four-person team to redesign the customer-facing dashboard, reducing average page load time by 40% through code-splitting and caching improvements.",
+        "Architected a component library adopted by three product teams, cutting UI development time across the organisation.",
+        "Introduced end-to-end testing with Playwright, bringing release-blocking bug rate down by 60%."
+      ],
+      "tagsLabel": "Tech",
+      "tags": ["React", "TypeScript", "Next.js", "Playwright", "Tailwind CSS"]
+    }
+  ],
+  "education": [
+    {
+      "degree": "B.Sc. Computer Science",
+      "institution": "State University",
+      "institutionUrl": "https://www.example.com/",
+      "startYear": "2012",
+      "endYear": "2016",
+      "location": "Austin, TX",
+      "bullets": [
+        "Graduated magna cum laude. Coursework in algorithms, distributed systems, and human-computer interaction."
+      ]
+    }
+  ],
+  "others": [
+    {
+      "role": "AWS Certified Solutions Architect",
+      "company": "Amazon Web Services",
+      "url": "https://www.example.com/",
+      "startDate": "Jun 2023",
+      "endDate": "",
+      "location": "Online",
+      "bullets": [
+        "Earned the Associate-level certification covering compute, storage, networking, and security best practices on AWS."
+      ],
+      "tagsLabel": "",
+      "tags": []
+    }
+  ]
+}

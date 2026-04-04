@@ -23,6 +23,7 @@ interface CoverLetterFieldsProps {
   register: UseFormRegister<CvFormData>;
   control: Control<CvFormData>;
   errors: FieldErrors<CvFormData>;
+  defaultExpanded?: boolean;
   generating: boolean;
   generatedText: AiResult<string> | null;
   onGenerate: () => void;
@@ -35,6 +36,7 @@ export function CoverLetterFields({
   register,
   control,
   errors,
+  defaultExpanded = false,
   generating,
   generatedText,
   onGenerate,
@@ -42,9 +44,8 @@ export function CoverLetterFields({
   onCopy,
   onDismiss,
 }: CoverLetterFieldsProps) {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(defaultExpanded);
   const [aiOpen, setAiOpen] = useState(false);
-  const enabled = useWatch({ control, name: 'coverLetterEnabled' });
   const apiKey = useWatch({ control, name: 'aiApiKey' });
   const jdText = useWatch({ control, name: 'jobDescriptionText' });
   const canGenerate = Boolean(apiKey) && Boolean(jdText);
@@ -91,126 +92,120 @@ export function CoverLetterFields({
                 </label>
               </Field>
 
-              {enabled && (
-                <>
-                  <Field data-invalid={errors.coverLetter ? true : undefined}>
-                    <FieldLabel htmlFor="coverLetter" className="sr-only">
-                      Cover Letter
-                    </FieldLabel>
-                    <Textarea
-                      id="coverLetter"
-                      {...register('coverLetter')}
-                      rows={10}
-                      aria-invalid={errors.coverLetter ? true : undefined}
-                      aria-describedby={
-                        'coverLetter-hint' + (errors.coverLetter ? ' coverLetter-error' : '')
-                      }
+              <Field data-invalid={errors.coverLetter ? true : undefined}>
+                <FieldLabel htmlFor="coverLetter" className="sr-only">
+                  Cover Letter
+                </FieldLabel>
+                <Textarea
+                  id="coverLetter"
+                  {...register('coverLetter')}
+                  rows={10}
+                  aria-invalid={errors.coverLetter ? true : undefined}
+                  aria-describedby={
+                    'coverLetter-hint' + (errors.coverLetter ? ' coverLetter-error' : '')
+                  }
+                />
+                <MarkdownHint id="coverLetter-hint">
+                  Write manually or generate with AI below.
+                </MarkdownHint>
+                {errors.coverLetter && (
+                  <FieldError id="coverLetter-error" errors={[errors.coverLetter]} />
+                )}
+              </Field>
+
+              <Collapsible open={aiOpen} onOpenChange={setAiOpen}>
+                <CollapsibleTrigger
+                  render={
+                    <button
+                      type="button"
+                      aria-label="Enhance cover letter with AI"
+                      className="flex items-center hover:opacity-80"
                     />
-                    <MarkdownHint id="coverLetter-hint">
-                      Write manually or generate with AI below.
-                    </MarkdownHint>
-                    {errors.coverLetter && (
-                      <FieldError id="coverLetter-error" errors={[errors.coverLetter]} />
-                    )}
+                  }
+                >
+                  <Badge variant="secondary" className="h-auto gap-1 text-xs [&>svg]:!size-3.5">
+                    <GeminiIcon className="size-3.5" />
+                    <ChevronDownIcon
+                      className={'size-3.5 transition-transform' + (aiOpen ? ' rotate-180' : '')}
+                    />
+                    Enhance with AI
+                  </Badge>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent className="space-y-3 pt-2">
+                  <Field>
+                    <FieldLabel htmlFor="aiCoverLetterPrompt">AI prompt</FieldLabel>
+                    <Textarea
+                      id="aiCoverLetterPrompt"
+                      {...register('aiCoverLetterPrompt')}
+                      rows={4}
+                      className="text-xs"
+                      placeholder="Write a concise, professional cover letter tailored to the job description. One page max."
+                    />
                   </Field>
 
-                  <Collapsible open={aiOpen} onOpenChange={setAiOpen}>
-                    <CollapsibleTrigger
-                      render={
-                        <button
-                          type="button"
-                          aria-label="Enhance cover letter with AI"
-                          className="flex items-center hover:opacity-80"
-                        />
-                      }
+                  <div className="flex items-center gap-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      disabled={!canGenerate || generating}
+                      onClick={onGenerate}
+                      aria-busy={generating || undefined}
                     >
-                      <Badge variant="secondary" className="h-auto gap-1 text-xs [&>svg]:!size-3.5">
-                        <GeminiIcon className="size-3.5" />
-                        <ChevronDownIcon
-                          className={
-                            'size-3.5 transition-transform' + (aiOpen ? ' rotate-180' : '')
-                          }
-                        />
-                        Enhance with AI
-                      </Badge>
-                    </CollapsibleTrigger>
+                      {generating ? (
+                        <Loader2Icon className="animate-spin" data-icon="inline-start" />
+                      ) : (
+                        <GeminiIcon className="size-4" data-icon="inline-start" />
+                      )}
+                      {generating ? 'Generating…' : 'Generate with AI'}
+                    </Button>
+                    {!canGenerate && (
+                      <span className="text-xs text-muted-foreground">
+                        Requires API key and job description
+                      </span>
+                    )}
+                  </div>
 
-                    <CollapsibleContent className="space-y-3 pt-2">
-                      <Field>
-                        <FieldLabel htmlFor="aiCoverLetterPrompt">AI prompt</FieldLabel>
-                        <Textarea
-                          id="aiCoverLetterPrompt"
-                          {...register('aiCoverLetterPrompt')}
-                          rows={4}
-                          className="text-xs"
-                          placeholder="Write a concise, professional cover letter tailored to the job description. One page max."
-                        />
-                      </Field>
-
-                      <div className="flex items-center gap-2">
-                        <Button
-                          type="button"
-                          variant="secondary"
-                          size="sm"
-                          disabled={!canGenerate || generating}
-                          onClick={onGenerate}
-                          aria-busy={generating || undefined}
-                        >
-                          {generating ? (
-                            <Loader2Icon className="animate-spin" data-icon="inline-start" />
-                          ) : (
-                            <GeminiIcon className="size-4" data-icon="inline-start" />
+                  {generatedText && (
+                    <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-medium text-muted-foreground">
+                          AI-generated cover letter
+                          {generatedText.reasoning && (
+                            <span className="block font-normal">{generatedText.reasoning}</span>
                           )}
-                          {generating ? 'Generating…' : 'Generate with AI'}
-                        </Button>
-                        {!canGenerate && (
-                          <span className="text-xs text-muted-foreground">
-                            Requires API key and job description
-                          </span>
-                        )}
-                      </div>
-
-                      {generatedText && (
-                        <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-medium text-muted-foreground">
-                              AI-generated cover letter
-                              {generatedText.reasoning && (
-                                <span className="block font-normal">{generatedText.reasoning}</span>
-                              )}
-                            </span>
-                            <div className="flex gap-1">
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon-xs"
-                                onClick={() => onCopy(generatedText.content)}
-                                aria-label="Copy to clipboard"
-                              >
-                                <ClipboardIcon />
-                              </Button>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="icon-xs"
-                                onClick={onDismiss}
-                                aria-label="Dismiss"
-                              >
-                                <XIcon />
-                              </Button>
-                            </div>
-                          </div>
-                          <BlockMarkdown text={generatedText.content} className="text-sm" />
-                          <Button type="button" variant="default" size="sm" onClick={onUse}>
-                            <CheckIcon data-icon="inline-start" />
-                            Use this cover letter
+                        </span>
+                        <div className="flex gap-1">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-xs"
+                            onClick={() => onCopy(generatedText.content)}
+                            aria-label="Copy to clipboard"
+                          >
+                            <ClipboardIcon />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon-xs"
+                            onClick={onDismiss}
+                            aria-label="Dismiss"
+                          >
+                            <XIcon />
                           </Button>
                         </div>
-                      )}
-                    </CollapsibleContent>
-                  </Collapsible>
-                </>
-              )}
+                      </div>
+                      <BlockMarkdown text={generatedText.content} className="text-sm" />
+                      <Button type="button" variant="default" size="sm" onClick={onUse}>
+                        <CheckIcon data-icon="inline-start" />
+                        Use this cover letter
+                      </Button>
+                    </div>
+                  )}
+                </CollapsibleContent>
+              </Collapsible>
             </FieldGroup>
           </CardContent>
         </CollapsibleContent>

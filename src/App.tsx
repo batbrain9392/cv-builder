@@ -435,6 +435,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               register={register}
               control={control}
               errors={errors}
+              defaultExpanded={defaultValues.coverLetterEnabled}
               generating={generatingCoverLetter}
               generatedText={generatedCoverLetter}
               onGenerate={onGenerateCoverLetter}

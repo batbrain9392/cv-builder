@@ -6,6 +6,7 @@ import {
   DEFAULT_HIGHLIGHTS_PROMPT,
   DEFAULT_SUMMARY_PROMPT,
 } from './cvFormSchema.ts';
+import starterCv from './starterCv.json';
 
 export const AI_FIELD_DEFAULTS: Partial<CvFormData> = {
   aiApiKey: '',
@@ -58,15 +59,11 @@ const EMPTY_DEFAULTS: CvFormData = {
   others: [],
 };
 
-export async function loadDefaultValues(): Promise<CvFormData> {
-  if (import.meta.env.DEV) {
-    try {
-      const path = '../../data/seed.json';
-      const seed = await import(/* @vite-ignore */ path);
-      return cvFormSchema.parse(backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...seed.default }));
-    } catch {
-      // seed.json is optional — only used for local development
-    }
+export function loadDefaultValues(): CvFormData {
+  try {
+    const raw = Object.fromEntries(Object.entries(starterCv));
+    return cvFormSchema.parse(backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...raw }));
+  } catch {
+    return EMPTY_DEFAULTS;
   }
-  return EMPTY_DEFAULTS;
 }
