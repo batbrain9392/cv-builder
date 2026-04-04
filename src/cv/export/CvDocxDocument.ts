@@ -21,6 +21,59 @@ const FONT = CV_FONT.family;
 
 type Docx = typeof import('docx');
 
+interface InlineSegment {
+  text: string;
+  bold?: boolean;
+  italic?: boolean;
+}
+
+/**
+ * Parses inline markdown bold/italic into segments.
+ * Supports **bold**, *italic*, and ***bold+italic***.
+ * Nested or overlapping markers beyond these are passed through as-is.
+ */
+export function parseInlineSegments(input: string): InlineSegment[] {
+  const segments: InlineSegment[] = [];
+  const regex = /(\*{1,3})((?:(?!\1).)+?)\1/g;
+  let lastIndex = 0;
+  let match;
+
+  while ((match = regex.exec(input)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ text: input.slice(lastIndex, match.index) });
+    }
+    const stars = match[1].length;
+    segments.push({
+      text: match[2],
+      bold: stars >= 2,
+      italic: stars === 1 || stars === 3,
+    });
+    lastIndex = regex.lastIndex;
+  }
+
+  if (lastIndex < input.length) {
+    segments.push({ text: input.slice(lastIndex) });
+  }
+
+  return segments.length > 0 ? segments : [{ text: input }];
+}
+
+function inlineTextRuns(
+  { TextRun }: Docx,
+  text: string,
+  base: { size: number; font: string; color?: string },
+): InstanceType<Docx['TextRun']>[] {
+  return parseInlineSegments(text).map(
+    (seg) =>
+      new TextRun({
+        text: seg.text,
+        bold: seg.bold || undefined,
+        italics: seg.italic || undefined,
+        ...base,
+      }),
+  );
+}
+
 function headerLine({ Paragraph, TextRun }: Docx, info: CvFormData['personalInfo']) {
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
@@ -138,17 +191,11 @@ function entryMeta({ Paragraph, TextRun }: Docx, text: string) {
   });
 }
 
-function bulletParagraph({ Paragraph, TextRun }: Docx, text: string) {
-  return new Paragraph({
+function bulletParagraph(docx: Docx, text: string) {
+  return new docx.Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
     bullet: { level: 0 },
-    children: [
-      new TextRun({
-        text,
-        size: CV_SIZE.body * PT,
-        font: FONT,
-      }),
-    ],
+    children: inlineTextRuns(docx, text, { size: CV_SIZE.body * PT, font: FONT }),
   });
 }
 
@@ -169,13 +216,12 @@ function tagsBullet({ Paragraph, TextRun }: Docx, label: string | undefined, ite
 }
 
 function summaryParagraphs(docx: Docx, text: string) {
-  const { Paragraph, TextRun } = docx;
   return text.split('\n').map((line, i, arr) => {
     const isLast = i === arr.length - 1;
-    return new Paragraph({
+    return new docx.Paragraph({
       spacing: { after: isLast ? CV_SPACING_PT.md * TWIP : 0 },
       children: line.trim()
-        ? [new TextRun({ text: line, size: CV_SIZE.body * PT, font: FONT })]
+        ? inlineTextRuns(docx, line, { size: CV_SIZE.body * PT, font: FONT })
         : [],
     });
   });

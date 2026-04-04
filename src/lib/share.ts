@@ -16,6 +16,6 @@ export async function shareApp(): Promise<void> {
     return;
   }
 
-  await navigator.clipboard.writeText(SHARE_DATA.url!);
+  await navigator.clipboard.writeText(SHARE_DATA.url ?? '');
   toast.success('Link copied to clipboard.');
 }

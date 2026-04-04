@@ -25,6 +25,8 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }],
+      '@typescript-eslint/no-non-null-assertion': 'error',
+      eqeqeq: ['error', 'always'],
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
       'perfectionist/sort-imports': [
         'error',

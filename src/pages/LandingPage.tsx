@@ -6,6 +6,7 @@ import {
   ExternalLinkIcon,
   FileTextIcon,
   GraduationCapIcon,
+  PrinterIcon,
   KeyRoundIcon,
   LayoutListIcon,
   LockIcon,
@@ -88,6 +89,11 @@ const FEATURES = [
     icon: FileTextIcon,
     title: 'ATS-safe DOCX export',
     desc: 'A clean, single-column Word document with structured headings that parsers read correctly.',
+  },
+  {
+    icon: PrinterIcon,
+    title: 'Pixel-perfect PDF',
+    desc: 'Open the DOCX in Word or Google Docs and save as PDF — better results than any generator.',
   },
   {
     icon: MonitorSmartphoneIcon,
@@ -190,8 +196,15 @@ function AtsExplainerSection() {
       <div className="mx-auto mb-10 max-w-2xl space-y-3 text-center text-sm text-muted-foreground sm:text-base">
         <p>
           Before a recruiter reads your CV, software called an{' '}
-          <strong className="text-foreground">Applicant Tracking System (ATS)</strong> parses it. It
-          extracts text, matches keywords, and scores you against the job description.
+          <a
+            href="https://en.wikipedia.org/wiki/Applicant_tracking_system"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-foreground underline decoration-primary/40 underline-offset-2 hover:decoration-primary"
+          >
+            Applicant Tracking System (ATS)
+          </a>{' '}
+          parses it. It extracts text, matches keywords, and scores you against the job description.
         </p>
         <p>
           Columns, tables, images, custom fonts, and fancy layouts? The parser often can&rsquo;t
@@ -205,10 +218,18 @@ function AtsExplainerSection() {
             What ATS sees from a fancy CV
           </p>
           <ul className="space-y-1.5 text-sm text-muted-foreground">
-            <li>❌ Two-column layout &rarr; text merged into gibberish</li>
-            <li>❌ Icons for phone/email &rarr; missing contact info</li>
-            <li>❌ Skill bars &amp; charts &rarr; invisible to the parser</li>
-            <li>❌ Header/footer text &rarr; often skipped entirely</li>
+            <li className="flex gap-2">
+              ❌ <span>Two-column layout &rarr; text merged into gibberish</span>
+            </li>
+            <li className="flex gap-2">
+              ❌ <span>Icons for phone/email &rarr; missing contact info</span>
+            </li>
+            <li className="flex gap-2">
+              ❌ <span>Skill bars &amp; charts &rarr; invisible to the parser</span>
+            </li>
+            <li className="flex gap-2">
+              ❌ <span>Header/footer text &rarr; often skipped entirely</span>
+            </li>
           </ul>
         </div>
 
@@ -217,10 +238,18 @@ function AtsExplainerSection() {
             What ATS reads from BioBot&rsquo;s export
           </p>
           <ul className="space-y-1.5 text-sm text-muted-foreground">
-            <li>✅ Single-column, structured headings</li>
-            <li>✅ Plain-text contact details at the top</li>
-            <li>✅ Keywords in bullet points, easy to score</li>
-            <li>✅ Clean DOCX that every parser handles</li>
+            <li className="flex gap-2">
+              ✅ <span>Single-column, structured headings</span>
+            </li>
+            <li className="flex gap-2">
+              ✅ <span>Plain-text contact details at the top</span>
+            </li>
+            <li className="flex gap-2">
+              ✅ <span>Keywords in bullet points, easy to score</span>
+            </li>
+            <li className="flex gap-2">
+              ✅ <span>Clean DOCX that every parser handles</span>
+            </li>
           </ul>
         </div>
       </div>
@@ -422,7 +451,8 @@ function BehindTheScenesSection() {
           </CardHeader>
           <CardContent>
             <p className="mb-4 text-xs text-muted-foreground">
-              Code written in <strong>Cursor</strong> with <strong>Claude Opus</strong>. In-app AI
+              This entire app was vibe-coded — built by a human giving directions to AI agents. Code
+              written in <strong>Cursor</strong> with <strong>Claude Opus</strong>. In-app AI
               powered by <strong>Google Gemini</strong> (gemini-2.5-flash).
             </p>
             <div className="grid grid-cols-3 gap-3">
@@ -598,13 +628,13 @@ function FloatingCta({ visible }: { visible: boolean }) {
   return (
     <Link
       to="/app"
-      aria-label="Build your CV"
       className={
-        'fixed bottom-6 right-6 z-50 inline-flex size-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-300 hover:scale-110 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none' +
+        'fixed bottom-6 right-6 z-50 inline-flex h-10 items-center gap-1.5 rounded-full bg-primary pl-4 pr-3 text-sm font-medium text-primary-foreground shadow-lg transition-all duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none active:scale-100' +
         (visible ? ' scale-100 opacity-100' : ' pointer-events-none scale-75 opacity-0')
       }
     >
-      <ArrowRightIcon className="size-6" />
+      Build your CV
+      <ArrowRightIcon className="size-4" />
     </Link>
   );
 }
@@ -656,29 +686,43 @@ function LandingFooter({ ref }: { ref: React.RefObject<HTMLElement | null> }) {
           <ArrowRightIcon className="size-4" />
         </Link>
 
-        <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-xs text-primary-foreground/70">
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-primary-foreground/70">
           <a
             href={GITHUB_REPO}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary-foreground"
+            className="inline-flex items-center gap-1.5 hover:text-primary-foreground"
           >
+            <svg className="size-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M12 .3a12 12 0 0 0-3.8 23.38c.6.12.83-.26.83-.57L9 21.07c-3.34.72-4.04-1.61-4.04-1.61-.55-1.39-1.34-1.76-1.34-1.76-1.08-.74.08-.73.08-.73 1.2.09 1.84 1.24 1.84 1.24 1.07 1.83 2.8 1.3 3.49 1 .1-.78.42-1.3.76-1.6-2.67-.3-5.47-1.33-5.47-5.93 0-1.31.47-2.38 1.24-3.22-.14-.3-.54-1.52.1-3.18 0 0 1-.32 3.3 1.23a11.5 11.5 0 0 1 6.02 0c2.28-1.55 3.29-1.23 3.29-1.23.64 1.66.24 2.88.12 3.18a4.65 4.65 0 0 1 1.23 3.22c0 4.61-2.8 5.63-5.48 5.92.42.37.81 1.1.81 2.22l-.01 3.29c0 .31.2.69.82.57A12 12 0 0 0 12 .3" />
+            </svg>
             GitHub
           </a>
-          <span aria-hidden="true">·</span>
           <a
             href={LINKEDIN_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:text-primary-foreground"
+            className="inline-flex items-center gap-1.5 hover:text-primary-foreground"
           >
+            <svg className="size-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.41v1.56h.05a3.74 3.74 0 0 1 3.37-1.85c3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13ZM7.12 20.45H3.56V9h3.56v11.45ZM22.22 0H1.77A1.75 1.75 0 0 0 0 1.73v20.54A1.75 1.75 0 0 0 1.77 24h20.45A1.75 1.75 0 0 0 24 22.27V1.73A1.75 1.75 0 0 0 22.22 0Z" />
+            </svg>
             LinkedIn
           </a>
         </div>
 
-        <p className="text-xs text-primary-foreground/50">
-          Made by Debmallya Bhattacharya &middot; {new Date().getFullYear()}
-        </p>
+        <div className="flex items-center gap-2 text-xs text-primary-foreground/50">
+          <img
+            src={AVATAR_URL}
+            alt=""
+            aria-hidden="true"
+            className="size-4 rounded-full ring-1 ring-primary-foreground/20"
+            loading="lazy"
+          />
+          <span>Made by Debmallya Bhattacharya &middot; {new Date().getFullYear()}</span>
+        </div>
+
+        <p className="text-[0.65rem] text-primary-foreground/40">100% vibe-coded with AI ✨</p>
       </div>
     </footer>
   );

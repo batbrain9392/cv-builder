@@ -68,7 +68,7 @@ The same values live in `package.json` as `description` and `homepage` for tooli
 
 To enable on a fresh fork: go to **Settings > Pages** and set the source to **GitHub Actions**.
 
-The app is served under a `/cv-builder/` subpath and uses `HashRouter` for client-side routing, so in-app URLs look like `/#/about`.
+The app is served under a `/cv-builder/` subpath and uses `HashRouter` for client-side routing, so in-app URLs look like `/#/app`.
 
 ## 💻 Local development
 
