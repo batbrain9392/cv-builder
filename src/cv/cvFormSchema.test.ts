@@ -98,16 +98,30 @@ describe('cvFormSchema', () => {
     expect(cvFormSchema.safeParse(withEmpty).success).toBe(true);
   });
 
-  it('rejects empty bullets array in experience', () => {
+  it('accepts empty bullets array in experience', () => {
     const data = makeValidData({
       experience: [{ ...VALID_EXPERIENCE, bullets: [] }],
     });
-    expect(cvFormSchema.safeParse(data).success).toBe(false);
+    expect(cvFormSchema.safeParse(data).success).toBe(true);
   });
 
-  it('rejects summary shorter than 10 characters', () => {
-    const data = makeValidData({ summary: 'Short' });
-    expect(cvFormSchema.safeParse(data).success).toBe(false);
+  it('accepts empty summary', () => {
+    const data = makeValidData({ summary: '' });
+    expect(cvFormSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('accepts optional personal info fields as empty strings', () => {
+    const data = makeValidData({
+      personalInfo: { ...VALID_PERSONAL_INFO, title: '', location: '', phone: '' },
+    });
+    expect(cvFormSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('accepts experience entry with empty location', () => {
+    const data = makeValidData({
+      experience: [{ ...VALID_EXPERIENCE, location: '' }],
+    });
+    expect(cvFormSchema.safeParse(data).success).toBe(true);
   });
 
   it('accepts optional fields as empty or missing', () => {

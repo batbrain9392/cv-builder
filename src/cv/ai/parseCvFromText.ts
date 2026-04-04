@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
+import { sortCvSections } from '../cvFormatters.ts';
 import { cvFormSchema } from '../cvFormSchema.ts';
 import { AI_FIELD_DEFAULTS, backfillEntryPrompts } from '../loadDefaultValues.ts';
 
@@ -61,20 +62,23 @@ const EXAMPLE_STRUCTURE = `{
   ]
 }`;
 
-const SYSTEM_PROMPT = `You are an expert CV/resume parser. Given raw text from a CV, extract structured data and return ONLY valid JSON matching the exact schema below.
+const SYSTEM_PROMPT = `You are an expert CV/resume parser. ATS COMPATIBILITY IS THE PRIMARY OBJECTIVE — preserve the original structure and content faithfully. Given raw text from a CV, extract structured data and return ONLY valid JSON matching the exact schema below.
 
 TARGET JSON STRUCTURE (follow this exactly):
 ${EXAMPLE_STRUCTURE}
 
 RULES:
-- "experience" is for work/employment history. Each entry needs: role, company, url (default ""), startDate, endDate (optional, default ""), location, bullets (array of strings, at least one), tagsLabel (optional, default ""), tags (optional, default []).
-- "education" is for degrees/academic qualifications. Each entry needs: degree, institution, institutionUrl (default ""), startYear, endYear (optional, default ""), location, bullets (array of strings).
+- Match the exact JSON format, data types, and array structures shown in the example above.
+- "personalInfo": name and email are required. title, location, and phone are optional (default "").
+- "experience" is for work/employment history. Each entry needs: role, company, startDate. Optional (default "" or []): url, endDate, location, bullets, tagsLabel, tags.
+- "education" is for degrees/academic qualifications. Each entry needs: degree, institution, startYear. Optional (default "" or []): institutionUrl, endYear, location, bullets.
 - "others" is for everything else: certifications, projects, volunteer work, skills sections, publications, awards. Use the same shape as experience entries. For skills sections, use role="Skills", company="" as the section label.
 - "url", "institutionUrl" fields: set to "" unless a URL is explicitly present in the text. Never invent URLs.
 - Preserve dates exactly as written in the source text. For education, use year strings only (e.g. "2012").
-- "summary": extract or synthesize a professional summary. If none exists, write a brief one from the overall CV content.
+- "summary": extract a professional summary. If none exists in the source text, leave as "".
 - "personalInfo.links": extract LinkedIn, GitHub, portfolio, or other profile URLs if present. Each link needs a "label" and a "url".
-- Every "bullets" array must have at least one entry. If a section has no bullet points, create one from the available description text.
+- Do not invent claims, metrics, or information not present in the source text. Extract faithfully. If information for an optional field is missing, leave it blank ("" or []).
+- Sort entries within each section (experience, education, others) by start date descending — most recent first. This is the standard reverse chronological order expected by ATS systems.
 - Return ONLY the JSON object. No markdown fences, no explanation.`;
 
 export interface ParseCvResult {
@@ -172,7 +176,7 @@ export async function parseCvFromText(apiKey: string, rawText: string): Promise<
 
   const strict = cvFormSchema.safeParse(withDefaults);
   if (strict.success) {
-    return { data: strict.data, issues: [] };
+    return { data: sortCvSections(strict.data), issues: [] };
   }
 
   const issues = buildIssuesFromZodError(strict.error);
@@ -204,5 +208,5 @@ export async function parseCvFromText(apiKey: string, rawText: string): Promise<
     others: relaxed.data.others,
   };
 
-  return { data: typed, issues };
+  return { data: sortCvSections(typed), issues };
 }

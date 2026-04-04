@@ -28,7 +28,7 @@ export function useAiGeneration(
 
   const onGenerateSummary = async () => {
     const values = getValues();
-    if (!values.aiApiKey || !values.jobDescriptionText) return;
+    if (!values.aiApiKey) return;
     setGeneratingSummary(true);
     try {
       const result = await generateSummary(
@@ -64,7 +64,7 @@ export function useAiGeneration(
 
   const onGenerateCoverLetter = async () => {
     const values = getValues();
-    if (!values.aiApiKey || !values.jobDescriptionText) return;
+    if (!values.aiApiKey) return;
     setGeneratingCoverLetter(true);
     try {
       const result = await generateCoverLetter(
@@ -100,7 +100,7 @@ export function useAiGeneration(
   const onGenerateHighlights = useCallback(
     async (path: string) => {
       const values = getValues();
-      if (!values.aiApiKey || !values.jobDescriptionText) return;
+      if (!values.aiApiKey) return;
 
       setHighlightsAi((prev) => ({ ...prev, [path]: { generating: true, result: null } }));
       try {

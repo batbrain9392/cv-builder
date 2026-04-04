@@ -74,29 +74,37 @@ function inlineTextRuns(
   );
 }
 
-function headerLine({ Paragraph, TextRun }: Docx, info: CvFormData['personalInfo']) {
-  return new Paragraph({
-    spacing: { after: CV_SPACING_PT.sm * TWIP },
-    children: [
-      new TextRun({
-        text: info.name,
-        bold: true,
-        size: CV_SIZE.heading * PT,
-        font: FONT,
+function headerParagraphs({ Paragraph, TextRun }: Docx, info: CvFormData['personalInfo']) {
+  const paragraphs = [
+    new Paragraph({
+      spacing: { after: info.title ? 0 : CV_SPACING_PT.sm * TWIP },
+      children: [
+        new TextRun({
+          text: info.name,
+          size: CV_SIZE.heading * PT,
+          font: FONT,
+        }),
+      ],
+    }),
+  ];
+
+  if (info.title) {
+    paragraphs.push(
+      new Paragraph({
+        spacing: { after: CV_SPACING_PT.sm * TWIP },
+        children: [
+          new TextRun({
+            text: info.title,
+            bold: true,
+            size: CV_SIZE.title * PT,
+            font: FONT,
+          }),
+        ],
       }),
-      new TextRun({
-        text: '  \u2014  ',
-        size: CV_SIZE.title * PT,
-        font: FONT,
-      }),
-      new TextRun({
-        text: info.title,
-        bold: true,
-        size: CV_SIZE.title * PT,
-        font: FONT,
-      }),
-    ],
-  });
+    );
+  }
+
+  return paragraphs;
 }
 
 function contactLines({ Paragraph, TextRun }: Docx, info: CvFormData['personalInfo']) {
@@ -281,7 +289,7 @@ function createCvDocx(docx: Docx, data: CvFormData) {
     sections.push({
       properties: pageProperties,
       children: [
-        headerLine(docx, data.personalInfo),
+        ...headerParagraphs(docx, data.personalInfo),
         ...contactLines(docx, data.personalInfo),
         ...bodyParagraphs(docx, coverText),
       ],
@@ -289,11 +297,12 @@ function createCvDocx(docx: Docx, data: CvFormData) {
   }
 
   const cvChildren = [
-    headerLine(docx, data.personalInfo),
+    ...headerParagraphs(docx, data.personalInfo),
     ...contactLines(docx, data.personalInfo),
 
-    sectionHeading(docx, 'Professional Summary'),
-    ...summaryParagraphs(docx, data.summary),
+    ...(data.summary.trim()
+      ? [sectionHeading(docx, 'Professional Summary'), ...summaryParagraphs(docx, data.summary)]
+      : []),
 
     sectionHeading(docx, 'Work Experience'),
     ...data.experience.flatMap((exp) =>

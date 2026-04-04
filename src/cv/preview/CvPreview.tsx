@@ -15,11 +15,8 @@ interface HeaderProps {
 function Header({ name, title, contactLine, linksLine }: HeaderProps) {
   return (
     <header className="cv-preview-header">
-      <h1 className="cv-preview-header-line1">
-        <span className="cv-preview-name">{name}</span>
-        <span className="cv-preview-header-sep">{' \u2014 '}</span>
-        <span className="cv-preview-title">{title}</span>
-      </h1>
+      <h1 className="cv-preview-name">{name}</h1>
+      {title && <p className="cv-preview-title">{title}</p>}
       <address className="cv-preview-contact">{contactLine}</address>
       {linksLine && <address className="cv-preview-contact">{linksLine}</address>}
     </header>
@@ -108,8 +105,12 @@ export function CvPreview({ data }: CvPreviewProps) {
           linksLine={formatLinksLine(data.personalInfo.links)}
         />
 
-        <SectionHeading>Professional Summary</SectionHeading>
-        <BlockMarkdown text={data.summary} className="cv-preview-summary" />
+        {data.summary.trim() && (
+          <>
+            <SectionHeading>Professional Summary</SectionHeading>
+            <BlockMarkdown text={data.summary} className="cv-preview-summary" />
+          </>
+        )}
 
         <SectionHeading>Work Experience</SectionHeading>
         {data.experience.map((exp, i) => (

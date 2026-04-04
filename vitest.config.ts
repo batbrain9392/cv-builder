@@ -8,6 +8,9 @@ export default defineConfig({
   test: {
     projects: [
       {
+        resolve: {
+          alias: { '@': path.resolve(__dirname, './src') },
+        },
         test: {
           name: 'unit',
           environment: 'node',

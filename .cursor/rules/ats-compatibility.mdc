@@ -1,0 +1,34 @@
+---
+description: ATS compatibility is the primary objective of this app. Enforced when working on AI prompts, CV generation, export, preview, or any file that touches CV content.
+globs: src/cv/**
+---
+# ATS Compatibility — Primary Objective
+
+Producing an ATS-compatible CV is the single most important goal of this project. Every change to CV-related code must be evaluated against this constraint first.
+
+## What ATS compatibility means here
+
+- **Plain text structure.** No tables, multi-column layouts, icons, images, or graphics in the CV output. ATS systems parse top-to-bottom, single-column text.
+- **Clean formatting.** Simple headings, bullet lists, and short paragraphs. No exotic Unicode characters, decorative symbols, or invisible formatting.
+- **Standard section names.** Experience, Education, Skills, Summary — not creative alternatives that ATS parsers won't recognize.
+- **Reverse chronological order.** Items within each section (experience, education, others) must be sorted by start date descending — most recent first. This is the standard ATS expectation. The user can manually reorder entries in the form, but all AI-generated output, imports, and defaults should produce reverse chronological order.
+- **Honest content.** No fabricated metrics, invented claims, or company-specific jargon that the user didn't provide.
+
+## Rules for AI-generated content
+
+- AI improves wording within the existing CV structure. It does not redesign, reorder, or restructure the CV.
+- AI must not add or remove sections unless the user explicitly asks and confirms.
+- AI must not invent information absent from the user's source data.
+- The `ATS_CONSTRAINT` in `generateWithAi.ts` is appended to every Gemini call. Do not weaken or remove it.
+- Default prompts in `cvFormSchema.ts` include ATS-first language. Preserve this when editing prompts.
+
+## Rules for export and preview
+
+- DOCX export must use clean, structured formatting (single column, standard fonts, no floating elements).
+- Preview rendering should reflect what the DOCX output will look like — no visual-only flourishes that won't survive export.
+
+## When making changes
+
+- Before modifying any AI prompt, export format, or CV structure: ask whether the change could break ATS parsing.
+- If a proposed change conflicts with ATS compatibility, flag it and do not proceed without explicit user confirmation.
+- When in doubt, preserve the simpler, more parseable option.

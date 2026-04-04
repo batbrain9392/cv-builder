@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 
 import type { CvFormData } from './cvFormSchema.ts';
 
+import { sortCvSections } from './cvFormatters.ts';
 import { cvFormSchema } from './cvFormSchema.ts';
 import { downloadBlob } from './downloadBlob.ts';
 import { createCvDocxBlob } from './export/CvDocxDocument.ts';
@@ -16,8 +17,9 @@ export function useCvExport(reset: UseFormReset<CvFormData>, onExported?: () => 
   const pendingExportData = useRef<CvFormData | null>(null);
 
   const doExportJson = (data: CvFormData) => {
+    const sorted = sortCvSections(data);
     downloadBlob(
-      new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
+      new Blob([JSON.stringify(sorted, null, 2)], { type: 'application/json' }),
       'cv.json',
     );
     toast.success('JSON exported.');
@@ -53,7 +55,8 @@ export function useCvExport(reset: UseFormReset<CvFormData>, onExported?: () => 
     setExporting(true);
     const minWait = new Promise((r) => setTimeout(r, 400));
     try {
-      const [blob] = await Promise.all([createCvDocxBlob(data), minWait]);
+      const sorted = sortCvSections(data);
+      const [blob] = await Promise.all([createCvDocxBlob(sorted), minWait]);
       downloadBlob(blob, 'cv.docx');
       toast.success('DOCX exported.');
       onExported?.();
@@ -73,7 +76,7 @@ export function useCvExport(reset: UseFormReset<CvFormData>, onExported?: () => 
         const withDefaults = backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...data });
         const parsed = cvFormSchema.safeParse(withDefaults);
         if (parsed.success) {
-          reset(parsed.data);
+          reset(sortCvSections(parsed.data));
           toast.success('CV data loaded successfully.');
         } else {
           toast.error('Invalid cv.json format.');

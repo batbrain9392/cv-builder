@@ -1,8 +1,6 @@
-import { FileDownIcon, FileTextIcon } from 'lucide-react';
+import { FileTextIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef } from 'react';
 import { useWatch, type Control } from 'react-hook-form';
-
-import { Button } from '@/components/ui/button';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
@@ -64,10 +62,9 @@ function useFormData(control: Control<CvFormData>, defaultValues: CvFormData): C
 interface CvPreviewPanelProps {
   control: Control<CvFormData>;
   defaultValues: CvFormData;
-  onDownload: () => void;
 }
 
-export function CvPreviewPanel({ control, defaultValues, onDownload }: CvPreviewPanelProps) {
+export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) {
   const data = useFormData(control, defaultValues);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -93,19 +90,13 @@ export function CvPreviewPanel({ control, defaultValues, onDownload }: CvPreview
   return (
     <div className="p-4 lg:p-6 xl:p-8">
       <div className="mb-8 space-y-2">
-        <div className="flex items-center justify-between">
-          <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
-            <FileTextIcon className="size-5" aria-hidden="true" /> Preview
-          </h2>
-          <Button size="sm" onClick={onDownload}>
-            <FileDownIcon data-icon="inline-start" />
-            Download CV
-          </Button>
-        </div>
+        <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
+          <FileTextIcon className="size-5" aria-hidden="true" /> Preview
+        </h2>
         <p className="text-sm text-muted-foreground">
           ATS-friendly layout, designed to pass automated screeners and look great to recruiters.
-          What you see here is what they&rsquo;ll get. Hit <strong>Download CV</strong> to export a
-          DOCX &mdash; open it in Word or Google Docs and save as PDF if needed.
+          What you see here is what they&rsquo;ll get. Use the <strong>Download</strong> button to
+          export a DOCX &mdash; open it in Word or Google Docs and save as PDF if needed.
         </p>
       </div>
       <div ref={wrapperRef} className="flex justify-center">

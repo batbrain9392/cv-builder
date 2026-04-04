@@ -2,6 +2,9 @@ import type { CvFormData } from '../cvFormSchema.ts';
 
 const MODEL = 'gemini-2.5-flash';
 
+const ATS_CONSTRAINT =
+  '\n\nCRITICAL — ATS COMPATIBILITY IS THE PRIMARY OBJECTIVE. The output must be parseable by applicant tracking systems. Rules: use plain text only (no tables, columns, icons, or graphics). Do not invent metrics, company-specific acronyms, or claims not supported by the source data. Keep formatting simple: short paragraphs or one bullet per line. Preserve reverse chronological order (most recent first) within each section. Never restructure, reorder, or remove CV sections unless the user explicitly asks. Your role is to improve wording within the existing structure, not redesign the CV.';
+
 const REASONING_SUFFIX =
   '\n\nAfter your main output, add a line "---REASONING---" followed by a 1–2 sentence explanation of what information you considered and why this version improves on the original.';
 
@@ -79,7 +82,7 @@ async function generate(apiKey: string, instructions: string, input: string): Pr
 
   const response = await ai.models.generateContent({
     model: MODEL,
-    config: { systemInstruction: instructions + REASONING_SUFFIX },
+    config: { systemInstruction: instructions + ATS_CONSTRAINT + REASONING_SUFFIX },
     contents: input,
   });
 
@@ -94,13 +97,11 @@ export async function generateSummary(
   cvData: CvFormData,
   jobDescriptionText: string,
 ): Promise<AiResult<string>> {
-  const input = [
-    '--- Candidate CV ---',
-    buildCvContext(cvData),
-    '',
-    '--- Job Description ---',
-    jobDescriptionText,
-  ].join('\n');
+  const parts = ['--- Candidate CV ---', buildCvContext(cvData)];
+  if (jobDescriptionText.trim()) {
+    parts.push('', '--- Job Description ---', jobDescriptionText);
+  }
+  const input = parts.join('\n');
 
   const raw = await generate(apiKey, prompt, input);
   return splitReasoning(raw);
@@ -131,13 +132,11 @@ export async function generateHighlights(
   entry: CvFormData['experience'][number] | CvFormData['education'][number],
   jobDescriptionText: string,
 ): Promise<AiResult<string[]>> {
-  const input = [
-    '--- Entry ---',
-    buildEntryContext(entry),
-    '',
-    '--- Job Description ---',
-    jobDescriptionText,
-  ].join('\n');
+  const parts = ['--- Entry ---', buildEntryContext(entry)];
+  if (jobDescriptionText.trim()) {
+    parts.push('', '--- Job Description ---', jobDescriptionText);
+  }
+  const input = parts.join('\n');
 
   const raw = await generate(apiKey, prompt, input);
   const { content, reasoning } = splitReasoning(raw);
@@ -154,13 +153,11 @@ export async function generateCoverLetter(
   cvData: CvFormData,
   jobDescriptionText: string,
 ): Promise<AiResult<string>> {
-  const input = [
-    '--- Candidate CV ---',
-    buildCvContext(cvData),
-    '',
-    '--- Job Description ---',
-    jobDescriptionText,
-  ].join('\n');
+  const parts = ['--- Candidate CV ---', buildCvContext(cvData)];
+  if (jobDescriptionText.trim()) {
+    parts.push('', '--- Job Description ---', jobDescriptionText);
+  }
+  const input = parts.join('\n');
 
   const raw = await generate(apiKey, prompt, input);
   return splitReasoning(raw);

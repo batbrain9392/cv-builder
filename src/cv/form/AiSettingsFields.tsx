@@ -36,7 +36,7 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
           <CardHeader className="grid-cols-[1fr_auto] items-center">
             <CardTitle id="ai-settings-title" className="flex items-center gap-1.5">
               <GeminiIcon className="h-4" />
-              Gemini Spark{' '}
+              Gemini API{' '}
               <span className="text-sm font-normal text-muted-foreground">(optional)</span>
             </CardTitle>
             <ChevronDownIcon
@@ -67,8 +67,9 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
                   aria-describedby="aiApiKey-warning"
                 />
                 <p id="aiApiKey-warning" className="text-xs font-medium text-destructive">
-                  Your API key is stored in the exported JSON file. Never share that file publicly.
-                  Keep the key backed up safely (e.g.&nbsp;a password manager) &mdash; Google
+                  Your API key is saved in this browser&rsquo;s local storage alongside your CV
+                  data. It never leaves your device, but anyone with access to this browser can read
+                  it. Keep the key backed up safely (e.g.&nbsp;a password manager) &mdash; Google
                   won&rsquo;t show it again after creation.
                 </p>
 

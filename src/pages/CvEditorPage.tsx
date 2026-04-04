@@ -5,7 +5,6 @@ import {
   ChevronDownIcon,
   ClipboardIcon,
   EyeIcon,
-  FolderOpenIcon,
   Loader2Icon,
   PenLineIcon,
   Trash2Icon,
@@ -27,6 +26,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
 import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
+import { clearCv, saveCv } from '@/lib/cvStorage.ts';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 
 import type { CvFormData } from '../cv/cvFormSchema.ts';
@@ -109,8 +109,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   });
 
   const aiApiKey = useWatch({ control, name: 'aiApiKey' });
-  const jdText = useWatch({ control, name: 'jobDescriptionText' });
-  const canGenerate = Boolean(aiApiKey) && Boolean(jdText);
+  const canGenerate = Boolean(aiApiKey);
 
   const links = useFieldArray({ control, name: 'personalInfo.links' });
   const experience = useFieldArray({ control, name: 'experience' });
@@ -157,9 +156,15 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
 
   const onClearAll = useCallback(() => {
     reset(EMPTY_DEFAULTS);
+    clearCv();
     setClearConfirmOpen(false);
     toast.success('All data cleared.');
   }, [reset]);
+
+  const onSaveToBrowser = useCallback(() => {
+    saveCv(getValues());
+    toast.success('Saved to browser.');
+  }, [getValues]);
 
   const onValidationError = useCallback(() => {
     toast.error('Please fix the highlighted errors before downloading.');
@@ -209,26 +214,15 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                   <h1 className="flex items-center gap-3 text-xl font-bold tracking-tight">
                     <PenLineIcon className="size-5" aria-hidden="true" /> Edit your CV
                   </h1>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setImportDialogOpen(true)}
-                    >
-                      <FolderOpenIcon data-icon="inline-start" />
-                      Load data
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setClearConfirmOpen(true)}
-                    >
-                      <Trash2Icon data-icon="inline-start" />
-                      Clear all
-                    </Button>
-                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setClearConfirmOpen(true)}
+                  >
+                    <Trash2Icon data-icon="inline-start" />
+                    Clear all
+                  </Button>
                 </div>
                 <input
                   ref={fileInputRef}
@@ -251,9 +245,9 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                     >
                       load a previous backup
                     </button>{' '}
-                    to pick up where you left off. Your data stays in the browser and is never saved
-                    between sessions — download a JSON backup before you leave. Need a PDF? Open the
-                    DOCX in Word or Google Docs and save as PDF.
+                    to pick up where you left off. Hit <strong>Save</strong> to store your data in
+                    this browser&rsquo;s local storage so it&rsquo;s here next time you visit. Need
+                    a PDF? Open the DOCX in Word or Google Docs and save as PDF.
                   </p>
                 </div>
               </div>
@@ -345,7 +339,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                             {...register('aiSummaryPrompt')}
                             rows={4}
                             className="text-xs"
-                            placeholder="Rewrite the professional summary to highlight experience and skills most relevant to the job description. Keep it to 3–5 sentences."
+                            placeholder="Rewrite the professional summary to highlight relevant experience and skills. Preserve the existing formatting (e.g., a paragraph followed by a bulleted list)."
                           />
                         </Field>
 
@@ -366,9 +360,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                             {generatingSummary ? 'Generating…' : 'Generate with AI'}
                           </Button>
                           {!canGenerate && (
-                            <span className="text-xs text-muted-foreground">
-                              Requires API key and job description
-                            </span>
+                            <span className="text-xs text-muted-foreground">Requires API key</span>
                           )}
                         </div>
 
@@ -540,11 +532,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                 </div>
               )}
             >
-              <CvPreviewPanel
-                control={control}
-                defaultValues={defaultValues}
-                onDownload={() => setDownloadDialogOpen(true)}
-              />
+              <CvPreviewPanel control={control} defaultValues={defaultValues} />
             </ErrorBoundary>
           </aside>
         )}
@@ -566,17 +554,17 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                 </div>
               )}
             >
-              <CvPreviewPanel
-                control={control}
-                defaultValues={defaultValues}
-                onDownload={() => setDownloadDialogOpen(true)}
-              />
+              <CvPreviewPanel control={control} defaultValues={defaultValues} />
             </ErrorBoundary>
           </aside>
         )}
       </main>
 
-      <FormActions />
+      <FormActions
+        onLoad={() => setImportDialogOpen(true)}
+        onSave={onSaveToBrowser}
+        onDownload={() => setDownloadDialogOpen(true)}
+      />
 
       {/* Mobile FAB — toggle preview panel */}
       <Button
@@ -650,11 +638,12 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               className="mt-3 space-y-2 text-sm text-muted-foreground"
             >
               <p>
-                This will erase all CV data and reset to a blank form. You can&rsquo;t undo this.
+                This will erase all CV data from the form and from your browser&rsquo;s local
+                storage. You can&rsquo;t undo this.
               </p>
               <p>
                 If you haven&rsquo;t already, use the <strong>Download</strong> button first to save
-                a JSON backup &mdash; it&rsquo;s the only way to reload your data later.
+                a JSON backup.
               </p>
             </AlertDialog.Description>
             <div className="mt-4 flex justify-end gap-2">

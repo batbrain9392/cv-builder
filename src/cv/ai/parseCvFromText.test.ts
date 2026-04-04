@@ -66,11 +66,10 @@ describe('parseCvFromText', () => {
   it('relaxed fallback — empty required fields produce issues but still return data', async () => {
     const partialCv = {
       ...VALID_CV_JSON,
-      summary: '',
       experience: [
         {
           ...VALID_CV_JSON.experience[0],
-          bullets: [],
+          role: '',
         },
       ],
     };
@@ -81,9 +80,26 @@ describe('parseCvFromText', () => {
     const result = await parseCvFromText('key', 'raw cv text');
 
     expect(result.issues.length).toBeGreaterThan(0);
-    expect(result.issues.some((i) => i.includes('summary') || i.includes('Summary'))).toBe(true);
+    expect(result.issues.some((i) => i.includes('role') || i.includes('Role'))).toBe(true);
     expect(result.data.personalInfo.name).toBe('Jane Doe');
+    expect(result.data.experience[0].role).toBe('');
+  });
+
+  it('strict path accepts empty optional fields', async () => {
+    const minimalCv = {
+      ...VALID_CV_JSON,
+      summary: '',
+      experience: [{ ...VALID_CV_JSON.experience[0], location: '', bullets: [] }],
+    };
+    mockGenerateContent.mockResolvedValueOnce({
+      text: JSON.stringify(minimalCv),
+    });
+
+    const result = await parseCvFromText('key', 'raw cv text');
+
+    expect(result.issues).toEqual([]);
     expect(result.data.summary).toBe('');
+    expect(result.data.experience[0].location).toBe('');
   });
 
   it('throws on invalid JSON from Gemini', async () => {

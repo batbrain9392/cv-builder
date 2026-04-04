@@ -66,7 +66,7 @@ export function HighlightsAiEnhance({
             {...registerPrompt}
             rows={4}
             className="text-xs"
-            placeholder="Rewrite these highlights concisely, emphasising skills and achievements relevant to the job description."
+            placeholder="Rewrite these highlights concisely, emphasising relevant skills and achievements."
           />
         </Field>
 
@@ -86,11 +86,7 @@ export function HighlightsAiEnhance({
             )}
             {generating ? 'Generating…' : 'Generate with AI'}
           </Button>
-          {!canGenerate && (
-            <span className="text-xs text-muted-foreground">
-              Requires API key and job description
-            </span>
-          )}
+          {!canGenerate && <span className="text-xs text-muted-foreground">Requires API key</span>}
         </div>
 
         {generatedBullets && (

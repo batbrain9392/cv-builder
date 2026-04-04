@@ -12,7 +12,9 @@
   },
   "coverLetterEnabled": false,
   "coverLetter": "Dear Hiring Manager,\n\nI am writing to express my interest in the [Role] position at [Company]. With over eight years of experience building and scaling web applications, I bring a strong foundation in front-end architecture, cross-functional collaboration, and delivering high-quality software on tight timelines.\n\nIn my current role at Acme Corp, I led a team of four engineers to redesign the customer dashboard, improving page load performance by 40% and increasing user engagement. Previously at Widgets Inc., I built the real-time notification system that now serves two million daily active users.\n\nI would welcome the opportunity to discuss how my background aligns with your team's goals.\n\nJane Doe",
+  "aiCoverLetterPrompt": "You are an expert cover letter writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's CV data and the job description (if provided), write a professional cover letter tailored for the role. Keep it to one page, with a clear opening, body highlighting relevant experience, and a closing paragraph. Do not invent claims or metrics not present in the source data.",
   "summary": "8+ years of experience building performant, accessible web applications. Skilled in leading small teams, owning features end-to-end, and collaborating across product, design, and backend.\n\n- Core: TypeScript, React, Next.js, Node.js, HTML, CSS\n- Testing: Jest, Playwright, React Testing Library\n- Tooling: Git, Docker, CI/CD, Vite, Turborepo",
+  "aiSummaryPrompt": "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's CV data and the job description (if provided), rewrite the professional summary to highlight the most relevant experience and skills. Do not invent claims or metrics not present in the source data. Keep the exact format of the current summary: a short introductory paragraph followed by a bulleted list of Core, Testing, and Tooling skills.",
   "experience": [
     {
       "role": "Senior Software Engineer",
@@ -26,6 +28,7 @@
         "Architected a component library adopted by three product teams, cutting UI development time across the organisation.",
         "Introduced end-to-end testing with Playwright, bringing release-blocking bug rate down by 60%."
       ],
+      "aiHighlightsPrompt": "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's experience entry and the job description (if provided), rewrite the highlights to be concise, impactful, and aligned with the role. Do not invent claims or metrics not present in the source data. Return exactly 3 highlights, one highlight per line, no bullet characters. Start each highlight with a strong action verb.",
       "tagsLabel": "Tech",
       "tags": ["React", "TypeScript", "Next.js", "Playwright", "Tailwind CSS"]
     }
@@ -40,7 +43,8 @@
       "location": "Austin, TX",
       "bullets": [
         "Graduated magna cum laude. Coursework in algorithms, distributed systems, and human-computer interaction."
-      ]
+      ],
+      "aiHighlightsPrompt": "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's education entry and the job description (if provided), rewrite the highlights to be concise, impactful, and aligned with the role. Do not invent claims or metrics not present in the source data. Return exactly 1 highlight per line, no bullet characters."
     }
   ],
   "others": [
@@ -54,6 +58,7 @@
       "bullets": [
         "Earned the Associate-level certification covering compute, storage, networking, and security best practices on AWS."
       ],
+      "aiHighlightsPrompt": "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's entry and the job description (if provided), rewrite the highlights to be concise, impactful, and aligned with the role. Do not invent claims or metrics not present in the source data. Return exactly 1 highlight per line, no bullet characters.",
       "tagsLabel": "",
       "tags": []
     }

@@ -37,25 +37,14 @@
   margin-bottom: var(--cv-header-after);
 }
 
-.cv-preview-header-line1 {
-  display: flex;
-  align-items: baseline;
-  margin: 0 0 var(--cv-gap-sm);
-  font-size: inherit;
-  font-weight: normal;
-}
-
 .cv-preview-name {
-  font-weight: bold;
+  margin: 0;
+  font-weight: normal;
   font-size: var(--cv-heading-size);
 }
 
-.cv-preview-header-sep {
-  font-size: var(--cv-title-size);
-  margin: 0 6pt;
-}
-
 .cv-preview-title {
+  margin: 0;
   font-weight: bold;
   font-size: var(--cv-title-size);
 }

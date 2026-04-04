@@ -136,10 +136,10 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 
 ### Core product goals
 
-- **ATS-friendly output** — DOCX uses clean, structured formatting that applicant tracking systems parse correctly.
+- **ATS-compatible output is the #1 priority** — every feature, AI prompt, and export format must preserve clean, structured, plain-text formatting that applicant tracking systems parse correctly. Nothing in the app should alter the CV's structure, reorder sections, or inject content unless the user explicitly requests and confirms it.
 - **Per-job tailoring** — load data once, paste a JD, generate AI suggestions, tweak, export. Repeat for each application.
 - **Privacy-first, local-first** — no cookies, no server, no analytics. Gemini API calls go directly from the browser using the user's own API key.
-- **Simple English, honest content** — no fake metrics, no company-specific acronyms in exported CVs.
+- **Simple English, honest content** — no fake metrics, no company-specific acronyms in exported CVs. AI must not invent claims or data not present in the source.
 
 ---
 
@@ -305,6 +305,15 @@ These rules are non-negotiable. Violating them will be flagged during review.
 - **Bold for impact only.** Don't overdo bold text, but don't strip it entirely — use it where it guides the eye.
 - **Clear labels.** "Load data" not "Import", "Download" not ambiguous verbs. Every action label should be self-explanatory.
 - **Mobile-first responsive.** Editor and preview panels swap on mobile (toggle via FAB), side-by-side on desktop.
+
+### AI guardrails
+
+- **ATS compatibility is paramount.** All AI-generated content (summaries, highlights, cover letters) must produce plain-text output that ATS systems can parse. No tables, columns, icons, graphics, or exotic formatting.
+- **Reverse chronological order.** Items within each section (experience, education, others) must default to most-recent-first ordering. AI-parsed imports and generated output must respect this. The user can manually reorder in the form.
+- **No unsolicited CV modifications.** AI must not restructure, reorder, add, or remove CV sections unless the user explicitly requests and confirms the change. The AI improves wording within the existing structure — it does not redesign the CV.
+- **No fabrication.** AI must not invent metrics, claims, company-specific acronyms, or information absent from the user's source data.
+- **User confirmation required for destructive changes.** Any operation that would overwrite or delete user-entered CV content must require explicit confirmation before proceeding.
+- **Prompts are transparent and editable.** Default prompts live in \`cvFormSchema.ts\` and are visible/editable in the UI. System-level ATS constraints are enforced in \`generateWithAi.ts\` regardless of what the user puts in the prompt field.
 
 ### Dependencies
 

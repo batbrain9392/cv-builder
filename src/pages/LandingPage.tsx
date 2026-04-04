@@ -105,7 +105,7 @@ const FEATURES = [
   {
     icon: ShieldCheckIcon,
     title: 'Privacy-first',
-    desc: 'Everything runs in your browser. No server, no cookies, no data sent anywhere.',
+    desc: 'Everything stays in your browser\u2019s local storage. No server, no cookies, no sign-up.',
   },
   {
     icon: KeyRoundIcon,
@@ -578,13 +578,13 @@ function BehindTheScenesSection() {
               own API key.
             </p>
             <p>
-              The only <code className="rounded bg-muted px-1">localStorage</code> usage is the
-              light/dark theme preference. CV data lives in browser memory — nothing persists unless
-              you export.
+              Your CV data, API key, and theme preference are saved to{' '}
+              <code className="rounded bg-muted px-1">localStorage</code> in your browser so you can
+              pick up where you left off. Nothing is sent to any server.
             </p>
             <p>
-              Your API key is never stored server-side. It only appears in the exported JSON if you
-              choose to include it.
+              Your API key is stored locally on your device &mdash; never on a server. Anyone with
+              access to this browser could read it, so use a device you trust.
             </p>
           </CardContent>
         </Card>

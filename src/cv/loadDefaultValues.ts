@@ -1,3 +1,5 @@
+import { loadCv } from '@/lib/cvStorage.ts';
+
 import type { CvFormData } from './cvFormSchema.ts';
 
 import {
@@ -60,6 +62,9 @@ export const EMPTY_DEFAULTS: CvFormData = {
 };
 
 export function loadDefaultValues(): CvFormData {
+  const saved = loadCv();
+  if (saved) return saved;
+
   try {
     return cvFormSchema.parse(backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...starterCv }));
   } catch (err) {

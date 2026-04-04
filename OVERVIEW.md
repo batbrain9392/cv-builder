@@ -1,6 +1,6 @@
 # BioBot — Project Overview for AI Agents
 
-> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-04 (main@ffc2605).
+> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-04 (main@b15903a).
 > Re-run with `npm run generate:overview` after structural changes.
 
 ---
@@ -11,10 +11,10 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 
 ### Core product goals
 
-- **ATS-friendly output** — DOCX uses clean, structured formatting that applicant tracking systems parse correctly.
+- **ATS-compatible output is the #1 priority** — every feature, AI prompt, and export format must preserve clean, structured, plain-text formatting that applicant tracking systems parse correctly. Nothing in the app should alter the CV's structure, reorder sections, or inject content unless the user explicitly requests and confirms it.
 - **Per-job tailoring** — load data once, paste a JD, generate AI suggestions, tweak, export. Repeat for each application.
 - **Privacy-first, local-first** — no cookies, no server, no analytics. Gemini API calls go directly from the browser using the user's own API key.
-- **Simple English, honest content** — no fake metrics, no company-specific acronyms in exported CVs.
+- **Simple English, honest content** — no fake metrics, no company-specific acronyms in exported CVs. AI must not invent claims or data not present in the source.
 
 ---
 
@@ -52,6 +52,9 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 ```
 ├── .cursor/
 │   ├── rules/
+│   │   ├── ats-compatibility.mdc
+│   │   ├── code-review.mdc
+│   │   ├── testing.mdc
 │   │   └── theme.mdc
 │   └── mcp.json
 ├── .github/
@@ -59,6 +62,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │       ├── ci.yml
 │       └── deploy.yml
 ├── docs/
+│   ├── REVIEW.md
 │   ├── screenshot-desktop.png
 │   ├── screenshot-form.png
 │   └── screenshot-preview.png
@@ -94,6 +98,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   ├── AppHeader.tsx
 │   │   ├── AppLogo.tsx
 │   │   ├── EmojiIcon.tsx
+│   │   ├── ErrorBoundary.test.tsx
 │   │   ├── ErrorBoundary.tsx
 │   │   ├── GeminiIcon.tsx
 │   │   ├── InstallPwa.tsx
@@ -149,11 +154,13 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   ├── useAiGeneration.ts
 │   │   └── useCvExport.ts
 │   ├── lib/
+│   │   ├── cvStorage.ts
 │   │   ├── pwa.ts
 │   │   ├── share.ts
 │   │   ├── useInstallPwa.ts
 │   │   ├── useIsInView.ts
 │   │   ├── useIsKeyboardOpen.ts
+│   │   ├── useIsScrolledPast.test.tsx
 │   │   ├── useIsScrolledPast.ts
 │   │   ├── useMediaQuery.ts
 │   │   ├── useTheme.ts
@@ -183,7 +190,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 └── vitest.config.ts
 ```
 
-### Source files (65 source, 10 test, 1 e2e)
+### Source files (66 source, 12 test, 1 e2e)
 
 #### `src/` layout
 
@@ -298,6 +305,15 @@ These rules are non-negotiable. Violating them will be flagged during review.
 - **Bold for impact only.** Don't overdo bold text, but don't strip it entirely — use it where it guides the eye.
 - **Clear labels.** "Load data" not "Import", "Download" not ambiguous verbs. Every action label should be self-explanatory.
 - **Mobile-first responsive.** Editor and preview panels swap on mobile (toggle via FAB), side-by-side on desktop.
+
+### AI guardrails
+
+- **ATS compatibility is paramount.** All AI-generated content (summaries, highlights, cover letters) must produce plain-text output that ATS systems can parse. No tables, columns, icons, graphics, or exotic formatting.
+- **Reverse chronological order.** Items within each section (experience, education, others) must default to most-recent-first ordering. AI-parsed imports and generated output must respect this. The user can manually reorder in the form.
+- **No unsolicited CV modifications.** AI must not restructure, reorder, add, or remove CV sections unless the user explicitly requests and confirms the change. The AI improves wording within the existing structure — it does not redesign the CV.
+- **No fabrication.** AI must not invent metrics, claims, company-specific acronyms, or information absent from the user's source data.
+- **User confirmation required for destructive changes.** Any operation that would overwrite or delete user-entered CV content must require explicit confirmation before proceeding.
+- **Prompts are transparent and editable.** Default prompts live in `cvFormSchema.ts` and are visible/editable in the UI. System-level ATS constraints are enforced in `generateWithAi.ts` regardless of what the user puts in the prompt field.
 
 ### Dependencies
 
@@ -465,26 +481,27 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 
 ## File inventory
 
-### Source files (65)
+### Source files (66)
 
 - `src/components/menuItemClass.ts` (3 lines)
-- `src/cv/ai/generateWithAi.ts` (168 lines)
-- `src/cv/ai/parseCvFromText.ts` (209 lines)
+- `src/cv/ai/generateWithAi.ts` (171 lines)
+- `src/cv/ai/parseCvFromText.ts` (211 lines)
 - `src/cv/cvConstants.ts` (70 lines)
 - `src/cv/cvFormSchema.ts` (67 lines)
 - `src/cv/cvFormatters.ts` (22 lines)
-- `src/cv/downloadBlob.ts` (9 lines)
-- `src/cv/export/CvDocxDocument.ts` (347 lines)
-- `src/cv/loadDefaultValues.ts` (70 lines)
+- `src/cv/downloadBlob.ts` (11 lines)
+- `src/cv/export/CvDocxDocument.ts` (355 lines)
+- `src/cv/loadDefaultValues.ts` (75 lines)
 - `src/cv/preview/parseMarkdown.ts` (34 lines)
 - `src/cv/useAiGeneration.ts` (214 lines)
 - `src/cv/useCvExport.ts` (99 lines)
+- `src/lib/cvStorage.ts` (35 lines)
 - `src/lib/pwa.ts` (5 lines)
 - `src/lib/share.ts` (22 lines)
 - `src/lib/useInstallPwa.ts` (74 lines)
 - `src/lib/useIsInView.ts` (24 lines)
 - `src/lib/useIsKeyboardOpen.ts` (45 lines)
-- `src/lib/useIsScrolledPast.ts` (13 lines)
+- `src/lib/useIsScrolledPast.ts` (32 lines)
 - `src/lib/useMediaQuery.ts` (17 lines)
 - `src/lib/useTheme.ts` (29 lines)
 - `src/lib/utils.ts` (7 lines)
@@ -494,7 +511,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/components/AppHeader.tsx` (97 lines)
 - `src/components/AppLogo.tsx` (13 lines)
 - `src/components/EmojiIcon.tsx` (13 lines)
-- `src/components/ErrorBoundary.tsx` (33 lines)
+- `src/components/ErrorBoundary.tsx` (38 lines)
 - `src/components/GeminiIcon.tsx` (18 lines)
 - `src/components/InstallPwa.tsx` (116 lines)
 - `src/components/RobotIcon.tsx` (81 lines)
@@ -511,13 +528,13 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/components/ui/textarea.tsx` (19 lines)
 - `src/components/ui/tooltip.tsx` (24 lines)
 - `src/cv/ai/geminiHelpSteps.tsx` (62 lines)
-- `src/cv/form/AiSettingsFields.tsx` (93 lines)
+- `src/cv/form/AiSettingsFields.tsx` (94 lines)
 - `src/cv/form/BackupReminder.tsx` (26 lines)
 - `src/cv/form/CoverLetterFields.tsx` (216 lines)
 - `src/cv/form/DownloadDialog.tsx` (84 lines)
 - `src/cv/form/EducationFields.tsx` (270 lines)
 - `src/cv/form/ExperienceEntryFields.tsx` (263 lines)
-- `src/cv/form/FormActions.tsx` (28 lines)
+- `src/cv/form/FormActions.tsx` (74 lines)
 - `src/cv/form/HighlightsAiEnhance.tsx` (143 lines)
 - `src/cv/form/HighlightsInput.tsx` (55 lines)
 - `src/cv/form/ImportDialog.tsx` (382 lines)
@@ -526,14 +543,14 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/form/PersonalInfoFields.tsx` (153 lines)
 - `src/cv/form/SectionToolbar.tsx` (69 lines)
 - `src/cv/form/TagsInput.tsx` (94 lines)
-- `src/cv/preview/CvPreview.tsx` (158 lines)
-- `src/cv/preview/CvPreviewPanel.tsx` (79 lines)
+- `src/cv/preview/CvPreview.tsx` (155 lines)
+- `src/cv/preview/CvPreviewPanel.tsx` (108 lines)
 - `src/cv/preview/Markdown.tsx` (21 lines)
 - `src/main.tsx` (57 lines)
-- `src/pages/CvEditorPage.tsx` (678 lines)
-- `src/pages/LandingPage.tsx` (846 lines)
+- `src/pages/CvEditorPage.tsx` (684 lines)
+- `src/pages/LandingPage.tsx` (847 lines)
 
-### Test files (10)
+### Test files (12)
 
 - `src/cv/ai/generateWithAi.test.ts` (199 lines)
 - `src/cv/ai/parseCvFromText.test.ts` (133 lines)
@@ -542,9 +559,11 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/export/parseInlineSegments.test.ts` (50 lines)
 - `src/cv/loadDefaultValues.test.ts` (60 lines)
 - `src/cv/preview/parseMarkdown.test.ts` (76 lines)
-- `src/cv/form/HighlightsInput.test.tsx` (65 lines)
+- `src/components/ErrorBoundary.test.tsx` (67 lines)
+- `src/cv/form/HighlightsInput.test.tsx` (75 lines)
 - `src/cv/form/ImportDialog.test.tsx` (146 lines)
-- `src/cv/form/TagsInput.test.tsx` (98 lines)
+- `src/cv/form/TagsInput.test.tsx` (108 lines)
+- `src/lib/useIsScrolledPast.test.tsx` (89 lines)
 
 ### E2E files (1)
 

@@ -140,7 +140,7 @@ export function CoverLetterFields({
                       {...register('aiCoverLetterPrompt')}
                       rows={4}
                       className="text-xs"
-                      placeholder="Write a concise, professional cover letter tailored to the job description. One page max."
+                      placeholder="Write a concise, professional cover letter tailored to the role. One page max."
                     />
                   </Field>
 
@@ -161,9 +161,7 @@ export function CoverLetterFields({
                       {generating ? 'Generating…' : 'Generate with AI'}
                     </Button>
                     {!canGenerate && (
-                      <span className="text-xs text-muted-foreground">
-                        Requires API key and job description
-                      </span>
+                      <span className="text-xs text-muted-foreground">Requires API key</span>
                     )}
                   </div>
 

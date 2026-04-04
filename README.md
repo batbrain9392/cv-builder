@@ -26,16 +26,16 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 1. 👤 Fill in all your details — personal info, experience, education, skills — or **import a JSON** you exported earlier
 2. 📋 Paste a **job description** into the Job Description section and add your free [Gemini API key](https://aistudio.google.com/apikey)
 3. 🤖 Hit **Enhance with AI** to tailor your experience highlights, summary, and cover letter to the job, then tweak anything that still feels off
-4. 💾 Export as DOCX for submission, or JSON to save progress
+4. 💾 Hit **Save** to store your progress in the browser, or export as DOCX for submission / JSON for a portable backup
 5. 📄 Need a PDF? Open the DOCX in Word, Google Docs, or LibreOffice and print to PDF
 
 ## 🔒 Privacy
 
 - 🍪 **No cookies.** None.
 - 🚫 **No backend server.** Gemini API calls go directly from your browser to Google using your own API key.
-- 💡 The only `localStorage` usage is for the light/dark theme preference.
-- 🧠 CV data lives entirely in browser memory during the session. Nothing is persisted unless you explicitly export.
-- 🔑 Your Gemini API key is never stored server-side. It only appears in exported JSON if you choose to include it.
+- 💾 **`localStorage`** is used to save your CV data, Gemini API key, and theme preference in your browser so you can pick up where you left off. Nothing is sent to any server.
+- 🔑 Your Gemini API key is stored locally on your device — never on a server. Anyone with access to this browser can read it, so use a device you trust.
+- 📤 You can also export your data as JSON or DOCX at any time. Use **Clear all** in the editor to wipe both the form and local storage.
 
 ## ⚙️ Tech stack
 
