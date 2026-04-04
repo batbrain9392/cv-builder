@@ -5,12 +5,16 @@ import {
   ChevronDownIcon,
   ClipboardIcon,
   EyeIcon,
+  FileDownIcon,
   Loader2Icon,
+  PenLineIcon,
+  Trash2Icon,
   XIcon,
 } from 'lucide-react';
-import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { Route, Routes } from 'react-router';
+import { toast } from 'sonner';
 
 import { EmojiIcon } from '@/components/EmojiIcon';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
@@ -30,13 +34,17 @@ import type { CvFormData } from './cv/cvFormSchema.ts';
 
 import { cvFormSchema, DEFAULT_HIGHLIGHTS_PROMPT } from './cv/cvFormSchema.ts';
 import { AiSettingsFields } from './cv/form/AiSettingsFields.tsx';
+import { BackupReminder } from './cv/form/BackupReminder.tsx';
 import { CoverLetterFields } from './cv/form/CoverLetterFields.tsx';
+import { DownloadDialog } from './cv/form/DownloadDialog.tsx';
 import { EducationFields } from './cv/form/EducationFields.tsx';
 import { ExperienceEntryFields } from './cv/form/ExperienceEntryFields.tsx';
 import { FormActions } from './cv/form/FormActions.tsx';
+import { ImportDialog } from './cv/form/ImportDialog.tsx';
 import { JobDescriptionFields } from './cv/form/JobDescriptionFields.tsx';
 import { PersonalInfoFields } from './cv/form/PersonalInfoFields.tsx';
 import { SectionToolbar } from './cv/form/SectionToolbar.tsx';
+import { EMPTY_DEFAULTS } from './cv/loadDefaultValues.ts';
 import { CvPreviewPanel } from './cv/preview/CvPreviewPanel.tsx';
 import { useAiGeneration } from './cv/useAiGeneration.ts';
 import { useCvExport } from './cv/useCvExport.ts';
@@ -96,6 +104,12 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const [othSignal, setOthSignal] = useState({ n: 0, open: true });
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
+  const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
+  const [showBackupBanner, setShowBackupBanner] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     if (!previewOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -136,7 +150,10 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
     onExportDocx,
     onExportJsonWithKey,
     onExportJsonWithoutKey,
-  } = useCvExport(reset);
+  } = useCvExport(reset, () => {
+    setShowBackupBanner(false);
+    setDownloadDialogOpen(false);
+  });
 
   const {
     generatingSummary,
@@ -153,6 +170,23 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
     buildEntryAiProps,
   } = useAiGeneration(getValues, setValue, canGenerate);
 
+  const onImportParsed = useCallback(
+    (data: CvFormData) => {
+      reset(data);
+      setShowBackupBanner(true);
+      toast.success('CV imported. Review and edit your data.');
+    },
+    [reset],
+  );
+
+  const onClearAll = useCallback(() => {
+    reset(EMPTY_DEFAULTS);
+    setClearConfirmOpen(false);
+    toast.success('All data cleared.');
+  }, [reset]);
+
+  const onPickJsonFile = () => fileInputRef.current?.click();
+
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
       <a
@@ -163,28 +197,43 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       </a>
       <FormActions
         onImport={onImport}
-        onExportJson={handleSubmit(onExportJson)}
-        onExportDocx={handleSubmit(onExportDocx)}
-        exporting={exporting}
+        onOpenImportDialog={() => setImportDialogOpen(true)}
+        onOpenDownloadDialog={() => setDownloadDialogOpen(true)}
+        fileInputRef={fileInputRef}
       />
 
-      <main className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
+      <main className="mx-auto flex min-h-0 w-full max-w-[1728px] flex-1 flex-col overflow-hidden lg:flex-row">
         {/* Form panel */}
         <div className="min-h-0 flex-1 overscroll-contain overflow-y-auto lg:flex-1">
           <form
             id="cv-editor"
             aria-label="CV editor"
+            onSubmit={(e) => e.preventDefault()}
             className="space-y-8 p-4 pb-20 lg:p-6 lg:pb-6 xl:p-8 xl:pb-8"
           >
-            <div>
-              <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
-                <EmojiIcon emoji="✏️" /> Edit your CV
-              </h2>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
+                  <PenLineIcon className="size-5" aria-hidden="true" /> Edit your CV
+                </h2>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setClearConfirmOpen(true)}
+                >
+                  <Trash2Icon data-icon="inline-start" />
+                  Clear all
+                </Button>
+              </div>
               <p className="text-sm text-muted-foreground">
-                Let's face it: the AI writes better than you, works harder than you, and doesn't
-                need coffee. Use its superiority to convince a human to hire you.
+                We start you off with sample data so you can see how things look. Replace it with
+                your own, or use <strong>Load data</strong> to import an existing CV. When
+                you&rsquo;re done, hit <strong>Download</strong> for a JSON backup or a polished DOCX.
               </p>
             </div>
+
+            {showBackupBanner && <BackupReminder onDismiss={() => setShowBackupBanner(false)} />}
 
             <AiSettingsFields register={register} errors={errors} />
 
@@ -466,10 +515,10 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         </aside>
       </main>
 
-      {/* Mobile FAB */}
+      {/* Mobile FABs */}
       <Button
         size="lg"
-        className="fixed right-4 bottom-4 z-50 gap-2 shadow-lg lg:hidden"
+        className="fixed right-4 bottom-16 z-50 gap-2 shadow-lg lg:hidden"
         onClick={togglePreview}
         aria-label={previewOpen ? 'Close preview' : 'Open preview'}
         aria-expanded={previewOpen}
@@ -477,6 +526,15 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       >
         {previewOpen ? <XIcon /> : <EyeIcon />}
         {previewOpen ? 'Close' : 'Preview'}
+      </Button>
+      <Button
+        size="lg"
+        className="fixed right-4 bottom-4 z-50 gap-2 shadow-lg lg:hidden"
+        onClick={() => setDownloadDialogOpen(true)}
+        aria-label="Download"
+      >
+        <FileDownIcon />
+        Download
       </Button>
 
       <AlertDialog.Root open={apiKeyWarningOpen} onOpenChange={setApiKeyWarningOpen}>
@@ -525,6 +583,53 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           </AlertDialog.Popup>
         </AlertDialog.Portal>
       </AlertDialog.Root>
+
+      <AlertDialog.Root open={clearConfirmOpen} onOpenChange={setClearConfirmOpen}>
+        <AlertDialog.Portal>
+          <AlertDialog.Backdrop className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs" />
+          <AlertDialog.Popup className="fixed top-1/2 left-1/2 z-50 w-[90vw] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-popover p-6 text-popover-foreground shadow-lg">
+            <AlertDialog.Title className="text-base font-semibold">
+              Clear all data?
+            </AlertDialog.Title>
+            <AlertDialog.Description
+              render={<div />}
+              className="mt-3 space-y-2 text-sm text-muted-foreground"
+            >
+              <p>
+                This will erase all CV data and reset to a blank form. You can&rsquo;t undo this.
+              </p>
+              <p>
+                If you haven&rsquo;t already, use the <strong>Download</strong> button first to save
+                a JSON backup &mdash; it&rsquo;s the only way to reload your data later.
+              </p>
+            </AlertDialog.Description>
+            <div className="mt-4 flex justify-end gap-2">
+              <AlertDialog.Close render={<Button variant="secondary" size="sm" />}>
+                Cancel
+              </AlertDialog.Close>
+              <Button variant="destructive" size="sm" onClick={onClearAll}>
+                Clear everything
+              </Button>
+            </div>
+          </AlertDialog.Popup>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
+
+      <DownloadDialog
+        open={downloadDialogOpen}
+        onOpenChange={setDownloadDialogOpen}
+        onExportJson={handleSubmit(onExportJson)}
+        onExportDocx={handleSubmit(onExportDocx)}
+        exporting={exporting}
+      />
+
+      <ImportDialog
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+        onPickJsonFile={onPickJsonFile}
+        onImportParsed={onImportParsed}
+        currentApiKey={aiApiKey}
+      />
 
       <Toaster position="bottom-left" />
     </div>

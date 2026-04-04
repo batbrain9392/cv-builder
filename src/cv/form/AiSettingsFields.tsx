@@ -11,56 +11,7 @@ import { Input } from '@/components/ui/input';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
-const HELP_STEPS = [
-  {
-    title: 'Sign in to Google AI Studio',
-    body: (
-      <>
-        Go to{' '}
-        <a
-          href="https://aistudio.google.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-2 hover:text-foreground"
-        >
-          aistudio.google.com
-        </a>{' '}
-        and sign in with your Google account. Any personal Google account works.
-      </>
-    ),
-  },
-  {
-    title: 'Open the API Keys page',
-    body: (
-      <>
-        Navigate to{' '}
-        <a
-          href="https://aistudio.google.com/apikey"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-2 hover:text-foreground"
-        >
-          API Keys
-        </a>{' '}
-        (or click <strong>Get API key</strong> in the left sidebar).
-      </>
-    ),
-  },
-  {
-    title: 'Pick or create a Google Cloud project',
-    body: 'Click Create API key. You\u2019ll be asked to select a Google Cloud project. If you don\u2019t have one, choose Create new project \u2014 it\u2019s free and takes a few seconds. The project is just a container for your key.',
-  },
-  {
-    title: 'Copy the key and paste it above',
-    body: (
-      <>
-        Once the key is generated, copy it (it starts with{' '}
-        <code className="rounded bg-muted px-1 text-[0.7rem]">AIza</code>) and paste it into the
-        field above. It is only sent directly to Google from your browser.
-      </>
-    ),
-  },
-];
+import { GEMINI_HELP_STEPS } from '../ai/geminiHelpSteps.tsx';
 
 interface AiSettingsFieldsProps {
   register: UseFormRegister<CvFormData>;
@@ -117,10 +68,12 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
                 />
                 <p id="aiApiKey-warning" className="text-xs font-medium text-destructive">
                   Your API key is stored in the exported JSON file. Never share that file publicly.
+                  Keep the key backed up safely (e.g.&nbsp;a password manager) &mdash; Google
+                  won&rsquo;t show it again after creation.
                 </p>
 
                 <ol className="list-inside list-decimal space-y-2 rounded-lg border bg-muted/50 p-3 text-xs text-muted-foreground">
-                  {HELP_STEPS.map((step) => (
+                  {GEMINI_HELP_STEPS.map((step) => (
                     <li key={step.title}>
                       <strong className="text-foreground">{step.title}</strong>
                       <p className="ml-5">{step.body}</p>

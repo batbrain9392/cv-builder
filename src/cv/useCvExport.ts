@@ -10,7 +10,7 @@ import { downloadBlob } from './downloadBlob.ts';
 import { createCvDocxBlob } from './export/CvDocxDocument.ts';
 import { AI_FIELD_DEFAULTS, backfillEntryPrompts } from './loadDefaultValues.ts';
 
-export function useCvExport(reset: UseFormReset<CvFormData>) {
+export function useCvExport(reset: UseFormReset<CvFormData>, onExported?: () => void) {
   const [exporting, setExporting] = useState(false);
   const [apiKeyWarningOpen, setApiKeyWarningOpen] = useState(false);
   const pendingExportData = useRef<CvFormData | null>(null);
@@ -21,6 +21,7 @@ export function useCvExport(reset: UseFormReset<CvFormData>) {
       'cv.json',
     );
     toast.success('JSON exported.');
+    onExported?.();
   };
 
   const onExportJson = (data: CvFormData) => {
@@ -55,6 +56,7 @@ export function useCvExport(reset: UseFormReset<CvFormData>) {
       const [blob] = await Promise.all([createCvDocxBlob(data), minWait]);
       downloadBlob(blob, 'cv.docx');
       toast.success('DOCX exported.');
+      onExported?.();
     } finally {
       setExporting(false);
     }

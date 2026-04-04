@@ -38,7 +38,7 @@ export function backfillEntryPrompts(data: Record<string, unknown>): Record<stri
   };
 }
 
-const EMPTY_DEFAULTS: CvFormData = {
+export const EMPTY_DEFAULTS: CvFormData = {
   aiApiKey: '',
   jobDescriptionText: '',
   aiSummaryPrompt: DEFAULT_SUMMARY_PROMPT,

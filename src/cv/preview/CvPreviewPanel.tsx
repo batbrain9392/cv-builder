@@ -1,7 +1,6 @@
+import { FileTextIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef } from 'react';
 import { useWatch, type Control } from 'react-hook-form';
-
-import { EmojiIcon } from '@/components/EmojiIcon';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
@@ -17,7 +16,7 @@ const A4_WIDTH_PX = (CV_LAYOUT.pageWidthMm / 25.4) * 96;
  */
 function useFormData(control: Control<CvFormData>, defaultValues: CvFormData): CvFormData {
   const watched = useWatch({ control, defaultValue: defaultValues });
-  return Object.assign({}, defaultValues, watched) satisfies CvFormData;
+  return Object.assign({}, defaultValues, watched);
 }
 
 interface CvPreviewPanelProps {
@@ -50,13 +49,14 @@ export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) 
 
   return (
     <div className="p-4 lg:p-6 xl:p-8">
-      <div className="mb-8">
+      <div className="mb-8 space-y-2">
         <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
-          <EmojiIcon emoji="📄" /> Preview
+          <FileTextIcon className="size-5" aria-hidden="true" /> Preview
         </h2>
         <p className="text-sm text-muted-foreground">
-          What you see is what recruiters get. Download DOCX (save as PDF from Word if needed), or
-          Export Data as JSON to pick up where you left off.
+          ATS-friendly layout, designed to pass automated screeners and look great to recruiters.
+          What you see here is what they&rsquo;ll get. Hit <strong>Download</strong> to export a
+          DOCX &mdash; open it in Word or Google Docs and save as PDF if needed.
         </p>
       </div>
       <div ref={wrapperRef} className="flex justify-center">

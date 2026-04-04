@@ -1,4 +1,4 @@
-import { ArrowLeftIcon, BotIcon, ExternalLinkIcon, SendIcon } from 'lucide-react';
+import { ArrowLeftIcon, BotIcon, BrainIcon, ExternalLinkIcon, SendIcon } from 'lucide-react';
 import { type FormEvent, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
@@ -155,7 +155,10 @@ export default function AboutPage() {
         <div className="mx-auto grid max-w-4xl gap-5 p-4 pb-16 [&>[data-slot=card]]:h-full lg:grid-cols-2 lg:p-6 xl:p-8">
           {/* Hero heading + motivation — full width */}
           <div className="lg:col-span-2">
-            <h1 className="text-2xl font-bold tracking-tight">🤖 Behind the Bot</h1>
+            <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
+              <BrainIcon className="size-6" aria-hidden="true" />
+              Behind the Bot
+            </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Everything you wanted to know about this app (and some things you didn&rsquo;t).
             </p>
@@ -206,7 +209,8 @@ export default function AboutPage() {
               </p>
               <p>
                 🔑 You&rsquo;ll need a free <strong>Gemini API key</strong> for the AI features —
-                grab one from Google AI Studio.
+                grab one from Google AI Studio. Back it up somewhere safe (e.g.&nbsp;a password
+                manager) since Google won&rsquo;t show it again.
               </p>
               <p>
                 🤖 After AI enhances your CV, <strong>always review and tweak</strong> the result.
