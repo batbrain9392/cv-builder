@@ -16,6 +16,7 @@ const GITHUB_REPO = 'https://github.com/batbrain9392/cv-builder';
 const LINKEDIN_URL = 'https://www.linkedin.com/in/batbrain9392/';
 const AVATAR_URL = 'https://github.com/batbrain9392.png';
 
+const PWA_LOGO = 'https://cdn.simpleicons.org/pwa';
 const CURSOR_LOGO = 'https://cdn.simpleicons.org/cursor';
 const CLAUDE_LOGO = 'https://cdn.simpleicons.org/claude';
 
@@ -176,21 +177,6 @@ export default function AboutPage() {
               </p>
             </div>
           </div>
-
-          {/* Install as app — full width, hidden when already installed */}
-          {!isInStandaloneMode() && (
-            <Card className="lg:col-span-2">
-              <CardContent className="flex flex-col items-center gap-3 py-6 sm:flex-row sm:justify-between">
-                <div className="text-center sm:text-left">
-                  <p className="text-sm font-medium">📲 Install as an app</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    Works offline on your phone or desktop — no app store needed.
-                  </p>
-                </div>
-                <InstallPwa variant="default" size="default" label="Install app" />
-              </CardContent>
-            </Card>
-          )}
 
           {/* Features & tips — left */}
           <Card>
@@ -406,6 +392,51 @@ export default function AboutPage() {
                   <span className="sr-only"> (opens in new tab)</span>
                 </a>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Progressive Web App — full width, at the end */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <img src={PWA_LOGO} alt="" aria-hidden="true" className="h-5" loading="lazy" />
+                Progressive Web App
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-sm">
+              <p>
+                BioBot is a{' '}
+                <a
+                  href="https://web.dev/explore/progressive-web-apps"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+                >
+                  Progressive Web App
+                  <ExternalLinkIcon className="size-3" aria-hidden="true" />
+                  <span className="sr-only"> (opens in new tab)</span>
+                </a>{' '}
+                &mdash; a website that can be installed on your device and used like a native app.
+                PWAs load fast, work offline, and receive updates automatically without an app
+                store.
+              </p>
+              <ul className="grid gap-1.5 text-muted-foreground sm:grid-cols-2">
+                <li>📶 Works offline after first visit</li>
+                <li>⚡ Instant load from cached assets</li>
+                <li>📱 Add to home screen on any device</li>
+                <li>🔄 Always up to date — no manual updates</li>
+              </ul>
+              {!isInStandaloneMode() && (
+                <div className="flex items-center gap-3 rounded-lg border bg-muted/40 px-4 py-3">
+                  <div className="flex-1">
+                    <p className="text-xs font-medium">Install BioBot on this device</p>
+                    <p className="text-xs text-muted-foreground">
+                      No app store needed — installs directly from your browser.
+                    </p>
+                  </div>
+                  <InstallPwa variant="default" size="default" label="Install" />
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
