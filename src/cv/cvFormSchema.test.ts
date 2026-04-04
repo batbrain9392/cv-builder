@@ -67,4 +67,116 @@ describe('cvFormSchema', () => {
     const result = cvFormSchema.safeParse(badData);
     expect(result.success).toBe(false);
   });
+
+  it('rejects invalid email', () => {
+    const data = makeValidData({ personalInfo: { ...VALID_PERSONAL_INFO, email: 'not-an-email' } });
+    const result = cvFormSchema.safeParse(data);
+    expect(result.success).toBe(false);
+  });
+
+  it('rejects invalid URL in experience but accepts empty string', () => {
+    const withBadUrl = makeValidData({
+      experience: [{ ...VALID_EXPERIENCE, url: 'not-a-url' }],
+    });
+    expect(cvFormSchema.safeParse(withBadUrl).success).toBe(false);
+
+    const withEmpty = makeValidData({
+      experience: [{ ...VALID_EXPERIENCE, url: '' }],
+    });
+    expect(cvFormSchema.safeParse(withEmpty).success).toBe(true);
+  });
+
+  it('rejects invalid URL in education but accepts empty string', () => {
+    const withBadUrl = makeValidData({
+      education: [{ ...VALID_EDUCATION, institutionUrl: 'not-a-url' }],
+    });
+    expect(cvFormSchema.safeParse(withBadUrl).success).toBe(false);
+
+    const withEmpty = makeValidData({
+      education: [{ ...VALID_EDUCATION, institutionUrl: '' }],
+    });
+    expect(cvFormSchema.safeParse(withEmpty).success).toBe(true);
+  });
+
+  it('rejects empty bullets array in experience', () => {
+    const data = makeValidData({
+      experience: [{ ...VALID_EXPERIENCE, bullets: [] }],
+    });
+    expect(cvFormSchema.safeParse(data).success).toBe(false);
+  });
+
+  it('rejects summary shorter than 10 characters', () => {
+    const data = makeValidData({ summary: 'Short' });
+    expect(cvFormSchema.safeParse(data).success).toBe(false);
+  });
+
+  it('accepts optional fields as empty or missing', () => {
+    const data = makeValidData({
+      experience: [
+        {
+          ...VALID_EXPERIENCE,
+          endDate: undefined,
+          tagsLabel: undefined,
+          tags: undefined,
+          aiHighlightsPrompt: undefined,
+        },
+      ],
+    });
+    expect(cvFormSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('accepts empty cover letter fields', () => {
+    const data = makeValidData({
+      coverLetterEnabled: false,
+      coverLetter: '',
+      aiCoverLetterPrompt: '',
+    });
+    expect(cvFormSchema.safeParse(data).success).toBe(true);
+  });
 });
+
+const VALID_PERSONAL_INFO = {
+  name: 'Jane Doe',
+  title: 'Engineer',
+  location: 'Dublin',
+  email: 'jane@example.com',
+  phone: '+1 555 000',
+  links: [],
+};
+
+const VALID_EXPERIENCE = {
+  role: 'Engineer',
+  company: 'Acme',
+  url: '',
+  startDate: 'Jan 2020',
+  endDate: 'Present',
+  location: 'Dublin',
+  bullets: ['Built things'],
+};
+
+const VALID_EDUCATION = {
+  degree: 'BSc CS',
+  institution: 'University',
+  institutionUrl: '',
+  startYear: '2016',
+  endYear: '2020',
+  location: 'Dublin',
+  bullets: ['Graduated'],
+};
+
+function makeValidData(overrides: Record<string, unknown> = {}) {
+  return {
+    aiApiKey: '',
+    jobDescriptionText: '',
+    aiSummaryPrompt: 'Write a summary.',
+    coverLetterEnabled: false,
+    coverLetter: '',
+    aiCoverLetterPrompt: '',
+    personalInfo: VALID_PERSONAL_INFO,
+    summary: 'A professional summary with enough characters.',
+    experience: [VALID_EXPERIENCE],
+    education: [VALID_EDUCATION],
+    others: [],
+    ...overrides,
+  };
+}

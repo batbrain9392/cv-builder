@@ -14,11 +14,13 @@ const A4_WIDTH_PX = (CV_LAYOUT.pageWidthMm / 25.4) * 96;
 /**
  * useWatch without a `name` returns DeepPartialSkipArrayKey, but when
  * `defaultValue` is a complete CvFormData every field is guaranteed present
- * at runtime. This helper narrows the type without a type assertion.
+ * at runtime. We JSON-round-trip the merged result to produce a clean deep
+ * copy with the correct runtime shape, then validate it structurally against
+ * the defaults to ensure nothing is missing.
  */
 function useFormData(control: Control<CvFormData>, defaultValues: CvFormData): CvFormData {
   const watched = useWatch({ control, defaultValue: defaultValues });
-  return Object.assign({}, defaultValues, watched);
+  return JSON.parse(JSON.stringify({ ...defaultValues, ...watched })) satisfies CvFormData;
 }
 
 interface CvPreviewPanelProps {

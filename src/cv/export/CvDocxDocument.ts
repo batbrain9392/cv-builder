@@ -7,9 +7,10 @@
  * - Page/margin dimensions: millimeters converted via `convertMillimetersToTwip`
  *
  * PT and TWIP are imported from cvConstants.ts.
+ *
+ * The `docx` library is loaded lazily (dynamic import) so it stays out of
+ * the initial bundle and is only fetched when the user triggers a DOCX export.
  */
-
-import { Document, Paragraph, TextRun, BorderStyle, Packer, convertMillimetersToTwip } from 'docx';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
@@ -18,7 +19,9 @@ import { formatDateRange, formatEntryMeta, formatLinksLine } from '../cvFormatte
 
 const FONT = CV_FONT.family;
 
-function headerLine(info: CvFormData['personalInfo']): Paragraph {
+type Docx = typeof import('docx');
+
+function headerLine({ Paragraph, TextRun }: Docx, info: CvFormData['personalInfo']) {
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
     children: [
@@ -43,11 +46,11 @@ function headerLine(info: CvFormData['personalInfo']): Paragraph {
   });
 }
 
-function contactLines(info: CvFormData['personalInfo']): Paragraph[] {
+function contactLines({ Paragraph, TextRun }: Docx, info: CvFormData['personalInfo']) {
   const contact = formatEntryMeta(info.email, info.phone, info.location);
   const links = formatLinksLine(info.links);
 
-  const paragraphs: Paragraph[] = [
+  const paragraphs = [
     new Paragraph({
       spacing: {
         after: (links ? CV_SPACING_PT.sm : CV_SPACING_PT.headerAfter) * TWIP,
@@ -82,7 +85,7 @@ function contactLines(info: CvFormData['personalInfo']): Paragraph[] {
   return paragraphs;
 }
 
-function sectionHeading(text: string): Paragraph {
+function sectionHeading({ Paragraph, TextRun, BorderStyle }: Docx, text: string) {
   return new Paragraph({
     spacing: {
       before: CV_SPACING_PT.sectionBefore * TWIP,
@@ -107,7 +110,7 @@ function sectionHeading(text: string): Paragraph {
   });
 }
 
-function entryTitle(text: string): Paragraph {
+function entryTitle({ Paragraph, TextRun }: Docx, text: string) {
   return new Paragraph({
     spacing: { before: CV_SPACING_PT.lg * TWIP, after: 0 },
     children: [
@@ -121,7 +124,7 @@ function entryTitle(text: string): Paragraph {
   });
 }
 
-function entryMeta(text: string): Paragraph {
+function entryMeta({ Paragraph, TextRun }: Docx, text: string) {
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
     children: [
@@ -135,7 +138,7 @@ function entryMeta(text: string): Paragraph {
   });
 }
 
-function bulletParagraph(text: string): Paragraph {
+function bulletParagraph({ Paragraph, TextRun }: Docx, text: string) {
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
     bullet: { level: 0 },
@@ -149,7 +152,7 @@ function bulletParagraph(text: string): Paragraph {
   });
 }
 
-function tagsBullet(label: string | undefined, items: string[]): Paragraph {
+function tagsBullet({ Paragraph, TextRun }: Docx, label: string | undefined, items: string[]) {
   const text = label ? `${label}: ${items.join(', ')}` : items.join(', ');
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
@@ -165,7 +168,8 @@ function tagsBullet(label: string | undefined, items: string[]): Paragraph {
   });
 }
 
-function summaryParagraphs(text: string): Paragraph[] {
+function summaryParagraphs(docx: Docx, text: string) {
+  const { Paragraph, TextRun } = docx;
   return text.split('\n').map((line, i, arr) => {
     const isLast = i === arr.length - 1;
     return new Paragraph({
@@ -178,24 +182,26 @@ function summaryParagraphs(text: string): Paragraph[] {
 }
 
 function entryParagraphs(
+  docx: Docx,
   title: string,
   meta: string,
   bullets: string[],
   tagsLabel?: string,
   tags?: string[],
-): Paragraph[] {
-  const paragraphs: Paragraph[] = [
-    entryTitle(title),
-    entryMeta(meta),
-    ...bullets.map((b) => bulletParagraph(b)),
+) {
+  const paragraphs = [
+    entryTitle(docx, title),
+    entryMeta(docx, meta),
+    ...bullets.map((b) => bulletParagraph(docx, b)),
   ];
   if (tags && tags.length > 0) {
-    paragraphs.push(tagsBullet(tagsLabel, tags));
+    paragraphs.push(tagsBullet(docx, tagsLabel, tags));
   }
   return paragraphs;
 }
 
-function bodyParagraphs(text: string): Paragraph[] {
+function bodyParagraphs(docx: Docx, text: string) {
+  const { Paragraph, TextRun } = docx;
   return text.split('\n').map((line) => {
     return new Paragraph({
       spacing: { after: CV_SIZE.body * TWIP },
@@ -206,7 +212,8 @@ function bodyParagraphs(text: string): Paragraph[] {
   });
 }
 
-function createCvDocx(data: CvFormData): Document {
+function createCvDocx(docx: Docx, data: CvFormData) {
+  const { Document, convertMillimetersToTwip } = docx;
   const margin = convertMillimetersToTwip(CV_LAYOUT.marginMm);
   const pageProperties = {
     page: {
@@ -218,30 +225,34 @@ function createCvDocx(data: CvFormData): Document {
     },
   };
 
-  const sections: { properties: typeof pageProperties; children: Paragraph[] }[] = [];
+  const sections: {
+    properties: typeof pageProperties;
+    children: InstanceType<Docx['Paragraph']>[];
+  }[] = [];
 
-  const showCoverLetter = data.coverLetterEnabled && data.coverLetter?.trim();
-  if (showCoverLetter) {
+  const coverText = data.coverLetter?.trim();
+  if (data.coverLetterEnabled && coverText) {
     sections.push({
       properties: pageProperties,
       children: [
-        headerLine(data.personalInfo),
-        ...contactLines(data.personalInfo),
-        ...bodyParagraphs(data.coverLetter!),
+        headerLine(docx, data.personalInfo),
+        ...contactLines(docx, data.personalInfo),
+        ...bodyParagraphs(docx, coverText),
       ],
     });
   }
 
-  const cvChildren: Paragraph[] = [
-    headerLine(data.personalInfo),
-    ...contactLines(data.personalInfo),
+  const cvChildren = [
+    headerLine(docx, data.personalInfo),
+    ...contactLines(docx, data.personalInfo),
 
-    sectionHeading('Professional Summary'),
-    ...summaryParagraphs(data.summary),
+    sectionHeading(docx, 'Professional Summary'),
+    ...summaryParagraphs(docx, data.summary),
 
-    sectionHeading('Work Experience'),
+    sectionHeading(docx, 'Work Experience'),
     ...data.experience.flatMap((exp) =>
       entryParagraphs(
+        docx,
         `${exp.role}, ${exp.company}`,
         formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location),
         exp.bullets,
@@ -250,9 +261,10 @@ function createCvDocx(data: CvFormData): Document {
       ),
     ),
 
-    sectionHeading('Education'),
+    sectionHeading(docx, 'Education'),
     ...data.education.flatMap((edu) =>
       entryParagraphs(
+        docx,
         `${edu.degree}, ${edu.institution}`,
         formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location),
         edu.bullets,
@@ -262,9 +274,10 @@ function createCvDocx(data: CvFormData): Document {
 
   if (data.others.length > 0) {
     cvChildren.push(
-      sectionHeading('Others'),
+      sectionHeading(docx, 'Others'),
       ...data.others.flatMap((other) =>
         entryParagraphs(
+          docx,
           `${other.role}, ${other.company}`,
           formatEntryMeta(formatDateRange(other.startDate, other.endDate), other.location),
           other.bullets,
@@ -281,6 +294,7 @@ function createCvDocx(data: CvFormData): Document {
 }
 
 export async function createCvDocxBlob(data: CvFormData): Promise<Blob> {
-  const doc = createCvDocx(data);
-  return Packer.toBlob(doc);
+  const docx = await import('docx');
+  const doc = createCvDocx(docx, data);
+  return docx.Packer.toBlob(doc);
 }

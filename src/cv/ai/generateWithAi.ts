@@ -1,5 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
-
 import type { CvFormData } from '../cvFormSchema.ts';
 
 const MODEL = 'gemini-2.5-flash';
@@ -76,6 +74,7 @@ export function splitReasoning(raw: string): { content: string; reasoning: strin
 }
 
 async function generate(apiKey: string, instructions: string, input: string): Promise<string> {
+  const { GoogleGenAI } = await import('@google/genai');
   const ai = new GoogleGenAI({ apiKey });
 
   const response = await ai.models.generateContent({

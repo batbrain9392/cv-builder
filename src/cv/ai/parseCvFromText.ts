@@ -1,4 +1,3 @@
-import { GoogleGenAI } from '@google/genai';
 import { z } from 'zod';
 
 import type { CvFormData } from '../cvFormSchema.ts';
@@ -140,6 +139,7 @@ function buildIssuesFromZodError(error: z.ZodError): string[] {
 }
 
 export async function parseCvFromText(apiKey: string, rawText: string): Promise<ParseCvResult> {
+  const { GoogleGenAI } = await import('@google/genai');
   const ai = new GoogleGenAI({ apiKey });
 
   const response = await ai.models.generateContent({

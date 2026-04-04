@@ -67,4 +67,9 @@ describe('parseMarkdown', () => {
     expect(html).toContain('&lt;script&gt;');
     expect(html).not.toContain('<script>');
   });
+
+  it('escapes quotes in link href to prevent attribute breakout', () => {
+    const html = parseInlineMarkdown('[click](https://evil.com" onmouseover="alert(1))');
+    expect(html).not.toMatch(/href="[^"]*onmouseover/);
+  });
 });

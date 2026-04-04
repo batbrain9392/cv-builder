@@ -2,19 +2,23 @@ import { Marked } from 'marked';
 
 const SAFE_PROTOCOL = /^https?:\/\//i;
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 const renderer = {
   html(token: { text: string }) {
-    return token.text
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
+    return escapeHtml(token.text);
   },
   link(token: { href: string; text: string }) {
     if (!SAFE_PROTOCOL.test(token.href)) {
-      return token.text;
+      return escapeHtml(token.text);
     }
-    return `<a href="${token.href}">${token.text}</a>`;
+    return `<a href="${escapeHtml(token.href)}">${escapeHtml(token.text)}</a>`;
   },
 };
 
