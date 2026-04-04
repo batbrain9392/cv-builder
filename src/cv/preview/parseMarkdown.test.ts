@@ -34,6 +34,12 @@ describe('parseInlineMarkdown', () => {
   it('renders inline code', () => {
     expect(parseInlineMarkdown('use `npm install`')).toBe('use <code>npm install</code>');
   });
+
+  it('strips javascript: links', () => {
+    const result = parseInlineMarkdown('[click](javascript:alert(1))');
+    expect(result).not.toContain('javascript:');
+    expect(result).toContain('click');
+  });
 });
 
 describe('parseMarkdown', () => {

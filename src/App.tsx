@@ -8,12 +8,12 @@ import {
   Loader2Icon,
   XIcon,
 } from 'lucide-react';
-import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
-import { useForm, useFieldArray, useWatch, type SubmitHandler } from 'react-hook-form';
+import { lazy, Suspense, useCallback, useEffect, useState } from 'react';
+import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { Route, Routes } from 'react-router';
-import { toast } from 'sonner';
 
 import { EmojiIcon } from '@/components/EmojiIcon';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { GeminiIcon } from '@/components/GeminiIcon';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,22 +26,9 @@ import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
 import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 
-import type { AiResult } from './cv/ai/generateWithAi.ts';
 import type { CvFormData } from './cv/cvFormSchema.ts';
 
-import {
-  generateCoverLetter,
-  generateHighlights,
-  generateSummary,
-} from './cv/ai/generateWithAi.ts';
-import {
-  cvFormSchema,
-  DEFAULT_COVER_LETTER_PROMPT,
-  DEFAULT_HIGHLIGHTS_PROMPT,
-  DEFAULT_SUMMARY_PROMPT,
-} from './cv/cvFormSchema.ts';
-import { downloadBlob } from './cv/downloadBlob.ts';
-import { createCvDocxBlob } from './cv/export/CvDocxDocument.ts';
+import { cvFormSchema, DEFAULT_HIGHLIGHTS_PROMPT } from './cv/cvFormSchema.ts';
 import { AiSettingsFields } from './cv/form/AiSettingsFields.tsx';
 import { CoverLetterFields } from './cv/form/CoverLetterFields.tsx';
 import { EducationFields } from './cv/form/EducationFields.tsx';
@@ -50,12 +37,13 @@ import { FormActions } from './cv/form/FormActions.tsx';
 import { JobDescriptionFields } from './cv/form/JobDescriptionFields.tsx';
 import { PersonalInfoFields } from './cv/form/PersonalInfoFields.tsx';
 import { SectionToolbar } from './cv/form/SectionToolbar.tsx';
-import { AI_FIELD_DEFAULTS, backfillEntryPrompts } from './cv/loadDefaultValues.ts';
 import { CvPreviewPanel } from './cv/preview/CvPreviewPanel.tsx';
+import { useAiGeneration } from './cv/useAiGeneration.ts';
+import { useCvExport } from './cv/useCvExport.ts';
 
 const AboutPage = lazy(() => import('./pages/AboutPage.tsx'));
 
-const EMPTY_EXPERIENCE = {
+const EMPTY_ENTRY = {
   role: '',
   company: '',
   url: '',
@@ -100,11 +88,6 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
 }
 
 function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
-  const [exporting, setExporting] = useState(false);
-  const [generatingSummary, setGeneratingSummary] = useState(false);
-  const [generatedSummary, setGeneratedSummary] = useState<AiResult<string> | null>(null);
-  const [generatingCoverLetter, setGeneratingCoverLetter] = useState(false);
-  const [generatedCoverLetter, setGeneratedCoverLetter] = useState<AiResult<string> | null>(null);
   const [summaryAiOpen, setSummaryAiOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
   const togglePreview = useCallback(() => setPreviewOpen((o) => !o), []);
@@ -144,252 +127,31 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const education = useFieldArray({ control, name: 'education' });
   const others = useFieldArray({ control, name: 'others' });
 
-  const onImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        if (typeof reader.result !== 'string') return;
-        const data = JSON.parse(reader.result);
-        const withDefaults = backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...data });
-        const parsed = cvFormSchema.safeParse(withDefaults);
-        if (parsed.success) {
-          reset(parsed.data);
-          toast.success('CV data loaded successfully.');
-        } else {
-          toast.error('Invalid cv.json format.');
-        }
-      } catch {
-        toast.error('Could not parse file.');
-      }
-    };
-    reader.readAsText(file);
-  };
+  const {
+    exporting,
+    apiKeyWarningOpen,
+    setApiKeyWarningOpen,
+    onImport,
+    onExportJson,
+    onExportDocx,
+    onExportJsonWithKey,
+    onExportJsonWithoutKey,
+  } = useCvExport(reset);
 
-  const [apiKeyWarningOpen, setApiKeyWarningOpen] = useState(false);
-  const pendingExportData = useRef<CvFormData | null>(null);
-
-  const doExportJson = (data: CvFormData) => {
-    downloadBlob(
-      new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }),
-      'cv.json',
-    );
-    toast.success('JSON exported.');
-  };
-
-  const onExportJson: SubmitHandler<CvFormData> = (data) => {
-    if (data.aiApiKey) {
-      pendingExportData.current = data;
-      setApiKeyWarningOpen(true);
-    } else {
-      doExportJson(data);
-    }
-  };
-
-  const onExportJsonWithKey = () => {
-    if (pendingExportData.current) {
-      doExportJson(pendingExportData.current);
-      pendingExportData.current = null;
-    }
-    setApiKeyWarningOpen(false);
-  };
-
-  const onExportJsonWithoutKey = () => {
-    if (pendingExportData.current) {
-      doExportJson({ ...pendingExportData.current, aiApiKey: '' });
-      pendingExportData.current = null;
-    }
-    setApiKeyWarningOpen(false);
-  };
-
-  const onExportDocx: SubmitHandler<CvFormData> = async (data) => {
-    setExporting(true);
-    const minWait = new Promise((r) => setTimeout(r, 400));
-    try {
-      const [blob] = await Promise.all([createCvDocxBlob(data), minWait]);
-      downloadBlob(blob, 'cv.docx');
-      toast.success('DOCX exported.');
-    } finally {
-      setExporting(false);
-    }
-  };
-
-  const onGenerateSummary = async () => {
-    const values = getValues();
-    if (!values.aiApiKey || !values.jobDescriptionText) return;
-    setGeneratingSummary(true);
-    try {
-      const result = await generateSummary(
-        values.aiApiKey,
-        values.aiSummaryPrompt || DEFAULT_SUMMARY_PROMPT,
-        values,
-        values.jobDescriptionText,
-      );
-      setGeneratedSummary(result);
-      toast.success('Summary generated. Review it below.');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to generate summary.');
-    } finally {
-      setGeneratingSummary(false);
-    }
-  };
-
-  const onUseSummary = () => {
-    if (!generatedSummary) return;
-    setValue('summary', generatedSummary.content, { shouldValidate: true, shouldDirty: true });
-    setGeneratedSummary(null);
-    toast.success('Summary applied.');
-  };
-
-  const onCopyGenerated = async (text: string) => {
-    try {
-      await navigator.clipboard.writeText(text);
-      toast.success('Copied to clipboard.');
-    } catch {
-      toast.error('Failed to copy.');
-    }
-  };
-
-  const onGenerateCoverLetter = async () => {
-    const values = getValues();
-    if (!values.aiApiKey || !values.jobDescriptionText) return;
-    setGeneratingCoverLetter(true);
-    try {
-      const result = await generateCoverLetter(
-        values.aiApiKey,
-        values.aiCoverLetterPrompt || DEFAULT_COVER_LETTER_PROMPT,
-        values,
-        values.jobDescriptionText,
-      );
-      setGeneratedCoverLetter(result);
-      toast.success('Cover letter generated. Review it below.');
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : 'Failed to generate cover letter.');
-    } finally {
-      setGeneratingCoverLetter(false);
-    }
-  };
-
-  const onUseCoverLetter = () => {
-    if (!generatedCoverLetter) return;
-    setValue('coverLetter', generatedCoverLetter.content, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-    setGeneratedCoverLetter(null);
-    toast.success('Cover letter applied.');
-  };
-
-  type HighlightsAiState = Record<
-    string,
-    { generating: boolean; result: AiResult<string[]> | null }
-  >;
-  const [highlightsAi, setHighlightsAi] = useState<HighlightsAiState>({});
-
-  const getHighlightsAiState = useCallback(
-    (path: string) => highlightsAi[path] ?? { generating: false, result: null },
-    [highlightsAi],
-  );
-
-  const onGenerateHighlights = useCallback(
-    async (path: string) => {
-      const values = getValues();
-      if (!values.aiApiKey || !values.jobDescriptionText) return;
-
-      setHighlightsAi((prev) => ({ ...prev, [path]: { generating: true, result: null } }));
-      try {
-        const parts = path.split('.');
-        const section = parts[0];
-        const idx = Number(parts[1]);
-        const entries =
-          section === 'experience'
-            ? values.experience
-            : section === 'education'
-              ? values.education
-              : values.others;
-        const entry = entries[idx];
-        const prompt = entry.aiHighlightsPrompt || DEFAULT_HIGHLIGHTS_PROMPT;
-
-        const result = await generateHighlights(
-          values.aiApiKey,
-          prompt,
-          entry,
-          values.jobDescriptionText,
-        );
-        setHighlightsAi((prev) => ({ ...prev, [path]: { generating: false, result } }));
-        toast.success('Highlights generated. Review below.');
-      } catch (err) {
-        setHighlightsAi((prev) => ({ ...prev, [path]: { generating: false, result: null } }));
-        toast.error(err instanceof Error ? err.message : 'Failed to generate highlights.');
-      }
-    },
-    [getValues],
-  );
-
-  const onUseHighlights = useCallback(
-    (path: string) => {
-      const state = highlightsAi[path];
-      if (!state?.result) return;
-
-      const [section, idxStr] = path.split('.');
-      const idx = Number(idxStr);
-      const opts = { shouldValidate: true, shouldDirty: true } as const;
-
-      if (section === 'experience') {
-        setValue(`experience.${idx}.bullets`, state.result.content, opts);
-      } else if (section === 'education') {
-        setValue(`education.${idx}.bullets`, state.result.content, opts);
-      } else {
-        setValue(`others.${idx}.bullets`, state.result.content, opts);
-      }
-
-      setHighlightsAi((prev) => ({ ...prev, [path]: { generating: false, result: null } }));
-      toast.success('Highlights applied.');
-    },
-    [highlightsAi, setValue],
-  );
-
-  const onDismissHighlights = useCallback((path: string) => {
-    setHighlightsAi((prev) => ({ ...prev, [path]: { generating: false, result: null } }));
-  }, []);
-
-  const onCopyHighlights = useCallback(
-    async (path: string) => {
-      const state = highlightsAi[path];
-      if (!state?.result) return;
-      try {
-        await navigator.clipboard.writeText(state.result.content.join('\n'));
-        toast.success('Copied to clipboard.');
-      } catch {
-        toast.error('Failed to copy.');
-      }
-    },
-    [highlightsAi],
-  );
-
-  const buildEntryAiProps = useCallback(
-    (path: string) => {
-      const state = getHighlightsAiState(path);
-      return {
-        canGenerate,
-        generatingHighlights: state.generating,
-        generatedHighlights: state.result,
-        onGenerateHighlights: () => onGenerateHighlights(path),
-        onUseHighlights: () => onUseHighlights(path),
-        onCopyHighlights: () => onCopyHighlights(path),
-        onDismissHighlights: () => onDismissHighlights(path),
-      };
-    },
-    [
-      canGenerate,
-      getHighlightsAiState,
-      onGenerateHighlights,
-      onUseHighlights,
-      onCopyHighlights,
-      onDismissHighlights,
-    ],
-  );
+  const {
+    generatingSummary,
+    generatedSummary,
+    setGeneratedSummary,
+    onGenerateSummary,
+    onUseSummary,
+    onCopyGenerated,
+    generatingCoverLetter,
+    generatedCoverLetter,
+    setGeneratedCoverLetter,
+    onGenerateCoverLetter,
+    onUseCoverLetter,
+    buildEntryAiProps,
+  } = useAiGeneration(getValues, setValue, canGenerate);
 
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
@@ -407,7 +169,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       />
 
       <main className="flex min-h-0 flex-1 flex-col overflow-hidden lg:flex-row">
-        {/* Form panel - full width on mobile, half on desktop */}
+        {/* Form panel */}
         <div className="min-h-0 flex-1 overscroll-contain overflow-y-auto lg:flex-1">
           <form
             id="cv-editor"
@@ -424,13 +186,10 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               </p>
             </div>
 
-            {/* AI Assist */}
             <AiSettingsFields register={register} errors={errors} />
 
-            {/* Job Description */}
             <JobDescriptionFields register={register} errors={errors} />
 
-            {/* Cover Letter */}
             <CoverLetterFields
               register={register}
               control={control}
@@ -444,7 +203,6 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               onDismiss={() => setGeneratedCoverLetter(null)}
             />
 
-            {/* Personal Info */}
             <PersonalInfoFields
               register={register}
               errors={errors.personalInfo}
@@ -591,7 +349,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                 count={experience.fields.length}
                 onCollapse={() => setExpSignal((s) => ({ n: s.n + 1, open: false }))}
                 onExpand={() => setExpSignal((s) => ({ n: s.n + 1, open: true }))}
-                onAdd={() => experience.insert(0, EMPTY_EXPERIENCE)}
+                onAdd={() => experience.insert(0, EMPTY_ENTRY)}
                 addLabel="Add Experience"
               />
 
@@ -646,7 +404,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                 count={others.fields.length}
                 onCollapse={() => setOthSignal((s) => ({ n: s.n + 1, open: false }))}
                 onExpand={() => setOthSignal((s) => ({ n: s.n + 1, open: true }))}
-                onAdd={() => others.insert(0, EMPTY_EXPERIENCE)}
+                onAdd={() => others.insert(0, EMPTY_ENTRY)}
                 addLabel="Add Other"
               />
 
@@ -678,7 +436,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           </form>
         </div>
 
-        {/* Preview panel — always in DOM, slides in on mobile */}
+        {/* Preview panel */}
         {previewOpen && (
           <div
             className="fixed inset-0 z-40 bg-black/10 backdrop-blur-xs lg:hidden"
@@ -696,11 +454,19 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             (previewOpen ? ' translate-x-0' : ' translate-x-full')
           }
         >
-          <CvPreviewPanel control={control} defaultValues={defaultValues} />
+          <ErrorBoundary
+            fallback={
+              <div className="flex h-full items-center justify-center p-8 text-center text-muted-foreground">
+                <p>Preview could not be rendered. Check your form data for issues.</p>
+              </div>
+            }
+          >
+            <CvPreviewPanel control={control} defaultValues={defaultValues} />
+          </ErrorBoundary>
         </aside>
       </main>
 
-      {/* Mobile FAB — toggles preview open/close from the same spot */}
+      {/* Mobile FAB */}
       <Button
         size="lg"
         className="fixed right-4 bottom-4 z-50 gap-2 shadow-lg lg:hidden"

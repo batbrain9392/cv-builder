@@ -8,9 +8,17 @@ import type { CvFormData } from '../cvFormSchema.ts';
 import { CV_LAYOUT } from '../cvConstants.ts';
 import { CvPreview } from './CvPreview.tsx';
 
-const identity = (v: CvFormData) => v;
-
 const A4_WIDTH_PX = (CV_LAYOUT.pageWidthMm / 25.4) * 96;
+
+/**
+ * useWatch without a `name` returns DeepPartialSkipArrayKey, but when
+ * `defaultValue` is a complete CvFormData every field is guaranteed present
+ * at runtime. This helper narrows the type without a type assertion.
+ */
+function useFormData(control: Control<CvFormData>, defaultValues: CvFormData): CvFormData {
+  const watched = useWatch({ control, defaultValue: defaultValues });
+  return Object.assign({}, defaultValues, watched) satisfies CvFormData;
+}
 
 interface CvPreviewPanelProps {
   control: Control<CvFormData>;
@@ -18,7 +26,7 @@ interface CvPreviewPanelProps {
 }
 
 export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) {
-  const data = useWatch({ control, defaultValue: defaultValues, compute: identity });
+  const data = useFormData(control, defaultValues);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const updateScale = useCallback(() => {

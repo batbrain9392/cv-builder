@@ -61,9 +61,9 @@ const EMPTY_DEFAULTS: CvFormData = {
 
 export function loadDefaultValues(): CvFormData {
   try {
-    const raw = Object.fromEntries(Object.entries(starterCv));
-    return cvFormSchema.parse(backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...raw }));
-  } catch {
+    return cvFormSchema.parse(backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...starterCv }));
+  } catch (err) {
+    console.warn('Failed to parse starterCv.json, falling back to empty defaults:', err);
     return EMPTY_DEFAULTS;
   }
 }

@@ -9,6 +9,7 @@ export function MarkdownHint({ id, children }: { id: string; children?: React.Re
         className="underline hover:text-foreground"
       >
         Markdown
+        <span className="sr-only"> (opens in new tab)</span>
       </a>{' '}
       supported.
     </p>

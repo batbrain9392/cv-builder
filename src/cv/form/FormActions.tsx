@@ -38,7 +38,7 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
   return (
     <header className="z-40 flex shrink-0 items-center justify-between bg-primary px-4 py-3 text-primary-foreground shadow-md lg:px-6 xl:px-8">
       <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-        <BotIcon className="size-6" />
+        <BotIcon className="size-6" aria-hidden="true" />
         Bot-ter Than You
       </Link>
 
