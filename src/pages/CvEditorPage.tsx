@@ -7,6 +7,8 @@ import {
   EyeIcon,
   Loader2Icon,
   PenLineIcon,
+  SaveIcon,
+  SettingsIcon,
   Trash2Icon,
   XIcon,
 } from 'lucide-react';
@@ -42,7 +44,7 @@ import { DownloadDialog } from '../cv/form/DownloadDialog.tsx';
 import { EducationFields } from '../cv/form/EducationFields.tsx';
 import { ExperienceEntryFields } from '../cv/form/ExperienceEntryFields.tsx';
 import { FormActions } from '../cv/form/FormActions.tsx';
-import { ImportDialog } from '../cv/form/ImportDialog.tsx';
+import { ImportDataFields } from '../cv/form/ImportDataFields.tsx';
 import { JobDescriptionFields } from '../cv/form/JobDescriptionFields.tsx';
 import { PersonalInfoFields } from '../cv/form/PersonalInfoFields.tsx';
 import { SectionToolbar } from '../cv/form/SectionToolbar.tsx';
@@ -87,6 +89,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
     mobilePreviewRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const [toolsOpen, setToolsOpen] = useState(false);
   const [summaryAiOpen, setSummaryAiOpen] = useState(false);
   const [expSignal, setExpSignal] = useState({ n: 0, open: true });
   const [eduSignal, setEduSignal] = useState({ n: 0, open: true });
@@ -94,7 +97,6 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
-  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const [showBackupBanner, setShowBackupBanner] = useState(false);
@@ -216,20 +218,9 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               className="px-4 py-8 lg:p-6 xl:p-8 space-y-8"
             >
               <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <h1 className="flex items-center gap-3 text-xl font-bold tracking-tight">
-                    <PenLineIcon className="size-5" aria-hidden="true" /> Edit your CV
-                  </h1>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setClearConfirmOpen(true)}
-                  >
-                    <Trash2Icon data-icon="inline-start" />
-                    Clear all
-                  </Button>
-                </div>
+                <h1 className="flex items-center gap-3 text-xl font-bold tracking-tight">
+                  <PenLineIcon className="size-5" aria-hidden="true" /> Edit your CV
+                </h1>
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -243,39 +234,85 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                     This is sample data to show you how the editor works.
                   </p>
                   <p className="mt-1 text-muted-foreground">
-                    Replace it with your own info, or{' '}
+                    Replace it with your own info, or expand{' '}
                     <button
                       type="button"
-                      onClick={() => setImportDialogOpen(true)}
+                      onClick={() => setToolsOpen(true)}
                       className="inline font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
                     >
-                      load a previous backup
+                      Tools &amp; Import
                     </button>{' '}
-                    to pick up where you left off. Hit <strong>Save</strong> to store your data in
-                    this browser&rsquo;s local storage so it&rsquo;s here next time you visit. Need
-                    a PDF? Open the DOCX in Word or Google Docs and save as PDF.
+                    to load a previous backup. Hit <strong>Save</strong> at the bottom to store your
+                    data in this browser&rsquo;s local storage so it&rsquo;s here next time you
+                    visit. Need a PDF? Open the DOCX in Word or Google Docs and save as PDF.
                   </p>
                 </div>
               </div>
 
               {showBackupBanner && <BackupReminder onDismiss={() => setShowBackupBanner(false)} />}
 
-              <AiSettingsFields register={register} errors={errors} />
+              <Card>
+                <Collapsible
+                  open={toolsOpen}
+                  onOpenChange={setToolsOpen}
+                  className="flex flex-col gap-2"
+                >
+                  <CollapsibleTrigger
+                    render={
+                      <button
+                        type="button"
+                        aria-labelledby="tools-import-title"
+                        className="cursor-pointer text-left"
+                      />
+                    }
+                  >
+                    <CardHeader className="grid-cols-[1fr_auto] items-center">
+                      <CardTitle id="tools-import-title" className="flex items-center gap-1.5">
+                        <SettingsIcon className="size-4" />
+                        Import existing CV
+                      </CardTitle>
+                      <ChevronDownIcon
+                        className={
+                          'size-4 shrink-0 text-muted-foreground transition-transform' +
+                          (toolsOpen ? ' rotate-180' : '')
+                        }
+                      />
+                    </CardHeader>
+                  </CollapsibleTrigger>
 
-              <JobDescriptionFields register={register} errors={errors} />
+                  <CollapsibleContent>
+                    <CardContent className="space-y-6">
+                      <AiSettingsFields register={register} errors={errors} />
 
-              <CoverLetterFields
-                register={register}
-                control={control}
-                errors={errors}
-                defaultExpanded={defaultValues.coverLetterEnabled}
-                generating={generatingCoverLetter}
-                generatedText={generatedCoverLetter}
-                onGenerate={onGenerateCoverLetter}
-                onUse={onUseCoverLetter}
-                onCopy={onCopyGenerated}
-                onDismiss={() => setGeneratedCoverLetter(null)}
-              />
+                      <hr className="border-border/60" />
+
+                      <ImportDataFields
+                        currentApiKey={aiApiKey}
+                        onPickJsonFile={onPickJsonFile}
+                        onImportParsed={onImportParsed}
+                      />
+
+                      <hr className="border-border/60" />
+
+                      <JobDescriptionFields register={register} errors={errors} />
+
+                      <hr className="border-border/60" />
+
+                      <CoverLetterFields
+                        register={register}
+                        control={control}
+                        errors={errors}
+                        generating={generatingCoverLetter}
+                        generatedText={generatedCoverLetter}
+                        onGenerate={onGenerateCoverLetter}
+                        onUse={onUseCoverLetter}
+                        onCopy={onCopyGenerated}
+                        onDismiss={() => setGeneratedCoverLetter(null)}
+                      />
+                    </CardContent>
+                  </CollapsibleContent>
+                </Collapsible>
+              </Card>
 
               <PersonalInfoFields
                 register={register}
@@ -517,6 +554,22 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                   );
                 })}
               </section>
+
+              <div className="flex items-center justify-end gap-3 border-t pt-6">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setClearConfirmOpen(true)}
+                >
+                  <Trash2Icon data-icon="inline-start" />
+                  Clear all
+                </Button>
+                <Button type="button" size="sm" onClick={onSaveToBrowser}>
+                  <SaveIcon data-icon="inline-start" />
+                  Save to browser
+                </Button>
+              </div>
             </form>
           </ErrorBoundary>
 
@@ -526,7 +579,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               ref={mobilePreviewRef}
               id="cv-preview-panel-mobile"
               aria-label="CV preview"
-              className="border-t bg-muted pb-32 lg:hidden"
+              className="border-t bg-muted pb-32"
             >
               <ErrorBoundary
                 fallback={(reset) => (
@@ -573,11 +626,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         )}
       </main>
 
-      <FormActions
-        onLoad={() => setImportDialogOpen(true)}
-        onSave={onSaveToBrowser}
-        onDownload={() => setDownloadDialogOpen(true)}
-      />
+      <FormActions onDownload={() => setDownloadDialogOpen(true)} />
 
       {/* Mobile FAB — jump to preview */}
       <Button
@@ -680,14 +729,6 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         onExportJson={handleSubmit(onExportJson, onValidationError)}
         onExportDocx={handleSubmit(onExportDocx, onValidationError)}
         exporting={exporting}
-      />
-
-      <ImportDialog
-        open={importDialogOpen}
-        onOpenChange={setImportDialogOpen}
-        onPickJsonFile={onPickJsonFile}
-        onImportParsed={onImportParsed}
-        currentApiKey={aiApiKey}
       />
 
       <Toaster position="bottom-left" />

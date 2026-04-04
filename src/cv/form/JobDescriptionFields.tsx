@@ -1,11 +1,6 @@
 import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 
-import { ChevronDownIcon } from 'lucide-react';
-import { useState } from 'react';
-
 import { EmojiIcon } from '@/components/EmojiIcon';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Textarea } from '@/components/ui/textarea';
 
@@ -17,61 +12,37 @@ interface JobDescriptionFieldsProps {
 }
 
 export function JobDescriptionFields({ register, errors }: JobDescriptionFieldsProps) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <Card>
-      <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
-        <CollapsibleTrigger
-          render={
-            <button type="button" aria-labelledby="jd-title" className="cursor-pointer text-left" />
-          }
-        >
-          <CardHeader className="grid-cols-[1fr_auto] items-center">
-            <CardTitle id="jd-title" className="flex items-center gap-1.5">
-              <EmojiIcon emoji="🎯" />
-              Job Description{' '}
-              <span className="text-sm font-normal text-muted-foreground">(optional)</span>
-            </CardTitle>
-            <ChevronDownIcon
-              className={
-                'size-4 shrink-0 text-muted-foreground transition-transform' +
-                (open ? ' rotate-180' : '')
-              }
-            />
-          </CardHeader>
-        </CollapsibleTrigger>
-
-        <CollapsibleContent>
-          <CardContent>
-            <FieldGroup>
-              <p className="text-xs text-muted-foreground">
-                Copy the full job posting text and paste it here. The AI uses this to tailor your
-                summary, cover letter, and experience highlights to match the specific role —
-                picking up on keywords, required skills, and tone.
-              </p>
-              <Field data-invalid={errors.jobDescriptionText ? true : undefined}>
-                <FieldLabel htmlFor="jobDescriptionText">Job Description</FieldLabel>
-                <Textarea
-                  id="jobDescriptionText"
-                  {...register('jobDescriptionText')}
-                  rows={6}
-                  placeholder="Paste the job description here…"
-                  aria-invalid={errors.jobDescriptionText ? true : undefined}
-                  aria-describedby="jobDescriptionText-hint"
-                />
-                <p id="jobDescriptionText-hint" className="text-xs text-muted-foreground">
-                  Tip: select all the text on the job listing page (Ctrl+A / ⌘A), copy it, and paste
-                  here. Extra formatting or boilerplate won't affect the results.
-                </p>
-                {errors.jobDescriptionText && (
-                  <FieldError id="jobDescriptionText-error" errors={[errors.jobDescriptionText]} />
-                )}
-              </Field>
-            </FieldGroup>
-          </CardContent>
-        </CollapsibleContent>
-      </Collapsible>
-    </Card>
+    <section aria-labelledby="jd-title" className="space-y-1.5">
+      <h3 id="jd-title" className="flex items-center gap-1.5 text-sm font-semibold">
+        <EmojiIcon emoji="🎯" />
+        Job Description <span className="font-normal text-muted-foreground">(optional)</span>
+      </h3>
+      <FieldGroup>
+        <p className="text-xs text-muted-foreground">
+          Copy the full job posting text and paste it here. The AI uses this to tailor your summary,
+          cover letter, and experience highlights to match the specific role — picking up on
+          keywords, required skills, and tone.
+        </p>
+        <Field data-invalid={errors.jobDescriptionText ? true : undefined}>
+          <FieldLabel htmlFor="jobDescriptionText">Job Description</FieldLabel>
+          <Textarea
+            id="jobDescriptionText"
+            {...register('jobDescriptionText')}
+            rows={6}
+            placeholder="Paste the job description here…"
+            aria-invalid={errors.jobDescriptionText ? true : undefined}
+            aria-describedby="jobDescriptionText-hint"
+          />
+          <p id="jobDescriptionText-hint" className="text-xs text-muted-foreground">
+            Tip: select all the text on the job listing page (Ctrl+A / ⌘A), copy it, and paste here.
+            Extra formatting or boilerplate won't affect the results.
+          </p>
+          {errors.jobDescriptionText && (
+            <FieldError id="jobDescriptionText-error" errors={[errors.jobDescriptionText]} />
+          )}
+        </Field>
+      </FieldGroup>
+    </section>
   );
 }
