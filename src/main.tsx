@@ -1,5 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router';
 
 import { App } from './App.tsx';
 import { loadDefaultValues } from './cv/loadDefaultValues.ts';
@@ -17,7 +18,9 @@ if (!el) {
 loadDefaultValues().then((defaultValues) => {
   createRoot(el).render(
     <StrictMode>
-      <App defaultValues={defaultValues} />
+      <BrowserRouter>
+        <App defaultValues={defaultValues} />
+      </BrowserRouter>
     </StrictMode>,
   );
 });

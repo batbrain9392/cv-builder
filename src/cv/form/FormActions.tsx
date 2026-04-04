@@ -7,9 +7,11 @@ import {
   FileDownIcon,
   FileOutputIcon,
   FolderOpenIcon,
+  InfoIcon,
   Loader2Icon,
 } from 'lucide-react';
 import { useRef } from 'react';
+import { Link } from 'react-router';
 
 import { InstallPwa } from '@/components/InstallPwa';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -35,14 +37,22 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
 
   return (
     <header className="z-40 flex shrink-0 items-center justify-between bg-primary px-4 py-3 text-primary-foreground shadow-md lg:px-6 xl:px-8">
-      <h1 className="flex items-center gap-2 text-lg font-semibold tracking-tight">
+      <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
         <BotIcon className="size-6" />
         Bot-ter Than You
-      </h1>
+      </Link>
 
       <nav aria-label="CV actions" className="flex items-center gap-2">
         <InstallPwa />
         <ThemeToggle />
+
+        <Link
+          to="/behind-the-bot"
+          className="hidden items-center gap-1 rounded-lg border border-primary-foreground/30 px-2.5 py-1 text-[0.8rem] font-medium text-primary-foreground hover:bg-primary-foreground/15 sm:inline-flex"
+        >
+          <InfoIcon className="size-3.5" />
+          Behind the Bot
+        </Link>
 
         {/* Mobile: overflow menu */}
         <Menu.Root>
@@ -61,6 +71,10 @@ export function FormActions({ onImport, onExportJson, onExportDocx, exporting }:
           <Menu.Portal>
             <Menu.Positioner align="end" sideOffset={12}>
               <Menu.Popup className="z-50 min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
+                <Menu.Item className={menuItemClass} render={<Link to="/behind-the-bot" />}>
+                  <InfoIcon className="size-4" />
+                  Behind the Bot
+                </Menu.Item>
                 <Menu.Item className={menuItemClass} onClick={() => fileInputRef.current?.click()}>
                   <FolderOpenIcon className="size-4" />
                   Load data

@@ -9,8 +9,9 @@ import {
   SparklesIcon,
   XIcon,
 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { useForm, useFieldArray, useWatch, type SubmitHandler } from 'react-hook-form';
+import { Route, Routes } from 'react-router';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -50,6 +51,8 @@ import { SectionToolbar } from './cv/form/SectionToolbar.tsx';
 import { AI_FIELD_DEFAULTS, backfillEntryPrompts } from './cv/loadDefaultValues.ts';
 import { CvPreviewPanel } from './cv/preview/CvPreviewPanel.tsx';
 
+const AboutPage = lazy(() => import('./pages/AboutPage.tsx'));
+
 const EMPTY_EXPERIENCE = {
   role: '',
   company: '',
@@ -73,6 +76,28 @@ const EMPTY_EDUCATION = {
 };
 
 export function App({ defaultValues }: { defaultValues: CvFormData }) {
+  return (
+    <Routes>
+      <Route index element={<CvEditorPage defaultValues={defaultValues} />} />
+      <Route
+        path="behind-the-bot"
+        element={
+          <Suspense
+            fallback={
+              <div className="flex h-dvh items-center justify-center bg-background text-muted-foreground">
+                Loading…
+              </div>
+            }
+          >
+            <AboutPage />
+          </Suspense>
+        }
+      />
+    </Routes>
+  );
+}
+
+function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const [exporting, setExporting] = useState(false);
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [generatedSummary, setGeneratedSummary] = useState<AiResult<string> | null>(null);
