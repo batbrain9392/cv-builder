@@ -1,12 +1,14 @@
 import type React from 'react';
 
-import { ArrowLeftIcon, BotIcon, BrainIcon, ExternalLinkIcon, SendIcon } from 'lucide-react';
+import { Menu } from '@base-ui/react/menu';
+import { ArrowLeftIcon, BrainIcon, ExternalLinkIcon, SendIcon } from 'lucide-react';
 import { type FormEvent, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
+import { AppHeader } from '@/components/AppHeader';
 import { GEMINI_LOGO_URL } from '@/components/GeminiIcon';
 import { InstallPwa } from '@/components/InstallPwa';
-import { ShareButton } from '@/components/ShareButton';
+import { menuItemClass } from '@/components/menuItemClass';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -152,24 +154,23 @@ function InstallCardRow({ children }: { children: React.ReactNode }) {
 export default function AboutPage() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
-      <header className="z-40 flex shrink-0 items-center justify-between bg-primary px-4 py-3 text-primary-foreground shadow-md lg:px-6 xl:px-8">
-        <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-          <BotIcon className="size-6" aria-hidden="true" />
-          BioBot
+      <AppHeader
+        mobileMenuItems={
+          <Menu.Item className={menuItemClass} render={<Link to="/" />}>
+            <ArrowLeftIcon className="size-4" />
+            Back to editor
+          </Menu.Item>
+        }
+      >
+        <Link
+          to="/"
+          aria-label="Back to editor"
+          className="hidden items-center gap-1 rounded-lg border border-primary-foreground/30 px-2.5 py-1 text-[0.8rem] font-medium text-primary-foreground hover:bg-primary-foreground/15 sm:inline-flex"
+        >
+          <ArrowLeftIcon className="size-3.5" />
+          Back to editor
         </Link>
-        <nav aria-label="Page navigation" className="flex items-center gap-2">
-          <InstallPwa />
-          <ShareButton />
-          <Link
-            to="/"
-            aria-label="Back to editor"
-            className="inline-flex items-center gap-1 rounded-lg border border-primary-foreground/30 px-2.5 py-1 text-[0.8rem] font-medium text-primary-foreground hover:bg-primary-foreground/15"
-          >
-            <ArrowLeftIcon className="size-3.5" />
-            <span className="hidden sm:inline">Back to editor</span>
-          </Link>
-        </nav>
-      </header>
+      </AppHeader>
 
       <main className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto grid max-w-4xl gap-5 p-4 pb-16 [&>[data-slot=card]]:h-full lg:grid-cols-2 lg:p-6 xl:p-8">

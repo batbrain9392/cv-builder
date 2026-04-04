@@ -8,18 +8,18 @@ function isIos(): boolean {
   return /iPad|iPhone|iPod/.test(navigator.userAgent) && !('MSStream' in window);
 }
 
-export type InstallState = 'standalone' | 'installable' | 'ios' | 'dev-only' | 'hidden';
+export type InstallState = 'standalone' | 'installable' | 'ios' | 'manual';
 
 export function useInstallPwa() {
   const [canInstall, setCanInstall] = useState(false);
-  const [showIosHint, setShowIosHint] = useState(false);
+  const [isIosDevice, setIsIosDevice] = useState(false);
   const promptRef = useRef<PromptFn | null>(null);
 
   useEffect(() => {
     if (isInStandaloneMode()) return;
 
     if (isIos()) {
-      setShowIosHint(true);
+      setIsIosDevice(true);
       return;
     }
 
@@ -63,12 +63,10 @@ export function useInstallPwa() {
     state = 'standalone';
   } else if (canInstall) {
     state = 'installable';
-  } else if (showIosHint) {
+  } else if (isIosDevice) {
     state = 'ios';
-  } else if (!import.meta.env.PROD) {
-    state = 'dev-only';
   } else {
-    state = 'hidden';
+    state = 'manual';
   }
 
   return { state, handleInstall };

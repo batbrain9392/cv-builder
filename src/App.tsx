@@ -5,7 +5,7 @@ import {
   ChevronDownIcon,
   ClipboardIcon,
   EyeIcon,
-  FileDownIcon,
+  FolderOpenIcon,
   Loader2Icon,
   PenLineIcon,
   Trash2Icon,
@@ -28,7 +28,6 @@ import { Toaster } from '@/components/ui/sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
 import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
-import { useMediaQuery } from '@/lib/useMediaQuery';
 
 import type { CvFormData } from './cv/cvFormSchema.ts';
 
@@ -102,7 +101,6 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const [expSignal, setExpSignal] = useState({ n: 0, open: true });
   const [eduSignal, setEduSignal] = useState({ n: 0, open: true });
   const [othSignal, setOthSignal] = useState({ n: 0, open: true });
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
@@ -187,6 +185,11 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
 
   const onPickJsonFile = () => fileInputRef.current?.click();
 
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onImport(e);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
       <a
@@ -195,15 +198,11 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       >
         Skip to editor
       </a>
-      <FormActions
-        onImport={onImport}
-        onOpenImportDialog={() => setImportDialogOpen(true)}
-        fileInputRef={fileInputRef}
-      />
+      <FormActions />
 
-      <main className="mx-auto flex min-h-0 w-full max-w-[1728px] flex-1 flex-col overflow-hidden lg:flex-row">
-        {/* Form panel */}
-        <div className="min-h-0 flex-1 overscroll-contain overflow-y-auto lg:flex-1">
+      <main className="mx-auto flex min-h-0 w-full max-w-[1728px] flex-1 overflow-hidden lg:flex-row">
+        {/* Form panel — hidden on mobile when preview is open */}
+        <div className={'min-h-0 flex-1 overflow-y-auto' + (previewOpen ? ' hidden lg:block' : '')}>
           <form
             id="cv-editor"
             aria-label="CV editor"
@@ -215,16 +214,35 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                 <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
                   <PenLineIcon className="size-5" aria-hidden="true" /> Edit your CV
                 </h2>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setClearConfirmOpen(true)}
-                >
-                  <Trash2Icon data-icon="inline-start" />
-                  Clear all
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setImportDialogOpen(true)}
+                  >
+                    <FolderOpenIcon data-icon="inline-start" />
+                    Load data
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setClearConfirmOpen(true)}
+                  >
+                    <Trash2Icon data-icon="inline-start" />
+                    Clear all
+                  </Button>
+                </div>
               </div>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".json"
+                aria-label="Import CV JSON"
+                onChange={handleImport}
+                className="hidden"
+              />
               <p className="text-sm text-muted-foreground">
                 We start you off with sample data so you can see how things look. Replace it with
                 your own, or use <strong>Load data</strong> to import an existing CV. When
@@ -485,23 +503,33 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           </form>
         </div>
 
-        {/* Preview panel */}
+        {/* Mobile preview — shown when preview is open, hidden on desktop */}
         {previewOpen && (
-          <div
-            className="fixed inset-0 z-40 bg-black/10 backdrop-blur-xs lg:hidden"
-            onClick={togglePreview}
-            aria-hidden
-          />
+          <aside
+            id="cv-preview-panel"
+            aria-label="CV preview"
+            className="min-h-0 flex-1 overflow-y-auto bg-muted lg:hidden"
+          >
+            <ErrorBoundary
+              fallback={
+                <div className="flex h-full items-center justify-center p-8 text-center text-muted-foreground">
+                  <p>Preview could not be rendered. Check your form data for issues.</p>
+                </div>
+              }
+            >
+              <CvPreviewPanel
+                control={control}
+                defaultValues={defaultValues}
+                onDownload={() => setDownloadDialogOpen(true)}
+              />
+            </ErrorBoundary>
+          </aside>
         )}
+
+        {/* Desktop preview — static flex child, hidden on mobile */}
         <aside
-          id="cv-preview-panel"
           aria-label="CV preview"
-          inert={!isDesktop && !previewOpen ? true : undefined}
-          className={
-            'fixed inset-y-0 right-0 z-50 w-full border-l bg-muted overflow-y-auto transition-transform duration-200 ease-in-out' +
-            ' lg:static lg:z-auto lg:block lg:w-1/2 lg:translate-x-0' +
-            (previewOpen ? ' translate-x-0' : ' translate-x-full')
-          }
+          className="hidden min-h-0 overflow-y-auto border-l bg-muted lg:block lg:w-1/2"
         >
           <ErrorBoundary
             fallback={
@@ -510,15 +538,19 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               </div>
             }
           >
-            <CvPreviewPanel control={control} defaultValues={defaultValues} />
+            <CvPreviewPanel
+              control={control}
+              defaultValues={defaultValues}
+              onDownload={() => setDownloadDialogOpen(true)}
+            />
           </ErrorBoundary>
         </aside>
       </main>
 
-      {/* Mobile FABs */}
+      {/* Mobile FAB — toggle preview panel */}
       <Button
         size="lg"
-        className="fixed right-4 bottom-16 z-50 gap-2 shadow-lg lg:hidden"
+        className="fixed right-4 bottom-4 z-50 gap-2 shadow-lg lg:hidden"
         onClick={togglePreview}
         aria-label={previewOpen ? 'Close preview' : 'Open preview'}
         aria-expanded={previewOpen}
@@ -526,15 +558,6 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       >
         {previewOpen ? <XIcon /> : <EyeIcon />}
         {previewOpen ? 'Close' : 'Preview'}
-      </Button>
-      <Button
-        size="lg"
-        className="fixed right-4 bottom-4 z-50 gap-2 shadow-lg"
-        onClick={() => setDownloadDialogOpen(true)}
-        aria-label="Download"
-      >
-        <FileDownIcon />
-        Download CV
       </Button>
 
       <AlertDialog.Root open={apiKeyWarningOpen} onOpenChange={setApiKeyWarningOpen}>

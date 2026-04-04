@@ -43,7 +43,7 @@ export function InstallPwa({
 }: InstallPwaProps = {}) {
   const { state, handleInstall } = useInstallPwa();
 
-  if (state === 'standalone' || state === 'hidden') return null;
+  if (state === 'standalone') return null;
 
   const wrap = (node: React.ReactNode) => (Wrapper ? <Wrapper>{node}</Wrapper> : node);
 
@@ -58,39 +58,39 @@ export function InstallPwa({
     );
   }
 
-  if (state === 'ios') {
-    return wrap(
-      <Popover.Root>
+  const hint =
+    state === 'ios' ? (
+      <p>
+        Tap the{' '}
+        <strong className="inline-flex items-baseline gap-0.5">
+          Share
+          <ShareIcon className="inline size-3.5 self-center" />
+        </strong>{' '}
+        button in Safari, then choose <strong>&ldquo;Add to Home Screen&rdquo;</strong>.
+      </p>
+    ) : (
+      <p>
+        In your browser menu, look for <strong>&ldquo;Install app&rdquo;</strong> or{' '}
+        <strong>&ldquo;Add to Home Screen&rdquo;</strong>.
+      </p>
+    );
+
+  return wrap(
+    <Popover.Root>
+      <Tooltip label="Install app">
         <Popover.Trigger render={<Button variant={variant} size={size} aria-label="Install app" />}>
           <PwaIcon />
           {label && <span>{label}</span>}
         </Popover.Trigger>
-        <Popover.Portal>
-          <Popover.Positioner align="end" sideOffset={12}>
-            <Popover.Popup className="z-50 max-w-64 rounded-lg border bg-popover p-3 text-sm text-popover-foreground shadow-md">
-              <p>
-                Tap the{' '}
-                <strong className="inline-flex items-baseline gap-0.5">
-                  Share
-                  <ShareIcon className="inline size-3.5 self-center" />
-                </strong>{' '}
-                button in Safari, then choose <strong>&ldquo;Add to Home Screen&rdquo;</strong> to
-                install this app.
-              </p>
-            </Popover.Popup>
-          </Popover.Positioner>
-        </Popover.Portal>
-      </Popover.Root>,
-    );
-  }
-
-  return wrap(
-    <Tooltip label="Install app (dev only)">
-      <Button variant={variant} size={size} aria-label="Install app (dev)" disabled>
-        <PwaIcon />
-        {label && <span>{label}</span>}
-      </Button>
-    </Tooltip>,
+      </Tooltip>
+      <Popover.Portal>
+        <Popover.Positioner align="end" sideOffset={12}>
+          <Popover.Popup className="z-50 max-w-64 rounded-lg border bg-popover p-3 text-sm text-popover-foreground shadow-md">
+            {hint}
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>,
   );
 }
 
