@@ -60,8 +60,13 @@ const EMPTY_DEFAULTS: CvFormData = {
 
 export async function loadDefaultValues(): Promise<CvFormData> {
   if (import.meta.env.DEV) {
-    const seed = await import('../../data/seed.json');
-    return cvFormSchema.parse(backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...seed.default }));
+    try {
+      const path = '../../data/seed.json';
+      const seed = await import(/* @vite-ignore */ path);
+      return cvFormSchema.parse(backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...seed.default }));
+    } catch {
+      // seed.json is optional — only used for local development
+    }
   }
   return EMPTY_DEFAULTS;
 }
