@@ -37,4 +37,24 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          docx: ['docx'],
+          genai: ['@google/genai'],
+          vendor: [
+            'react',
+            'react-dom',
+            'react-router',
+            'react-hook-form',
+            'zod',
+            '@base-ui/react',
+            'sonner',
+            'marked',
+          ],
+        },
+      },
+    },
+  },
 });

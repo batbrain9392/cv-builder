@@ -8,11 +8,21 @@ import type { CvFormData } from '../cvFormSchema.ts';
 import { EMPTY_DEFAULTS } from '../loadDefaultValues.ts';
 import { HighlightsInput } from './HighlightsInput.tsx';
 
+const MINIMAL_ENTRY = {
+  role: '',
+  company: '',
+  url: '',
+  startDate: '',
+  location: '',
+  tagsLabel: '',
+  tags: [] satisfies string[],
+};
+
 function Harness({ bullets = ['First bullet'] }) {
   const { control } = useForm<CvFormData>({
     defaultValues: {
       ...EMPTY_DEFAULTS,
-      experience: [{ ...EMPTY_DEFAULTS.experience[0], bullets }],
+      experience: [{ ...MINIMAL_ENTRY, bullets }],
     },
   });
   return (

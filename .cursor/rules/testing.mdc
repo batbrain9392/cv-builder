@@ -1,0 +1,60 @@
+---
+description: Testing guidelines for when to write tests and how to write them well.
+globs: **/*.test.ts, **/*.test.tsx, **/e2e/**
+---
+# Testing Guidelines
+
+## Testing philosophy
+
+Don't test everything. Test the right things at the right level.
+
+Follow the **testing trophy** (not pyramid): a thin layer of E2E, a thick layer of integration, and unit tests only where logic is complex or pure.
+
+| Level | What it covers | When to use | Rough share |
+|-------|---------------|-------------|-------------|
+| **Unit** (`*.test.ts`) | Pure functions, parsers, formatters, schema validation | Logic with multiple code paths, edge cases, or transformations | ~40% |
+| **Component** (`*.test.tsx`) | Hooks, interactive components, form behavior | User-facing behavior that depends on state, props, or DOM interaction | ~40% |
+| **E2E** (`e2e/`) | Full user flows across pages | Critical happy paths (create CV, export, import). One or two flows, not exhaustive. | ~20% |
+
+The goal is **confidence per line of test code**. A 5-line unit test for a parser gives more confidence than a 50-line component test for a wrapper div.
+
+## When to write tests
+
+Write tests for:
+- Pure functions and utilities (formatters, parsers, schema validators)
+- Hooks with non-trivial logic (state machines, computed values, side-effect coordination)
+- Component behavior that encodes business rules (form validation, conditional rendering based on data)
+- Bug fixes — a regression test proves the fix works and prevents revert
+
+Do NOT write tests for:
+- Trivial wrappers (components that just pass props to a library primitive)
+- Build/config changes (verified by CI pipeline)
+- Styling or layout (use visual/e2e tests if needed)
+- Tests that only verify a mock was called (test behavior, not implementation)
+- Plumbing that TypeScript already covers (prop passing, type correctness)
+
+When in doubt: if deleting the function body would still pass the test, the test is worthless. Delete it.
+
+## Test quality
+
+- Each test should protect against a specific failure mode. If you can't name the bug it catches, delete it.
+- Prefer testing the public API (inputs → outputs). Avoid testing internal state.
+- Keep test files next to the code they test: `Foo.ts` → `Foo.test.ts`.
+- Use descriptive test names that state the expected behavior, not the method name.
+- No fluff: no `it('should work')`, no redundant assertions, no smoke tests that assert "renders without crashing."
+- Minimize mocking. If a test needs 10 mocks, you're testing the wrong thing at the wrong level — push it up to integration or E2E.
+- Test fixtures should be explicit and minimal. Don't spread `undefined` or rely on coincidental defaults. If a harness needs an experience entry, build one with the fields that matter — not `{ ...SOMETHING_THAT_HAPPENS_TO_BE_UNDEFINED, overrides }`.
+
+## Test environment
+
+- Unit tests (`*.test.ts`): Vitest with `node` environment. For pure logic.
+- Component tests (`*.test.tsx`): Vitest with `happy-dom` environment + `@testing-library/react`. For hooks and components.
+- E2E tests (`e2e/`): Playwright against `vite preview`. For user flows.
+
+## Running tests
+
+```sh
+npx vitest run              # all unit + component tests
+npx vitest run src/path     # specific file or directory
+npx playwright test         # e2e tests (requires build first)
+```

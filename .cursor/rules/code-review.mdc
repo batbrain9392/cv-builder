@@ -1,0 +1,41 @@
+---
+description: Guidelines for conducting code reviews on this project. Activated when the user asks for a review, audit, or quality check.
+globs: 
+---
+# Code Review Process
+
+## Before reviewing
+
+1. Read `docs/REVIEW.md` first. It contains the last review's findings, metrics, and known-accepted issues.
+2. Do NOT re-discover known-accepted issues listed there. Focus on:
+   - **Regressions**: Did any previously-fixed issue return?
+   - **New issues**: Anything introduced since the last review.
+   - **Metric changes**: Run `tsc --noEmit`, `eslint .`, `vitest run`, `vite build` and compare against stored metrics.
+3. Check `git log --oneline` since the last review date to scope what changed.
+
+## Review checklist
+
+- [ ] TypeScript: `npx tsc --noEmit` — 0 errors
+- [ ] Lint: `npx eslint .` — 0 errors, 0 warnings
+- [ ] Tests: `npx vitest run` — all pass, no skipped
+- [ ] Build: `npx vite build` — succeeds, no chunk > 500 KB
+- [ ] No new `@ts-ignore`, `eslint-disable`, or type assertions (`as`)
+- [ ] No hardcoded colors in themed components (CV preview is an exception)
+- [ ] New features have tests
+- [ ] Accessibility: aria-labels, keyboard nav, focus management
+- [ ] Bundle: lazy imports for heavy libraries (docx, genai)
+
+## After reviewing
+
+1. Update `docs/REVIEW.md`:
+   - Bump the date
+   - Add a new review section with findings
+   - Move fixed issues to resolved, add new issues
+   - Update metrics
+2. Rate the codebase out of 10 with brief justification.
+
+## Cost optimisation
+
+- Use `git diff` and `git log` to scope changes since last review — avoid re-reading unchanged files.
+- Run automated checks (tsc, eslint, vitest, build) first. Only read source files if checks fail or to investigate new code.
+- The review doc has architecture notes — don't re-explore the codebase structure unless it changed.

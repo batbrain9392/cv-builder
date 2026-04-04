@@ -27,6 +27,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
 import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
+import { useMediaQuery } from '@/lib/useMediaQuery';
 
 import type { CvFormData } from '../cv/cvFormSchema.ts';
 
@@ -76,6 +77,8 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const [expSignal, setExpSignal] = useState({ n: 0, open: true });
   const [eduSignal, setEduSignal] = useState({ n: 0, open: true });
   const [othSignal, setOthSignal] = useState({ n: 0, open: true });
+
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
@@ -183,14 +186,17 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         {/* Form panel — hidden on mobile when preview is open */}
         <div className={'min-h-0 flex-1 overflow-y-auto' + (previewOpen ? ' hidden lg:block' : '')}>
           <ErrorBoundary
-            fallback={
-              <div className="flex h-full items-center justify-center p-8 text-center text-muted-foreground">
+            fallback={(reset) => (
+              <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
                 <p>
-                  Something went wrong in the editor. Try refreshing the page. If you have a JSON
-                  backup, you can reload your data after refreshing.
+                  Something went wrong in the editor. If you have a JSON backup, you can reload your
+                  data after retrying.
                 </p>
+                <Button variant="outline" size="sm" onClick={reset}>
+                  Try again
+                </Button>
               </div>
-            }
+            )}
           >
             <form
               id="cv-editor"
@@ -525,11 +531,14 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             className="min-h-0 flex-1 overflow-y-auto bg-muted pb-32 lg:hidden"
           >
             <ErrorBoundary
-              fallback={
-                <div className="flex h-full items-center justify-center p-8 text-center text-muted-foreground">
+              fallback={(reset) => (
+                <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
                   <p>Preview could not be rendered. Check your form data for issues.</p>
+                  <Button variant="outline" size="sm" onClick={reset}>
+                    Try again
+                  </Button>
                 </div>
-              }
+              )}
             >
               <CvPreviewPanel
                 control={control}
@@ -540,26 +549,31 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           </aside>
         )}
 
-        {/* Desktop preview — static flex child, hidden on mobile */}
-        <aside
-          id="cv-preview-panel-desktop"
-          aria-label="CV preview"
-          className="hidden min-h-0 overflow-y-auto border-l bg-muted lg:block lg:w-1/2"
-        >
-          <ErrorBoundary
-            fallback={
-              <div className="flex h-full items-center justify-center p-8 text-center text-muted-foreground">
-                <p>Preview could not be rendered. Check your form data for issues.</p>
-              </div>
-            }
+        {/* Desktop preview — only mounted on lg+ to avoid duplicate useWatch + renders on mobile */}
+        {isDesktop && (
+          <aside
+            id="cv-preview-panel-desktop"
+            aria-label="CV preview"
+            className="min-h-0 overflow-y-auto border-l bg-muted lg:w-1/2"
           >
-            <CvPreviewPanel
-              control={control}
-              defaultValues={defaultValues}
-              onDownload={() => setDownloadDialogOpen(true)}
-            />
-          </ErrorBoundary>
-        </aside>
+            <ErrorBoundary
+              fallback={(reset) => (
+                <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
+                  <p>Preview could not be rendered. Check your form data for issues.</p>
+                  <Button variant="outline" size="sm" onClick={reset}>
+                    Try again
+                  </Button>
+                </div>
+              )}
+            >
+              <CvPreviewPanel
+                control={control}
+                defaultValues={defaultValues}
+                onDownload={() => setDownloadDialogOpen(true)}
+              />
+            </ErrorBoundary>
+          </aside>
+        )}
       </main>
 
       <FormActions />

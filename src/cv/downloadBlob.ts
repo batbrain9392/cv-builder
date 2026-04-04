@@ -4,5 +4,7 @@ export function downloadBlob(blob: Blob, filename: string): void {
   a.href = url;
   a.download = filename;
   a.click();
-  URL.revokeObjectURL(url);
+  // Delay revoke so the browser has time to start the download.
+  // Safari in particular needs this — immediate revoke can abort the save.
+  setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }

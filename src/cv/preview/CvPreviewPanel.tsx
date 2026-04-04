@@ -14,13 +14,51 @@ const A4_WIDTH_PX = (CV_LAYOUT.pageWidthMm / 25.4) * 96;
 /**
  * useWatch without a `name` returns DeepPartialSkipArrayKey, but when
  * `defaultValue` is a complete CvFormData every field is guaranteed present
- * at runtime. We JSON-round-trip the merged result to produce a clean deep
- * copy with the correct runtime shape, then validate it structurally against
- * the defaults to ensure nothing is missing.
+ * at runtime. We watch individual top-level fields so each return type is
+ * concrete, avoiding both type assertions and JSON roundtrips.
  */
 function useFormData(control: Control<CvFormData>, defaultValues: CvFormData): CvFormData {
-  const watched = useWatch({ control, defaultValue: defaultValues });
-  return JSON.parse(JSON.stringify({ ...defaultValues, ...watched })) satisfies CvFormData;
+  return {
+    aiApiKey: useWatch({ control, name: 'aiApiKey', defaultValue: defaultValues.aiApiKey }),
+    jobDescriptionText: useWatch({
+      control,
+      name: 'jobDescriptionText',
+      defaultValue: defaultValues.jobDescriptionText,
+    }),
+    aiSummaryPrompt: useWatch({
+      control,
+      name: 'aiSummaryPrompt',
+      defaultValue: defaultValues.aiSummaryPrompt,
+    }),
+    personalInfo: useWatch({
+      control,
+      name: 'personalInfo',
+      defaultValue: defaultValues.personalInfo,
+    }),
+    summary: useWatch({ control, name: 'summary', defaultValue: defaultValues.summary }),
+    coverLetterEnabled: useWatch({
+      control,
+      name: 'coverLetterEnabled',
+      defaultValue: defaultValues.coverLetterEnabled,
+    }),
+    coverLetter: useWatch({
+      control,
+      name: 'coverLetter',
+      defaultValue: defaultValues.coverLetter,
+    }),
+    aiCoverLetterPrompt: useWatch({
+      control,
+      name: 'aiCoverLetterPrompt',
+      defaultValue: defaultValues.aiCoverLetterPrompt,
+    }),
+    experience: useWatch({
+      control,
+      name: 'experience',
+      defaultValue: defaultValues.experience,
+    }),
+    education: useWatch({ control, name: 'education', defaultValue: defaultValues.education }),
+    others: useWatch({ control, name: 'others', defaultValue: defaultValues.others }),
+  };
 }
 
 interface CvPreviewPanelProps {

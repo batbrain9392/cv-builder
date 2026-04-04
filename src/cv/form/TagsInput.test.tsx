@@ -10,11 +10,21 @@ import { TagsInput } from './TagsInput.tsx';
 
 const EMPTY_TAGS: string[] = [];
 
+const MINIMAL_ENTRY = {
+  role: '',
+  company: '',
+  url: '',
+  startDate: '',
+  location: '',
+  bullets: [''],
+  tagsLabel: '',
+};
+
 function Harness({ tags = EMPTY_TAGS }) {
   const { control } = useForm<CvFormData>({
     defaultValues: {
       ...EMPTY_DEFAULTS,
-      experience: [{ ...EMPTY_DEFAULTS.experience[0], tags }],
+      experience: [{ ...MINIMAL_ENTRY, tags }],
     },
   });
   return <TagsInput control={control} name="experience.0.tags" id="tags" />;
