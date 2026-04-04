@@ -136,7 +136,7 @@ export default function AboutPage() {
       <header className="z-40 flex shrink-0 items-center justify-between bg-primary px-4 py-3 text-primary-foreground shadow-md lg:px-6 xl:px-8">
         <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
           <BotIcon className="size-6" aria-hidden="true" />
-          Bot-ter Than You
+          BioBot
         </Link>
         <nav aria-label="Page navigation" className="flex items-center gap-2">
           <Link

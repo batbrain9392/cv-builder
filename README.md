@@ -1,4 +1,4 @@
-# 🤖 Bot-ter Than You
+# 🤖 BioBot
 
 AI-powered CV and cover letter builder that runs entirely in your browser.
 

@@ -1,8 +1,8 @@
 {
-  "name": "cv-builder",
+  "name": "biobot",
   "private": true,
   "version": "0.0.1",
-  "description": "AI-powered CV and cover letter builder that runs entirely in your browser.",
+  "description": "BioBot — AI-powered CV and cover letter builder that runs entirely in your browser.",
   "homepage": "https://batbrain9392.github.io/cv-builder/",
   "repository": {
     "type": "git",

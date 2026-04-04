@@ -45,7 +45,7 @@ export function FormActions({
       <div className="flex w-full max-w-[1728px] items-center justify-between px-4 lg:px-6 xl:px-8">
         <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
           <BotIcon className="size-6" aria-hidden="true" />
-          Bot-ter Than You
+          BioBot
         </Link>
 
         <nav aria-label="CV actions" className="flex items-center gap-2">
