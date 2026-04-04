@@ -4,8 +4,8 @@ import { Menu } from '@base-ui/react/menu';
 import {
   BotIcon,
   BrainIcon,
+  DownloadIcon,
   EllipsisVerticalIcon,
-  FileDownIcon,
   FolderOpenIcon,
   MoonIcon,
   Share2Icon,
@@ -18,25 +18,21 @@ import { ShareButton } from '@/components/ShareButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { shareApp } from '@/lib/share';
+import { useInstallPwa } from '@/lib/useInstallPwa';
 import { useTheme } from '@/lib/useTheme';
 
 interface FormActionsProps {
   onImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onOpenImportDialog: () => void;
-  onOpenDownloadDialog: () => void;
   fileInputRef: React.RefObject<HTMLInputElement | null>;
 }
 
 const menuItemClass =
   'flex cursor-default items-center gap-2 rounded-md px-3 py-2 text-sm outline-none select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground';
 
-export function FormActions({
-  onImport,
-  onOpenImportDialog,
-  onOpenDownloadDialog,
-  fileInputRef,
-}: FormActionsProps) {
+export function FormActions({ onImport, onOpenImportDialog, fileInputRef }: FormActionsProps) {
   const { theme, toggle: toggleTheme } = useTheme();
+  const { state: installState, handleInstall } = useInstallPwa();
 
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     onImport(e);
@@ -52,8 +48,12 @@ export function FormActions({
         </Link>
 
         <nav aria-label="CV actions" className="flex items-center gap-2">
-          <InstallPwa />
-          <ShareButton />
+          <div className="hidden sm:flex">
+            <InstallPwa />
+          </div>
+          <div className="hidden sm:flex">
+            <ShareButton />
+          </div>
           <ThemeToggle className="hidden sm:inline-flex" />
 
           <Link
@@ -81,6 +81,20 @@ export function FormActions({
             <Menu.Portal>
               <Menu.Positioner align="end" sideOffset={12}>
                 <Menu.Popup className="z-50 min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
+                  {(installState === 'installable' || installState === 'dev-only') && (
+                    <Menu.Item
+                      className={menuItemClass}
+                      onClick={handleInstall}
+                      disabled={installState === 'dev-only'}
+                    >
+                      <DownloadIcon className="size-4" />
+                      Install app
+                    </Menu.Item>
+                  )}
+                  <Menu.Item className={menuItemClass} onClick={shareApp}>
+                    <Share2Icon className="size-4" />
+                    Share
+                  </Menu.Item>
                   <Menu.Item className={menuItemClass} onClick={toggleTheme}>
                     {theme === 'light' ? (
                       <MoonIcon className="size-4" />
@@ -97,10 +111,6 @@ export function FormActions({
                     <FolderOpenIcon className="size-4" />
                     Load data
                   </Menu.Item>
-                  <Menu.Item className={menuItemClass} onClick={shareApp}>
-                    <Share2Icon className="size-4" />
-                    Share
-                  </Menu.Item>
                 </Menu.Popup>
               </Menu.Positioner>
             </Menu.Portal>
@@ -115,16 +125,6 @@ export function FormActions({
           >
             <FolderOpenIcon data-icon="inline-start" />
             Load data
-          </Button>
-
-          <Button
-            variant="inverted-fill"
-            size="sm"
-            className="hidden sm:inline-flex"
-            onClick={onOpenDownloadDialog}
-          >
-            <FileDownIcon data-icon="inline-start" />
-            Download
           </Button>
 
           <input

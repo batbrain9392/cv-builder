@@ -198,7 +198,6 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       <FormActions
         onImport={onImport}
         onOpenImportDialog={() => setImportDialogOpen(true)}
-        onOpenDownloadDialog={() => setDownloadDialogOpen(true)}
         fileInputRef={fileInputRef}
       />
 
@@ -229,7 +228,8 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               <p className="text-sm text-muted-foreground">
                 We start you off with sample data so you can see how things look. Replace it with
                 your own, or use <strong>Load data</strong> to import an existing CV. When
-                you&rsquo;re done, hit <strong>Download</strong> for a JSON backup or a polished DOCX.
+                you&rsquo;re done, hit <strong>Download</strong> for a JSON backup or a polished
+                DOCX.
               </p>
             </div>
 
@@ -529,7 +529,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       </Button>
       <Button
         size="lg"
-        className="fixed right-4 bottom-4 z-50 gap-2 shadow-lg lg:hidden"
+        className="fixed right-4 bottom-4 z-50 gap-2 shadow-lg"
         onClick={() => setDownloadDialogOpen(true)}
         aria-label="Download"
       >
