@@ -114,24 +114,35 @@ async function captureScreenshots() {
 // Returns the actual drawn width so callers can position text tightly after it.
 // Draws the document-robot icon centered on centerY (page body only; antenna above).
 function drawRobot(ctx, left, centerY, height) {
-  // The page body in the 512-unit design is 270 units tall.
   const s = height / 270;
   const pw = 220 * s;
   const ph = 270 * s;
   const px = left;
   const py = centerY - ph / 2;
-  const r = 20 * s;
-  const fold = 32 * s;
-  const lw = 10 * s;
+  const r = 24 * s;
+  const fold = 36 * s;
 
   ctx.save();
-  ctx.strokeStyle = PRIMARY;
-  ctx.lineWidth = lw;
-  ctx.fillStyle = PRIMARY;
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  // Page outline with folded top-right corner
+  // Antenna stem
+  const cx = px + pw / 2;
+  ctx.strokeStyle = PRIMARY;
+  ctx.lineWidth = 14 * s;
+  ctx.beginPath();
+  ctx.moveTo(cx, py);
+  ctx.lineTo(cx, py - 45 * s);
+  ctx.stroke();
+
+  // Antenna tip
+  ctx.fillStyle = PRIMARY;
+  ctx.beginPath();
+  ctx.arc(cx, py - 52 * s, 16 * s, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Filled page shape with folded corner
+  ctx.fillStyle = PRIMARY;
   ctx.beginPath();
   ctx.moveTo(px + pw - fold, py);
   ctx.lineTo(px + r, py);
@@ -142,47 +153,44 @@ function drawRobot(ctx, left, centerY, height) {
   ctx.arcTo(px + pw, py + ph, px + pw, py + ph - r, r);
   ctx.lineTo(px + pw, py + fold);
   ctx.closePath();
-  ctx.stroke();
+  ctx.fill();
 
-  // Fold
+  // Fold triangle (dark cutout)
+  ctx.fillStyle = BG;
   ctx.beginPath();
   ctx.moveTo(px + pw - fold, py);
   ctx.lineTo(px + pw - fold, py + fold);
   ctx.lineTo(px + pw, py + fold);
-  ctx.stroke();
-
-  // Eyes
-  const eyeR = 22 * s;
-  ctx.beginPath();
-  ctx.arc(px + pw * 0.35, py + ph * 0.32, eyeR, 0, Math.PI * 2);
-  ctx.arc(px + pw * 0.65, py + ph * 0.32, eyeR, 0, Math.PI * 2);
+  ctx.closePath();
   ctx.fill();
 
-  // Mouth
+  // Eyes (dark knockout)
+  const eyeR = 19 * s;
+  const eyeY = py + ph * 0.32;
+  ctx.fillStyle = BG;
   ctx.beginPath();
-  ctx.moveTo(px + pw * 0.32, py + ph * 0.48);
-  ctx.lineTo(px + pw * 0.68, py + ph * 0.48);
+  ctx.arc(px + pw * 0.35, eyeY, eyeR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(px + pw * 0.65, eyeY, eyeR, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Mouth (dark knockout)
+  ctx.strokeStyle = BG;
+  ctx.lineWidth = 14 * s;
+  ctx.beginPath();
+  ctx.moveTo(px + pw * 0.34, py + ph * 0.48);
+  ctx.lineTo(px + pw * 0.66, py + ph * 0.48);
   ctx.stroke();
 
-  // Text lines
-  ctx.lineWidth = 7 * s;
+  // Text lines (dark knockout)
+  ctx.lineWidth = 13 * s;
   for (let i = 0; i < 3; i++) {
     ctx.beginPath();
-    ctx.moveTo(px + 30 * s, py + ph * 0.62 + i * 30 * s);
-    ctx.lineTo(px + pw - 30 * s - (i === 2 ? 40 * s : 0), py + ph * 0.62 + i * 30 * s);
+    ctx.moveTo(px + 30 * s, py + ph * 0.66 + i * 26 * s);
+    ctx.lineTo(px + pw - 30 * s - (i === 2 ? 40 * s : 0), py + ph * 0.66 + i * 26 * s);
     ctx.stroke();
   }
-
-  // Antenna
-  const cx = px + pw / 2;
-  ctx.lineWidth = lw;
-  ctx.beginPath();
-  ctx.moveTo(cx, py);
-  ctx.lineTo(cx, py - 45 * s);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(cx, py - 52 * s, 12 * s, 0, Math.PI * 2);
-  ctx.fill();
 
   ctx.restore();
   return pw;

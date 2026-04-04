@@ -21,21 +21,36 @@ function drawIcon(size, maskable = false) {
     ctx.fill();
   }
 
-  // Document-robot icon centered
+  const green = '#3dc78c';
+  const bg = '#1c1c1c';
+
   const pw = 220 * s;
   const ph = 270 * s;
   const px = (size - pw) / 2;
   const py = (size - ph) / 2 + 20 * s;
-  const r = 20 * s;
-  const fold = 32 * s;
+  const r = 24 * s;
+  const fold = 36 * s;
 
-  ctx.strokeStyle = '#3dc78c';
-  ctx.lineWidth = 10 * s;
-  ctx.fillStyle = '#3dc78c';
   ctx.lineCap = 'round';
   ctx.lineJoin = 'round';
 
-  // Page outline with folded top-right corner
+  // Antenna stem
+  const cx = px + pw / 2;
+  ctx.strokeStyle = green;
+  ctx.lineWidth = 14 * s;
+  ctx.beginPath();
+  ctx.moveTo(cx, py);
+  ctx.lineTo(cx, py - 45 * s);
+  ctx.stroke();
+
+  // Antenna tip
+  ctx.fillStyle = green;
+  ctx.beginPath();
+  ctx.arc(cx, py - 52 * s, 16 * s, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Filled page shape with folded corner
+  ctx.fillStyle = green;
   ctx.beginPath();
   ctx.moveTo(px + pw - fold, py);
   ctx.lineTo(px + r, py);
@@ -46,48 +61,44 @@ function drawIcon(size, maskable = false) {
   ctx.arcTo(px + pw, py + ph, px + pw, py + ph - r, r);
   ctx.lineTo(px + pw, py + fold);
   ctx.closePath();
-  ctx.stroke();
+  ctx.fill();
 
-  // Fold line
+  // Fold triangle (dark cutout)
+  ctx.fillStyle = bg;
   ctx.beginPath();
   ctx.moveTo(px + pw - fold, py);
   ctx.lineTo(px + pw - fold, py + fold);
   ctx.lineTo(px + pw, py + fold);
-  ctx.stroke();
+  ctx.closePath();
+  ctx.fill();
 
-  // Eyes
-  const eyeR = 22 * s;
+  // Eyes (dark knockout)
+  const eyeR = 19 * s;
   const eyeY = py + ph * 0.32;
+  ctx.fillStyle = bg;
   ctx.beginPath();
   ctx.arc(px + pw * 0.35, eyeY, eyeR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.beginPath();
   ctx.arc(px + pw * 0.65, eyeY, eyeR, 0, Math.PI * 2);
   ctx.fill();
 
-  // Mouth
+  // Mouth (dark knockout)
+  ctx.strokeStyle = bg;
+  ctx.lineWidth = 14 * s;
   ctx.beginPath();
-  ctx.moveTo(px + pw * 0.32, py + ph * 0.48);
-  ctx.lineTo(px + pw * 0.68, py + ph * 0.48);
+  ctx.moveTo(px + pw * 0.34, py + ph * 0.48);
+  ctx.lineTo(px + pw * 0.66, py + ph * 0.48);
   ctx.stroke();
 
-  // Text lines
-  ctx.lineWidth = 7 * s;
+  // Text lines (dark knockout)
+  ctx.lineWidth = 13 * s;
   for (let i = 0; i < 3; i++) {
     ctx.beginPath();
-    ctx.moveTo(px + 30 * s, py + ph * 0.62 + i * 30 * s);
-    ctx.lineTo(px + pw - 30 * s - (i === 2 ? 40 * s : 0), py + ph * 0.62 + i * 30 * s);
+    ctx.moveTo(px + 30 * s, py + ph * 0.66 + i * 26 * s);
+    ctx.lineTo(px + pw - 30 * s - (i === 2 ? 40 * s : 0), py + ph * 0.66 + i * 26 * s);
     ctx.stroke();
   }
-  ctx.lineWidth = 10 * s;
-
-  // Antenna
-  const cx = px + pw / 2;
-  ctx.beginPath();
-  ctx.moveTo(cx, py);
-  ctx.lineTo(cx, py - 45 * s);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.arc(cx, py - 52 * s, 12 * s, 0, Math.PI * 2);
-  ctx.fill();
 
   return canvas.toBuffer('image/png');
 }
