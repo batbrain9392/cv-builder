@@ -53,17 +53,17 @@ export function CoverLetterFields({
   return (
     <Card>
       <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
-        <CardHeader>
-          <CollapsibleTrigger
-            render={
-              <button
-                type="button"
-                aria-label="Toggle cover letter"
-                className="flex w-full items-center justify-between text-left"
-              />
-            }
-          >
-            <CardTitle className="flex items-center gap-1.5">
+        <CollapsibleTrigger
+          render={
+            <button
+              type="button"
+              aria-labelledby="cover-letter-title"
+              className="cursor-pointer text-left"
+            />
+          }
+        >
+          <CardHeader className="grid-cols-[1fr_auto] items-center">
+            <CardTitle id="cover-letter-title" className="flex items-center gap-1.5">
               <EmojiIcon emoji="✉️" />
               Cover Letter{' '}
               <span className="text-sm font-normal text-muted-foreground">(optional)</span>
@@ -74,8 +74,8 @@ export function CoverLetterFields({
                 (open ? ' rotate-180' : '')
               }
             />
-          </CollapsibleTrigger>
-        </CardHeader>
+          </CardHeader>
+        </CollapsibleTrigger>
 
         <CollapsibleContent>
           <CardContent>
@@ -118,7 +118,7 @@ export function CoverLetterFields({
                   render={
                     <button
                       type="button"
-                      aria-label="Enhance cover letter with AI"
+                      aria-label="Enhance with AI"
                       className="flex items-center hover:opacity-80"
                     />
                   }

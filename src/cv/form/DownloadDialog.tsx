@@ -41,13 +41,13 @@ export function DownloadDialog({
               className="flex w-full items-start gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
             >
               <FileJsonIcon className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
-              <div>
-                <p className="text-sm font-medium">JSON backup</p>
-                <p className="text-xs text-muted-foreground">
+              <span className="block text-left">
+                <span className="block text-sm font-medium">JSON backup</span>
+                <span className="block text-xs text-muted-foreground">
                   Saves your full CV data so you can reload and edit it later. Think of it as a save
                   file.
-                </p>
-              </div>
+                </span>
+              </span>
             </button>
 
             <button
@@ -61,14 +61,14 @@ export function DownloadDialog({
               ) : (
                 <FileDownIcon className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
               )}
-              <div>
-                <p className="text-sm font-medium">
+              <span className="block text-left">
+                <span className="block text-sm font-medium">
                   {exporting ? 'Downloading\u2026' : 'Word document (.docx)'}
-                </p>
-                <p className="text-xs text-muted-foreground">
+                </span>
+                <span className="block text-xs text-muted-foreground">
                   A polished, ready-to-send resume. Best for job applications and recruiters.
-                </p>
-              </div>
+                </span>
+              </span>
             </button>
 
             <p className="pt-1 text-xs text-muted-foreground">

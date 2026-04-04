@@ -198,7 +198,6 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       >
         Skip to editor
       </a>
-      <FormActions />
 
       <main className="mx-auto flex min-h-0 w-full max-w-[1728px] flex-1 overflow-hidden lg:flex-row">
         {/* Form panel — hidden on mobile when preview is open */}
@@ -207,13 +206,13 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             id="cv-editor"
             aria-label="CV editor"
             onSubmit={(e) => e.preventDefault()}
-            className="space-y-8 p-4 pb-20 lg:p-6 lg:pb-6 xl:p-8 xl:pb-8"
+            className="space-y-8 p-4 pb-32 lg:p-6 lg:pb-6 xl:p-8 xl:pb-8"
           >
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
+                <h1 className="flex items-center gap-3 text-xl font-bold tracking-tight">
                   <PenLineIcon className="size-5" aria-hidden="true" /> Edit your CV
-                </h2>
+                </h1>
                 <div className="flex items-center gap-1">
                   <Button
                     type="button"
@@ -309,7 +308,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                       render={
                         <button
                           type="button"
-                          aria-label="Enhance summary with AI"
+                          aria-label="Enhance with AI"
                           className="flex items-center hover:opacity-80"
                         />
                       }
@@ -406,8 +405,9 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             </Card>
 
             {/* Experience */}
-            <div className="space-y-4">
+            <section aria-labelledby="section-experience" className="space-y-4">
               <SectionToolbar
+                id="section-experience"
                 title={
                   <>
                     <EmojiIcon emoji="💼" /> Experience
@@ -444,7 +444,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                   />
                 );
               })}
-            </div>
+            </section>
 
             {/* Education */}
             <EducationFields
@@ -461,8 +461,9 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             />
 
             {/* Others */}
-            <div className="space-y-4">
+            <section aria-labelledby="section-others" className="space-y-4">
               <SectionToolbar
+                id="section-others"
                 title={
                   <>
                     <EmojiIcon emoji="🧩" /> Others
@@ -499,7 +500,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                   />
                 );
               })}
-            </div>
+            </section>
           </form>
         </div>
 
@@ -508,7 +509,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           <aside
             id="cv-preview-panel"
             aria-label="CV preview"
-            className="min-h-0 flex-1 overflow-y-auto bg-muted lg:hidden"
+            className="min-h-0 flex-1 overflow-y-auto bg-muted pb-32 lg:hidden"
           >
             <ErrorBoundary
               fallback={
@@ -547,14 +548,16 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         </aside>
       </main>
 
+      <FormActions />
+
       {/* Mobile FAB — toggle preview panel */}
       <Button
         size="lg"
-        className="fixed right-4 bottom-4 z-50 gap-2 shadow-lg lg:hidden"
+        className="fixed right-4 bottom-16 z-50 gap-2 shadow-lg lg:hidden"
         onClick={togglePreview}
         aria-label={previewOpen ? 'Close preview' : 'Open preview'}
         aria-expanded={previewOpen}
-        aria-controls="cv-preview-panel"
+        aria-controls={previewOpen ? 'cv-preview-panel' : undefined}
       >
         {previewOpen ? <XIcon /> : <EyeIcon />}
         {previewOpen ? 'Close' : 'Preview'}

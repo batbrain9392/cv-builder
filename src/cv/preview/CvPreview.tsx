@@ -20,8 +20,8 @@ function Header({ name, title, contactLine, linksLine }: HeaderProps) {
         <span className="cv-preview-header-sep">{' \u2014 '}</span>
         <span className="cv-preview-title">{title}</span>
       </h1>
-      <div className="cv-preview-contact">{contactLine}</div>
-      {linksLine && <div className="cv-preview-contact">{linksLine}</div>}
+      <address className="cv-preview-contact">{contactLine}</address>
+      {linksLine && <address className="cv-preview-contact">{linksLine}</address>}
     </header>
   );
 }
@@ -46,7 +46,7 @@ interface EntryProps {
 function Entry({ title, meta, bullets, tagsLabel, tags }: EntryProps) {
   return (
     <>
-      <div className="cv-preview-entry-title">{title}</div>
+      <h3 className="cv-preview-entry-title">{title}</h3>
       <div className="cv-preview-entry-meta">{meta}</div>
       <ul className="cv-preview-bullets">
         {bullets.map((b, i) => (
@@ -77,7 +77,7 @@ function CoverLetterPage({ data }: CvPreviewProps) {
   );
 
   return (
-    <div className="cv-preview cv-preview-cover-letter" style={CV_CSS_VARS}>
+    <article className="cv-preview cv-preview-cover-letter" style={CV_CSS_VARS}>
       <Header
         name={data.personalInfo.name}
         title={data.personalInfo.title}
@@ -85,7 +85,7 @@ function CoverLetterPage({ data }: CvPreviewProps) {
         linksLine={formatLinksLine(data.personalInfo.links)}
       />
       <BlockMarkdown text={data.coverLetter} className="cv-preview-cover-letter-body" />
-    </div>
+    </article>
   );
 }
 
@@ -96,7 +96,7 @@ export function CvPreview({ data }: CvPreviewProps) {
     <div className="cv-preview-pages">
       {showCoverLetter && <CoverLetterPage data={data} />}
 
-      <div className="cv-preview" style={CV_CSS_VARS}>
+      <article className="cv-preview" style={CV_CSS_VARS}>
         <Header
           name={data.personalInfo.name}
           title={data.personalInfo.title}
@@ -151,7 +151,7 @@ export function CvPreview({ data }: CvPreviewProps) {
             ))}
           </>
         )}
-      </div>
+      </article>
     </div>
   );
 }

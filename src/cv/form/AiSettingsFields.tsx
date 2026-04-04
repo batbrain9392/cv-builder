@@ -24,17 +24,17 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
   return (
     <Card>
       <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
-        <CardHeader>
-          <CollapsibleTrigger
-            render={
-              <button
-                type="button"
-                aria-label="Toggle Gemini Spark"
-                className="flex w-full items-center justify-between text-left"
-              />
-            }
-          >
-            <CardTitle className="flex items-center gap-1.5">
+        <CollapsibleTrigger
+          render={
+            <button
+              type="button"
+              aria-labelledby="ai-settings-title"
+              className="cursor-pointer text-left"
+            />
+          }
+        >
+          <CardHeader className="grid-cols-[1fr_auto] items-center">
+            <CardTitle id="ai-settings-title" className="flex items-center gap-1.5">
               <GeminiIcon className="h-4" />
               Gemini Spark{' '}
               <span className="text-sm font-normal text-muted-foreground">(optional)</span>
@@ -45,8 +45,8 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
                 (open ? ' rotate-180' : '')
               }
             />
-          </CollapsibleTrigger>
-        </CardHeader>
+          </CardHeader>
+        </CollapsibleTrigger>
 
         <CollapsibleContent>
           <CardContent>

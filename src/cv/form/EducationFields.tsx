@@ -237,8 +237,9 @@ export function EducationFields({
   getAiProps,
 }: EducationFieldsProps) {
   return (
-    <div className="space-y-4">
+    <section aria-labelledby="section-education" className="space-y-4">
       <SectionToolbar
+        id="section-education"
         title={
           <>
             <EmojiIcon emoji="🎓" /> Education
@@ -263,6 +264,6 @@ export function EducationFields({
           ai={getAiProps?.(index)}
         />
       ))}
-    </div>
+    </section>
   );
 }

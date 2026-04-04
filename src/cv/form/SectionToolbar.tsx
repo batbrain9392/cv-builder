@@ -3,6 +3,7 @@ import { ChevronsDownUpIcon, ChevronsUpDownIcon, PlusIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface SectionToolbarProps {
+  id?: string;
   title: React.ReactNode;
   count: number;
   onCollapse: () => void;
@@ -12,6 +13,7 @@ interface SectionToolbarProps {
 }
 
 export function SectionToolbar({
+  id,
   title,
   count,
   onCollapse,
@@ -21,7 +23,9 @@ export function SectionToolbar({
 }: SectionToolbarProps) {
   return (
     <div className="flex items-center justify-between">
-      <h2 className="flex items-center gap-1.5 text-base font-semibold text-primary">{title}</h2>
+      <h2 id={id} className="flex items-center gap-1.5 text-base font-semibold text-primary">
+        {title}
+      </h2>
       <div className="flex items-center gap-2">
         {count > 0 && (
           <>
@@ -30,7 +34,6 @@ export function SectionToolbar({
               variant="ghost"
               size="icon-sm"
               className="text-muted-foreground sm:size-auto sm:px-2.5"
-              aria-label="Collapse all"
               onClick={onCollapse}
             >
               <ChevronsDownUpIcon />
@@ -41,7 +44,6 @@ export function SectionToolbar({
               variant="ghost"
               size="icon-sm"
               className="text-muted-foreground sm:size-auto sm:px-2.5"
-              aria-label="Expand all"
               onClick={onExpand}
             >
               <ChevronsUpDownIcon />

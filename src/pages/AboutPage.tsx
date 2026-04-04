@@ -154,36 +154,18 @@ function InstallCardRow({ children }: { children: React.ReactNode }) {
 export default function AboutPage() {
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
-      <AppHeader
-        mobileMenuItems={
-          <Menu.Item className={menuItemClass} render={<Link to="/" />}>
-            <ArrowLeftIcon className="size-4" />
-            Back to editor
-          </Menu.Item>
-        }
-      >
-        <Link
-          to="/"
-          aria-label="Back to editor"
-          className="hidden items-center gap-1 rounded-lg border border-primary-foreground/30 px-2.5 py-1 text-[0.8rem] font-medium text-primary-foreground hover:bg-primary-foreground/15 sm:inline-flex"
-        >
-          <ArrowLeftIcon className="size-3.5" />
-          Back to editor
-        </Link>
-      </AppHeader>
-
       <main className="min-h-0 flex-1 overflow-y-auto">
-        <div className="mx-auto grid max-w-4xl gap-5 p-4 pb-16 [&>[data-slot=card]]:h-full lg:grid-cols-2 lg:p-6 xl:p-8">
+        <div className="mx-auto grid max-w-4xl gap-5 p-4 pb-24 [&>[data-slot=card]]:h-full lg:grid-cols-2 lg:p-6 lg:pb-6 xl:p-8 xl:pb-8">
           {/* Hero heading + motivation — full width */}
           <div className="lg:col-span-2">
-            <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight">
-              <BrainIcon className="size-6" aria-hidden="true" />
+            <h1 className="flex items-center gap-3 text-xl font-bold tracking-tight">
+              <BrainIcon className="size-5" aria-hidden="true" />
               Behind the Bot
             </h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Everything you wanted to know about this app (and some things you didn&rsquo;t).
             </p>
-            <div className="mt-4 max-w-3xl space-y-2 text-sm leading-relaxed">
+            <div className="mt-4 max-w-3xl space-y-2 text-sm">
               <p>
                 Writing a CV is hard. Tailoring it for every job you apply to is even harder. This
                 app exists so you can load your full career history once, paste a job description,
@@ -200,7 +182,7 @@ export default function AboutPage() {
           {/* Features & tips — left */}
           <Card>
             <CardHeader>
-              <CardTitle>✨ Features</CardTitle>
+              <CardTitle as="h2">✨ Features</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <p>
@@ -221,7 +203,7 @@ export default function AboutPage() {
           {/* Tips — right */}
           <Card>
             <CardHeader>
-              <CardTitle>💡 Tips</CardTitle>
+              <CardTitle as="h2">💡 Tips</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <p>
@@ -243,7 +225,7 @@ export default function AboutPage() {
           {/* Data Privacy — left */}
           <Card>
             <CardHeader>
-              <CardTitle>🔒 Cookies &amp; Data Privacy</CardTitle>
+              <CardTitle as="h2">🔒 Cookies &amp; Data Privacy</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-sm">
               <p>
@@ -265,7 +247,7 @@ export default function AboutPage() {
           {/* Suggestions & Feedback — right */}
           <Card>
             <CardHeader>
-              <CardTitle>💬 Suggestions &amp; Feedback</CardTitle>
+              <CardTitle as="h2">💬 Suggestions &amp; Feedback</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex flex-wrap gap-3">
@@ -300,7 +282,7 @@ export default function AboutPage() {
           {/* Built with — full width */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle>🛠️ Built with</CardTitle>
+              <CardTitle as="h2">🛠️ Built with</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="mb-4 text-sm text-muted-foreground">
@@ -334,7 +316,7 @@ export default function AboutPage() {
           {/* Tech stack — right */}
           <Card>
             <CardHeader>
-              <CardTitle>⚙️ Tech stack</CardTitle>
+              <CardTitle as="h2">⚙️ Tech stack</CardTitle>
             </CardHeader>
             <CardContent>
               <ul aria-label="Technologies used" className="flex flex-wrap gap-2">
@@ -369,7 +351,7 @@ export default function AboutPage() {
           {/* Developer + Source code — left */}
           <Card>
             <CardHeader>
-              <CardTitle>👨‍💻 Developer</CardTitle>
+              <CardTitle as="h2">👨‍💻 Developer</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-4">
@@ -417,7 +399,7 @@ export default function AboutPage() {
           {/* Progressive Web App — full width, at the end */}
           <Card className="lg:col-span-2">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle as="h2" className="flex items-center gap-2">
                 <img src={PWA_LOGO} alt="" aria-hidden="true" className="h-5" loading="lazy" />
                 Progressive Web App
               </CardTitle>
@@ -455,6 +437,24 @@ export default function AboutPage() {
           </Card>
         </div>
       </main>
+
+      <AppHeader
+        mobileMenuItems={
+          <Menu.Item className={menuItemClass} render={<Link to="/" />}>
+            <ArrowLeftIcon className="size-4" />
+            Back to editor
+          </Menu.Item>
+        }
+      >
+        <Link
+          to="/"
+          aria-label="Back to editor"
+          className="hidden items-center gap-1 rounded-lg border border-primary-foreground/30 px-2.5 py-1 text-[0.8rem] font-medium text-primary-foreground hover:bg-primary-foreground/15 sm:inline-flex"
+        >
+          <ArrowLeftIcon className="size-3.5" />
+          Back to editor
+        </Link>
+      </AppHeader>
     </div>
   );
 }

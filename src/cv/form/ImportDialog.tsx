@@ -229,12 +229,12 @@ function ChooseStep({
         className="flex w-full items-start gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         <FileJsonIcon className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
-        <div>
-          <p className="text-sm font-medium">I have previously exported data</p>
-          <p className="text-xs text-muted-foreground">
+        <span className="block text-left">
+          <span className="block text-sm font-medium">I have previously exported data</span>
+          <span className="block text-xs text-muted-foreground">
             Load a cv.json file previously exported from this app.
-          </p>
-        </div>
+          </span>
+        </span>
       </button>
       <button
         type="button"
@@ -242,12 +242,12 @@ function ChooseStep({
         className="flex w-full items-start gap-3 rounded-lg border p-4 text-left transition-colors hover:bg-muted/50 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
       >
         <SparklesIcon className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
-        <div>
-          <p className="text-sm font-medium">Start fresh with my CV</p>
-          <p className="text-xs text-muted-foreground">
+        <span className="block text-left">
+          <span className="block text-sm font-medium">Start fresh with my CV</span>
+          <span className="block text-xs text-muted-foreground">
             Paste your CV text and let Gemini parse it into the editor for you.
-          </p>
-        </div>
+          </span>
+        </span>
       </button>
     </div>
   );

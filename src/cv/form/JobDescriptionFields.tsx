@@ -22,17 +22,13 @@ export function JobDescriptionFields({ register, errors }: JobDescriptionFieldsP
   return (
     <Card>
       <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
-        <CardHeader>
-          <CollapsibleTrigger
-            render={
-              <button
-                type="button"
-                aria-label="Toggle job description"
-                className="flex w-full items-center justify-between text-left"
-              />
-            }
-          >
-            <CardTitle className="flex items-center gap-1.5">
+        <CollapsibleTrigger
+          render={
+            <button type="button" aria-labelledby="jd-title" className="cursor-pointer text-left" />
+          }
+        >
+          <CardHeader className="grid-cols-[1fr_auto] items-center">
+            <CardTitle id="jd-title" className="flex items-center gap-1.5">
               <EmojiIcon emoji="🎯" />
               Job Description{' '}
               <span className="text-sm font-normal text-muted-foreground">(optional)</span>
@@ -43,8 +39,8 @@ export function JobDescriptionFields({ register, errors }: JobDescriptionFieldsP
                 (open ? ' rotate-180' : '')
               }
             />
-          </CollapsibleTrigger>
-        </CardHeader>
+          </CardHeader>
+        </CollapsibleTrigger>
 
         <CollapsibleContent>
           <CardContent>
