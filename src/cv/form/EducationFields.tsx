@@ -4,6 +4,7 @@ import { ChevronsDownUpIcon, ChevronsUpDownIcon, TrashIcon } from 'lucide-react'
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
+import { EmojiIcon } from '@/components/EmojiIcon';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -238,7 +239,11 @@ export function EducationFields({
   return (
     <div className="space-y-4">
       <SectionToolbar
-        title="Education"
+        title={
+          <>
+            <EmojiIcon emoji="🎓" /> Education
+          </>
+        }
         count={fields.length}
         onCollapse={onCollapse}
         onExpand={onExpand}

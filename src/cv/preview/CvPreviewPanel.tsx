@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useWatch, type Control } from 'react-hook-form';
 
+import { EmojiIcon } from '@/components/EmojiIcon';
+
 import type { CvFormData } from '../cvFormSchema.ts';
 
 import { CV_LAYOUT } from '../cvConstants.ts';
@@ -41,7 +43,9 @@ export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) 
   return (
     <div className="p-4 lg:p-6 xl:p-8">
       <div className="mb-8">
-        <h2 className="text-xl font-bold tracking-tight">Preview</h2>
+        <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
+          <EmojiIcon emoji="📄" /> Preview
+        </h2>
         <p className="text-sm text-muted-foreground">
           What you see is what recruiters get. Download DOCX (save as PDF from Word if needed), or
           Export Data as JSON to pick up where you left off.

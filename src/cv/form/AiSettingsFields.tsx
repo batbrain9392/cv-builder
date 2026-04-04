@@ -3,6 +3,7 @@ import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { ChevronDownIcon } from 'lucide-react';
 import { useState } from 'react';
 
+import { GeminiIcon } from '@/components/GeminiIcon';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -77,13 +78,14 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
             render={
               <button
                 type="button"
-                aria-label="Toggle AI settings"
+                aria-label="Toggle Gemini Spark"
                 className="flex w-full items-center justify-between text-left"
               />
             }
           >
-            <CardTitle>
-              AI Assist{' '}
+            <CardTitle className="flex items-center gap-1.5">
+              <GeminiIcon className="h-4" />
+              Gemini Spark{' '}
               <span className="text-sm font-normal text-muted-foreground">(optional)</span>
             </CardTitle>
             <ChevronDownIcon

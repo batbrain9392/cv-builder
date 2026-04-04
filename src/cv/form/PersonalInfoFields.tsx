@@ -2,6 +2,7 @@ import type { UseFormRegister, FieldArrayWithId, FieldErrors } from 'react-hook-
 
 import { PlusIcon, XIcon } from 'lucide-react';
 
+import { EmojiIcon } from '@/components/EmojiIcon';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -27,7 +28,9 @@ export function PersonalInfoFields({
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Personal Information</CardTitle>
+        <CardTitle className="flex items-center gap-1.5">
+          <EmojiIcon emoji="👤" /> Personal Information
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <FieldGroup>

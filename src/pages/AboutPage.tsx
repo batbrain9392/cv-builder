@@ -2,6 +2,7 @@ import { ArrowLeftIcon, BotIcon, ExternalLinkIcon, SendIcon } from 'lucide-react
 import { type FormEvent, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
+import { GEMINI_LOGO_URL } from '@/components/GeminiIcon';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -12,21 +13,32 @@ import { Textarea } from '@/components/ui/textarea';
 
 const GITHUB_REPO = 'https://github.com/batbrain9392/cv-builder';
 const LINKEDIN_URL = 'https://www.linkedin.com/in/batbrain9392/';
-const AVATAR_URL = 'https://avatars.githubusercontent.com/u/16217568?v=4';
+const AVATAR_URL = 'https://github.com/batbrain9392.png';
 
 const CURSOR_LOGO = 'https://cdn.simpleicons.org/cursor';
 const CLAUDE_LOGO = 'https://cdn.simpleicons.org/claude';
-const GEMINI_LOGO = 'https://cdn.simpleicons.org/googlegemini';
 
 const TECH_STACK = [
-  { emoji: '⚛️', label: 'React 19 + TypeScript' },
-  { emoji: '⚡', label: 'Vite 6' },
-  { emoji: '🎨', label: 'Tailwind CSS v4 + shadcn' },
-  { emoji: '📋', label: 'react-hook-form + Zod' },
-  { emoji: '📄', label: 'docx (Word export)' },
-  { emoji: '📝', label: 'marked (Markdown)' },
+  { emoji: '⚛️', label: 'React 19 + TypeScript', href: 'https://react.dev' },
+  { emoji: '⚡', label: 'Vite 6', href: 'https://vite.dev' },
+  {
+    emoji: '🎨',
+    label: 'Tailwind CSS v4 + shadcn',
+    href: 'https://tailwindcss.com',
+  },
+  {
+    emoji: '📋',
+    label: 'react-hook-form + Zod',
+    href: 'https://react-hook-form.com',
+  },
+  { emoji: '📄', label: 'docx.js (Word export)', href: 'https://docx.js.org' },
+  {
+    emoji: '📝',
+    label: 'marked (Markdown)',
+    href: 'https://marked.js.org',
+  },
   { emoji: '🌐', label: 'Fully client-side — no backend' },
-];
+] satisfies { emoji: string; label: string; href?: string }[];
 
 function IssueForm() {
   const [title, setTitle] = useState('');
@@ -47,7 +59,12 @@ function IssueForm() {
   };
 
   return (
-    <form ref={formRef} onSubmit={handleSubmit} className="space-y-3">
+    <form
+      ref={formRef}
+      onSubmit={handleSubmit}
+      aria-label="Submit a GitHub issue"
+      className="space-y-3"
+    >
       <p className="text-xs text-muted-foreground">
         This opens a pre-filled issue on GitHub. You&rsquo;ll need a GitHub account to submit.
       </p>
@@ -81,13 +98,11 @@ function IssueForm() {
 
 function BuiltWithCard({
   logo,
-  alt,
   name,
   label,
   href,
 }: {
   logo: string;
-  alt: string;
   name: string;
   label: string;
   href: string;
@@ -97,11 +112,13 @@ function BuiltWithCard({
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex flex-col items-center gap-2 rounded-xl border bg-muted/40 p-4 transition-colors hover:bg-muted"
+      aria-label={`${name} — ${label} (opens in new tab)`}
+      className="flex flex-col items-center gap-2 rounded-xl border bg-muted/40 p-4 transition-colors hover:bg-muted focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none"
     >
       <img
         src={logo}
-        alt={alt}
+        alt=""
+        aria-hidden="true"
         className="h-6 dark:invert"
         loading="lazy"
         referrerPolicy="no-referrer"
@@ -119,10 +136,10 @@ export default function AboutPage() {
     <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
       <header className="z-40 flex shrink-0 items-center justify-between bg-primary px-4 py-3 text-primary-foreground shadow-md lg:px-6 xl:px-8">
         <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-          <BotIcon className="size-6" />
+          <BotIcon className="size-6" aria-hidden="true" />
           Bot-ter Than You
         </Link>
-        <nav className="flex items-center gap-2">
+        <nav aria-label="Page navigation" className="flex items-center gap-2">
           <ThemeToggle />
           <Link
             to="/"
@@ -138,7 +155,7 @@ export default function AboutPage() {
         <div className="mx-auto grid max-w-4xl gap-5 p-4 pb-16 [&>[data-slot=card]]:h-full lg:grid-cols-2 lg:p-6 xl:p-8">
           {/* Hero heading — full width */}
           <div className="lg:col-span-2">
-            <h2 className="text-2xl font-bold tracking-tight">🤖 Behind the Bot</h2>
+            <h1 className="text-2xl font-bold tracking-tight">🤖 Behind the Bot</h1>
             <p className="mt-1 text-sm text-muted-foreground">
               Everything you wanted to know about this app (and some things you didn&rsquo;t).
             </p>
@@ -184,107 +201,6 @@ export default function AboutPage() {
             </CardContent>
           </Card>
 
-          {/* Built with — full width */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>🛠️ Built with</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-4 text-sm text-muted-foreground">
-                🖥️ Code written in <strong>Cursor</strong> with <strong>Claude Opus</strong> by
-                Anthropic. ✨ Live AI features inside the app are powered by{' '}
-                <strong>Google Gemini</strong> (gemini-2.5-flash).
-              </p>
-              <div className="grid grid-cols-3 gap-3">
-                <BuiltWithCard
-                  logo={CURSOR_LOGO}
-                  alt="Cursor"
-                  name="Cursor"
-                  label="Code editor"
-                  href="https://cursor.com"
-                />
-                <BuiltWithCard
-                  logo={CLAUDE_LOGO}
-                  alt="Claude by Anthropic"
-                  name="Claude Opus"
-                  label="AI coding agent"
-                  href="https://anthropic.com/claude"
-                />
-                <BuiltWithCard
-                  logo={GEMINI_LOGO}
-                  alt="Google Gemini"
-                  name="Google Gemini"
-                  label="In-app AI engine"
-                  href="https://gemini.google.com"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Developer + Source code — left */}
-          <Card>
-            <CardHeader>
-              <CardTitle>👨‍💻 Developer</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-4">
-                <img
-                  src={AVATAR_URL}
-                  alt="Debmallya Bhattacharya"
-                  className="size-16 rounded-full ring-2 ring-primary/20"
-                  loading="lazy"
-                  referrerPolicy="no-referrer"
-                />
-                <div>
-                  <p className="font-medium">Debmallya Bhattacharya</p>
-                  <p className="text-sm text-muted-foreground">
-                    Senior Software Developer at Workday, Dublin
-                  </p>
-                  <a
-                    href={LINKEDIN_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1 inline-flex items-center gap-1 text-sm text-primary hover:underline"
-                  >
-                    <ExternalLinkIcon className="size-3.5" />
-                    LinkedIn
-                  </a>
-                </div>
-              </div>
-
-              <hr className="border-border" />
-
-              <div>
-                <p className="mb-1 text-xs font-medium text-muted-foreground">💻 Source code</p>
-                <a
-                  href={GITHUB_REPO}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
-                >
-                  <ExternalLinkIcon className="size-3.5" />
-                  github.com/batbrain9392/cv-builder
-                </a>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Tech stack — right */}
-          <Card>
-            <CardHeader>
-              <CardTitle>⚙️ Tech stack</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-wrap gap-2">
-                {TECH_STACK.map(({ emoji, label }) => (
-                  <Badge key={label} variant="outline">
-                    {emoji} {label}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
           {/* Data Privacy — left */}
           <Card>
             <CardHeader>
@@ -326,8 +242,9 @@ export default function AboutPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
                 >
-                  <ExternalLinkIcon className="size-3.5" />
+                  <ExternalLinkIcon className="size-3.5" aria-hidden="true" />
                   🐛 GitHub Issues
+                  <span className="sr-only"> (opens in new tab)</span>
                 </a>
                 <a
                   href={LINKEDIN_URL}
@@ -335,14 +252,132 @@ export default function AboutPage() {
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
                 >
-                  <ExternalLinkIcon className="size-3.5" />
+                  <ExternalLinkIcon className="size-3.5" aria-hidden="true" />
                   💼 LinkedIn Messages
+                  <span className="sr-only"> (opens in new tab)</span>
                 </a>
               </div>
 
               <hr className="border-border" />
 
               <IssueForm />
+            </CardContent>
+          </Card>
+
+          {/* Built with — full width */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <CardTitle>🛠️ Built with</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4 text-sm text-muted-foreground">
+                🖥️ Code written in <strong>Cursor</strong> with <strong>Claude Opus</strong> by
+                Anthropic. ✨ Live AI features inside the app are powered by{' '}
+                <strong>Google Gemini</strong> (gemini-2.5-flash).
+              </p>
+              <div className="grid grid-cols-3 gap-3">
+                <BuiltWithCard
+                  logo={CURSOR_LOGO}
+                  name="Cursor"
+                  label="Code editor"
+                  href="https://cursor.com"
+                />
+                <BuiltWithCard
+                  logo={CLAUDE_LOGO}
+                  name="Claude Opus"
+                  label="AI coding agent"
+                  href="https://anthropic.com/claude"
+                />
+                <BuiltWithCard
+                  logo={GEMINI_LOGO_URL}
+                  name="Google Gemini"
+                  label="In-app AI engine"
+                  href="https://gemini.google.com"
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Tech stack — right */}
+          <Card>
+            <CardHeader>
+              <CardTitle>⚙️ Tech stack</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ul aria-label="Technologies used" className="flex flex-wrap gap-2">
+                {TECH_STACK.map(({ emoji, label, href }) => (
+                  <li key={label}>
+                    {href ? (
+                      <Badge
+                        variant="outline"
+                        render={
+                          <a
+                            href={href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            aria-label={`${label} (opens in new tab)`}
+                          />
+                        }
+                      >
+                        {emoji} {label}
+                        <ExternalLinkIcon aria-hidden="true" />
+                      </Badge>
+                    ) : (
+                      <Badge variant="outline">
+                        {emoji} {label}
+                      </Badge>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+
+          {/* Developer + Source code — left */}
+          <Card>
+            <CardHeader>
+              <CardTitle>👨‍💻 Developer</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-4">
+                <img
+                  src={AVATAR_URL}
+                  alt="Debmallya Bhattacharya"
+                  className="size-16 rounded-full ring-2 ring-primary/20"
+                />
+                <div>
+                  <p className="font-medium">Debmallya Bhattacharya</p>
+                  <p className="text-sm text-muted-foreground">
+                    Senior Software Developer at Workday, Dublin
+                  </p>
+                  <a
+                    href={LINKEDIN_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                  >
+                    <ExternalLinkIcon className="size-3.5" aria-hidden="true" />
+                    LinkedIn
+                    <span className="sr-only"> (opens in new tab)</span>
+                  </a>
+                </div>
+              </div>
+
+              <hr className="border-border" />
+
+              <div>
+                <p className="mb-1 text-xs font-medium text-muted-foreground">💻 Source code</p>
+                <a
+                  href={GITHUB_REPO}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 text-sm text-primary hover:underline"
+                >
+                  <ExternalLinkIcon className="size-3.5" aria-hidden="true" />
+                  github.com/batbrain9392/cv-builder
+                  <span className="sr-only"> (opens in new tab)</span>
+                </a>
+              </div>
             </CardContent>
           </Card>
         </div>

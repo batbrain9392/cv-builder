@@ -6,7 +6,6 @@ import {
   ClipboardIcon,
   EyeIcon,
   Loader2Icon,
-  SparklesIcon,
   XIcon,
 } from 'lucide-react';
 import { lazy, Suspense, useCallback, useEffect, useRef, useState } from 'react';
@@ -14,6 +13,9 @@ import { useForm, useFieldArray, useWatch, type SubmitHandler } from 'react-hook
 import { Route, Routes } from 'react-router';
 import { toast } from 'sonner';
 
+import { EmojiIcon } from '@/components/EmojiIcon';
+import { GeminiIcon } from '@/components/GeminiIcon';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -413,7 +415,9 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             className="space-y-8 p-4 pb-20 lg:p-6 lg:pb-6 xl:p-8 xl:pb-8"
           >
             <div>
-              <h2 className="text-xl font-bold tracking-tight">Edit your CV</h2>
+              <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
+                <EmojiIcon emoji="✏️" /> Edit your CV
+              </h2>
               <p className="text-sm text-muted-foreground">
                 Let's face it: the AI writes better than you, works harder than you, and doesn't
                 need coffee. Use its superiority to convince a human to hire you.
@@ -451,7 +455,9 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             {/* Professional Summary */}
             <Card>
               <CardHeader>
-                <CardTitle>Professional Summary</CardTitle>
+                <CardTitle className="flex items-center gap-1.5">
+                  <EmojiIcon emoji="📜" /> Professional Summary
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <FieldGroup>
@@ -478,17 +484,19 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                         <button
                           type="button"
                           aria-label="Enhance summary with AI"
-                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                          className="flex items-center hover:opacity-80"
                         />
                       }
                     >
-                      <SparklesIcon className="size-3.5" />
-                      <ChevronDownIcon
-                        className={
-                          'size-3.5 transition-transform' + (summaryAiOpen ? ' rotate-180' : '')
-                        }
-                      />
-                      Enhance with AI
+                      <Badge variant="secondary" className="h-auto gap-1 text-xs [&>svg]:!size-3.5">
+                        <GeminiIcon className="size-3.5" />
+                        <ChevronDownIcon
+                          className={
+                            'size-3.5 transition-transform' + (summaryAiOpen ? ' rotate-180' : '')
+                          }
+                        />
+                        Enhance with AI
+                      </Badge>
                     </CollapsibleTrigger>
 
                     <CollapsibleContent className="space-y-3 pt-2">
@@ -515,7 +523,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                           {generatingSummary ? (
                             <Loader2Icon className="animate-spin" data-icon="inline-start" />
                           ) : (
-                            <SparklesIcon data-icon="inline-start" />
+                            <GeminiIcon className="size-4" data-icon="inline-start" />
                           )}
                           {generatingSummary ? 'Generating…' : 'Generate with AI'}
                         </Button>
@@ -574,7 +582,11 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             {/* Experience */}
             <div className="space-y-4">
               <SectionToolbar
-                title="Experience"
+                title={
+                  <>
+                    <EmojiIcon emoji="💼" /> Experience
+                  </>
+                }
                 count={experience.fields.length}
                 onCollapse={() => setExpSignal((s) => ({ n: s.n + 1, open: false }))}
                 onExpand={() => setExpSignal((s) => ({ n: s.n + 1, open: true }))}
@@ -625,7 +637,11 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             {/* Others */}
             <div className="space-y-4">
               <SectionToolbar
-                title="Others"
+                title={
+                  <>
+                    <EmojiIcon emoji="🧩" /> Others
+                  </>
+                }
                 count={others.fields.length}
                 onCollapse={() => setOthSignal((s) => ({ n: s.n + 1, open: false }))}
                 onExpand={() => setOthSignal((s) => ({ n: s.n + 1, open: true }))}

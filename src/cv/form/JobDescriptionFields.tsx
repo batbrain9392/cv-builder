@@ -3,6 +3,7 @@ import type { FieldErrors, UseFormRegister } from 'react-hook-form';
 import { ChevronDownIcon } from 'lucide-react';
 import { useState } from 'react';
 
+import { EmojiIcon } from '@/components/EmojiIcon';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
@@ -31,7 +32,8 @@ export function JobDescriptionFields({ register, errors }: JobDescriptionFieldsP
               />
             }
           >
-            <CardTitle>
+            <CardTitle className="flex items-center gap-1.5">
+              <EmojiIcon emoji="🎯" />
               Job Description{' '}
               <span className="text-sm font-normal text-muted-foreground">(optional)</span>
             </CardTitle>

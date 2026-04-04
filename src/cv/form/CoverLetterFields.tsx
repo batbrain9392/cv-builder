@@ -1,16 +1,12 @@
 import type { Control, FieldErrors, UseFormRegister } from 'react-hook-form';
 
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ClipboardIcon,
-  Loader2Icon,
-  SparklesIcon,
-  XIcon,
-} from 'lucide-react';
+import { CheckIcon, ChevronDownIcon, ClipboardIcon, Loader2Icon, XIcon } from 'lucide-react';
 import { useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
+import { EmojiIcon } from '@/components/EmojiIcon';
+import { GeminiIcon } from '@/components/GeminiIcon';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -66,7 +62,8 @@ export function CoverLetterFields({
               />
             }
           >
-            <CardTitle>
+            <CardTitle className="flex items-center gap-1.5">
+              <EmojiIcon emoji="✉️" />
               Cover Letter{' '}
               <span className="text-sm font-normal text-muted-foreground">(optional)</span>
             </CardTitle>
@@ -123,15 +120,19 @@ export function CoverLetterFields({
                         <button
                           type="button"
                           aria-label="Enhance cover letter with AI"
-                          className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
+                          className="flex items-center hover:opacity-80"
                         />
                       }
                     >
-                      <SparklesIcon className="size-3.5" />
-                      <ChevronDownIcon
-                        className={'size-3.5 transition-transform' + (aiOpen ? ' rotate-180' : '')}
-                      />
-                      Enhance with AI
+                      <Badge variant="secondary" className="h-auto gap-1 text-xs [&>svg]:!size-3.5">
+                        <GeminiIcon className="size-3.5" />
+                        <ChevronDownIcon
+                          className={
+                            'size-3.5 transition-transform' + (aiOpen ? ' rotate-180' : '')
+                          }
+                        />
+                        Enhance with AI
+                      </Badge>
                     </CollapsibleTrigger>
 
                     <CollapsibleContent className="space-y-3 pt-2">
@@ -158,7 +159,7 @@ export function CoverLetterFields({
                           {generating ? (
                             <Loader2Icon className="animate-spin" data-icon="inline-start" />
                           ) : (
-                            <SparklesIcon data-icon="inline-start" />
+                            <GeminiIcon className="size-4" data-icon="inline-start" />
                           )}
                           {generating ? 'Generating…' : 'Generate with AI'}
                         </Button>
