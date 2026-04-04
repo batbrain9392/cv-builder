@@ -1,101 +1,357 @@
-import { createCanvas } from '@napi-rs/canvas';
-import { writeFileSync } from 'node:fs';
-import { resolve, dirname } from 'node:path';
+import { createCanvas, GlobalFonts, loadImage } from '@napi-rs/canvas';
+import { spawn } from 'node:child_process';
+import { existsSync, writeFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { chromium } from 'playwright';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const WIDTH = 1200;
-const HEIGHT = 630;
+const ROOT = resolve(__dirname, '..');
+const DIST = resolve(ROOT, 'dist');
+const OUT = resolve(ROOT, 'public', 'og-image.png');
 
-const canvas = createCanvas(WIDTH, HEIGHT);
-const ctx = canvas.getContext('2d');
+const W = 1200;
+const H = 630;
+const BASE_URL = 'http://localhost:4173/cv-builder/';
 
-// Background — dark zinc matching app's primary color
-ctx.fillStyle = '#18181b';
-ctx.fillRect(0, 0, WIDTH, HEIGHT);
+// App dark-mode palette (from src/index.css)
+const BG = '#1c1c1c';
+const FG = '#fafafa';
+const MUTED_FG = '#d4d4d8';
+const PRIMARY = '#3dc78c';
+const MUTED_BG = '#343836';
 
-// Subtle gradient overlay
-const grad = ctx.createLinearGradient(0, 0, WIDTH, HEIGHT);
-grad.addColorStop(0, 'rgba(59, 130, 246, 0.08)');
-grad.addColorStop(1, 'rgba(139, 92, 246, 0.08)');
-ctx.fillStyle = grad;
-ctx.fillRect(0, 0, WIDTH, HEIGHT);
+GlobalFonts.registerFromPath(
+  resolve(ROOT, 'node_modules/@fontsource-variable/geist/files/geist-latin-wght-normal.woff2'),
+  'Geist',
+);
 
-// App name — draw text first to measure, then align icon to it
-ctx.fillStyle = '#fafafa';
-ctx.font = 'bold 80px sans-serif';
-ctx.textAlign = 'left';
-const textY = 270;
-const textMetrics = ctx.measureText('BioBot');
-const textTop = textY - textMetrics.actualBoundingBoxAscent;
-const textBottom = textY + textMetrics.actualBoundingBoxDescent;
-const textCenterY = (textTop + textBottom) / 2;
+// ---------------------------------------------------------------------------
+// 1. Start preview server
+// ---------------------------------------------------------------------------
 
-// Robot icon (drawn manually), head square centered with text
-const iconH = 80;
-const ry = Math.round(textCenterY - iconH / 2);
-const rx = 90;
+if (!existsSync(DIST)) {
+  console.error('dist/ not found. Run `npm run build` first.');
+  process.exit(1);
+}
 
-ctx.strokeStyle = '#60a5fa';
-ctx.lineWidth = 4;
-ctx.fillStyle = '#60a5fa';
+function startPreviewServer() {
+  return new Promise((resolvePromise, reject) => {
+    const child = spawn('npx', ['vite', 'preview'], { cwd: ROOT, stdio: 'pipe' });
+    let settled = false;
 
-// Head
-ctx.beginPath();
-ctx.roundRect(rx, ry, 100, iconH, 14);
-ctx.stroke();
+    child.stdout.on('data', (chunk) => {
+      const text = chunk.toString();
+      if (!settled && text.includes('Local:')) {
+        settled = true;
+        resolvePromise(child);
+      }
+    });
 
-// Eyes
-ctx.beginPath();
-ctx.arc(rx + 32, ry + 35, 10, 0, Math.PI * 2);
-ctx.arc(rx + 68, ry + 35, 10, 0, Math.PI * 2);
-ctx.fill();
+    child.stderr.on('data', (chunk) => {
+      const text = chunk.toString();
+      if (!settled && text.includes('Local:')) {
+        settled = true;
+        resolvePromise(child);
+      }
+    });
 
-// Antenna
-ctx.beginPath();
-ctx.moveTo(rx + 50, ry);
-ctx.lineTo(rx + 50, ry - 25);
-ctx.stroke();
-ctx.beginPath();
-ctx.arc(rx + 50, ry - 30, 6, 0, Math.PI * 2);
-ctx.fill();
+    child.on('error', (err) => {
+      if (!settled) {
+        settled = true;
+        reject(err);
+      }
+    });
 
-// Mouth
-ctx.beginPath();
-ctx.moveTo(rx + 30, ry + 58);
-ctx.lineTo(rx + 70, ry + 58);
-ctx.stroke();
+    child.on('exit', (code) => {
+      if (!settled) {
+        settled = true;
+        reject(new Error(`Preview server exited with code ${code}`));
+      }
+    });
 
-ctx.fillStyle = '#fafafa';
-ctx.fillText('BioBot', 220, textY);
+    setTimeout(() => {
+      if (!settled) {
+        settled = true;
+        reject(new Error('Preview server did not start within 15 seconds'));
+      }
+    }, 15_000);
+  });
+}
 
-// Tagline
-ctx.fillStyle = '#a1a1aa';
-ctx.font = '32px sans-serif';
-ctx.fillText('AI-powered CV and cover letter builder', 80, 370);
+// ---------------------------------------------------------------------------
+// 2. Capture mobile screenshot
+// ---------------------------------------------------------------------------
 
-// Sub-tagline
-ctx.fillStyle = '#71717a';
-ctx.font = '24px sans-serif';
-ctx.fillText('Runs entirely in your browser · No sign-up · No cookies', 80, 420);
+async function captureScreenshots() {
+  const browser = await chromium.launch({ headless: true });
+  const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+  await page.goto(BASE_URL, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(500);
 
-// PWA badge area
-ctx.fillStyle = 'rgba(250, 250, 250, 0.06)';
-ctx.beginPath();
-ctx.roundRect(80, 470, 440, 60, 12);
-ctx.fill();
+  const formShot = await page.screenshot({ type: 'png' });
 
-ctx.fillStyle = '#a1a1aa';
-ctx.font = '20px sans-serif';
-ctx.fillText('Install as a Progressive Web App', 100, 508);
+  // Open the preview panel via the mobile FAB
+  await page.click('button[aria-label="Open preview"]');
+  await page.waitForTimeout(600);
+  const previewShot = await page.screenshot({ type: 'png' });
 
-// URL
-ctx.fillStyle = '#3b82f6';
-ctx.font = '22px sans-serif';
-ctx.textAlign = 'right';
-ctx.fillText('batbrain9392.github.io/cv-builder', WIDTH - 80, 560);
+  await browser.close();
+  return { formShot, previewShot };
+}
 
-const outPath = resolve(__dirname, '..', 'public', 'og-image.png');
-const png = canvas.toBuffer('image/png');
-writeFileSync(outPath, png);
-console.log(`OG image written to ${outPath} (${png.byteLength} bytes)`);
+// ---------------------------------------------------------------------------
+// 3. Draw robot icon (reused from generate-icons.mjs, scaled to fit)
+// ---------------------------------------------------------------------------
+
+// Returns the actual drawn width so callers can position text tightly after it.
+function drawRobot(ctx, left, centerY, height) {
+  // Scale everything relative to desired height (antenna tip to head bottom).
+  // In the 512-unit design the visible height is ~242 units (antenna tip to head bottom).
+  const s = height / 242;
+
+  const headW = 240 * s;
+  const headH = 180 * s;
+  const lw = 10 * s;
+
+  // Center the head rectangle on centerY (antenna extends above).
+  const ry = centerY - headH / 2;
+  const rx = left;
+  const cx = rx + headW / 2;
+
+  ctx.strokeStyle = PRIMARY;
+  ctx.lineWidth = lw;
+  ctx.fillStyle = PRIMARY;
+
+  ctx.beginPath();
+  ctx.roundRect(rx, ry, headW, headH, 32 * s);
+  ctx.stroke();
+
+  const eyeR = 24 * s;
+  ctx.beginPath();
+  ctx.arc(rx + headW * 0.35, ry + headH * 0.42, eyeR, 0, Math.PI * 2);
+  ctx.arc(rx + headW * 0.65, ry + headH * 0.42, eyeR, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.beginPath();
+  ctx.moveTo(rx + headW * 0.3, ry + headH * 0.72);
+  ctx.lineTo(rx + headW * 0.7, ry + headH * 0.72);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(cx, ry);
+  ctx.lineTo(cx, ry - 55 * s);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(cx, ry - 62 * s, 14 * s, 0, Math.PI * 2);
+  ctx.fill();
+
+  return headW;
+}
+
+// Draw a download-arrow icon (↓ with tray) at the given position.
+function drawDownloadIcon(ctx, x, centerY, size) {
+  const half = size / 2;
+  const lw = Math.max(2, size * 0.14);
+  ctx.save();
+  ctx.strokeStyle = PRIMARY;
+  ctx.lineWidth = lw;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+
+  // Vertical shaft
+  ctx.beginPath();
+  ctx.moveTo(x + half, centerY - half * 0.7);
+  ctx.lineTo(x + half, centerY + half * 0.3);
+  ctx.stroke();
+
+  // Arrowhead
+  ctx.beginPath();
+  ctx.moveTo(x + half - half * 0.45, centerY - half * 0.1);
+  ctx.lineTo(x + half, centerY + half * 0.4);
+  ctx.lineTo(x + half + half * 0.45, centerY - half * 0.1);
+  ctx.stroke();
+
+  // Tray (bottom line)
+  ctx.beginPath();
+  ctx.moveTo(x + half - half * 0.6, centerY + half * 0.7);
+  ctx.lineTo(x + half + half * 0.6, centerY + half * 0.7);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+// Draw a globe icon at the given position (simplified: circle + two arcs + equator).
+function drawGlobeIcon(ctx, x, centerY, size) {
+  const r = size / 2 - 1;
+  const cx = x + size / 2;
+  const cy = centerY;
+  const lw = Math.max(1.5, size * 0.1);
+
+  ctx.save();
+  ctx.strokeStyle = PRIMARY;
+  ctx.lineWidth = lw;
+
+  // Outer circle
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.stroke();
+
+  // Equator
+  ctx.beginPath();
+  ctx.moveTo(cx - r, cy);
+  ctx.lineTo(cx + r, cy);
+  ctx.stroke();
+
+  // Vertical ellipse (meridian)
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, r * 0.4, r, 0, 0, Math.PI * 2);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+// ---------------------------------------------------------------------------
+// 4. Composite
+// ---------------------------------------------------------------------------
+
+async function composite(formBuf, previewBuf) {
+  const canvas = createCanvas(W, H);
+  const ctx = canvas.getContext('2d');
+
+  // Dark background
+  ctx.fillStyle = BG;
+  ctx.fillRect(0, 0, W, H);
+
+  const PAD = 36;
+  const TEXT_X = PAD;
+
+  // Element heights
+  const titleFontSize = 52;
+  const robotHeight = 60;
+  const titleH = Math.max(titleFontSize, robotHeight);
+  const subtitleH = 28;
+  const secondaryH = 20;
+  const pillH = 42;
+
+  // Uniform gap between elements
+  const GAP = 28;
+
+  // Center the block (title through pill, URL is a separate footer)
+  const blockH = titleH + subtitleH + secondaryH + pillH + GAP * 3;
+  const blockTop = Math.round((H - blockH) / 2);
+  let y = blockTop;
+
+  // -- Robot icon + title on same line --
+  const titleCenterY = y + titleH / 2;
+  const robotW = drawRobot(ctx, TEXT_X, titleCenterY, robotHeight);
+
+  ctx.fillStyle = FG;
+  ctx.font = `bold ${titleFontSize}px Geist`;
+  ctx.textBaseline = 'middle';
+  ctx.fillText('BioBot', TEXT_X + robotW + 16, titleCenterY);
+  y += titleH + GAP;
+
+  // -- Subtitle --
+  ctx.fillStyle = MUTED_FG;
+  ctx.font = '28px Geist';
+  ctx.textBaseline = 'top';
+  ctx.fillText('AI-powered CV and cover letter builder', TEXT_X, y);
+  y += subtitleH + GAP;
+
+  // -- Secondary line --
+  ctx.font = '20px Geist';
+  ctx.fillText('Runs entirely in your browser \u00B7 No sign-up \u00B7 No cookies', TEXT_X, y);
+  y += secondaryH + GAP;
+
+  // -- Install CTA pill --
+  const pillLabel = 'Install as a Progressive Web App';
+  ctx.font = '18px Geist';
+  const iconSize = 18;
+  const iconGap = 8;
+  const pillPadX = 18;
+  const pillMetrics = ctx.measureText(pillLabel);
+  const pillW = pillPadX + iconSize + iconGap + pillMetrics.width + pillPadX;
+  const pillCenterY = y + pillH / 2;
+
+  ctx.fillStyle = MUTED_BG;
+  ctx.beginPath();
+  ctx.roundRect(TEXT_X, y, pillW, pillH, pillH / 2);
+  ctx.fill();
+
+  drawDownloadIcon(ctx, TEXT_X + pillPadX, pillCenterY, iconSize);
+
+  ctx.fillStyle = PRIMARY;
+  ctx.textBaseline = 'middle';
+  ctx.fillText(pillLabel, TEXT_X + pillPadX + iconSize + iconGap, pillCenterY);
+
+  // -- URL (footer, anchored to bottom) with link icon --
+  const urlIconSize = 16;
+  const urlIconGap = 6;
+  const urlText = 'batbrain9392.github.io/cv-builder';
+  const urlY = H - PAD;
+  drawGlobeIcon(ctx, TEXT_X, urlY - urlIconSize / 2 - 2, urlIconSize);
+  ctx.fillStyle = PRIMARY;
+  ctx.font = '18px Geist';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(urlText, TEXT_X + urlIconSize + urlIconGap, urlY);
+
+  // -- Phone screenshots on the right --
+  const phoneR = 16;
+  const phoneGap = 16;
+  const phoneFrameH = H - 40;
+  const phoneFrameW = Math.round(phoneFrameH * (390 / 844));
+  const phonesW = phoneFrameW * 2 + phoneGap;
+  const phonesX = W - phonesW - PAD;
+  const phoneY = 20;
+
+  const formImg = await loadImage(formBuf);
+  const previewImg = await loadImage(previewBuf);
+
+  for (const [img, offsetX] of [[formImg, 0], [previewImg, phoneFrameW + phoneGap]]) {
+    const px = phonesX + offsetX;
+
+    // Drop shadow
+    ctx.save();
+    ctx.shadowColor = 'rgba(0, 0, 0, 0.45)';
+    ctx.shadowBlur = 24;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 4;
+    ctx.beginPath();
+    ctx.roundRect(px, phoneY, phoneFrameW, phoneFrameH, phoneR);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.restore();
+
+    // Clip and draw
+    ctx.save();
+    ctx.beginPath();
+    ctx.roundRect(px, phoneY, phoneFrameW, phoneFrameH, phoneR);
+    ctx.clip();
+    ctx.drawImage(img, 0, 0, img.width, img.height, px, phoneY, phoneFrameW, phoneFrameH);
+    ctx.restore();
+  }
+
+  return canvas.toBuffer('image/png');
+}
+
+// ---------------------------------------------------------------------------
+// Main
+// ---------------------------------------------------------------------------
+
+console.log('Starting preview server…');
+const server = await startPreviewServer();
+console.log('Preview server ready.');
+
+try {
+  console.log('Capturing screenshots…');
+  const { formShot, previewShot } = await captureScreenshots();
+  console.log(`Form: ${formShot.byteLength} bytes, Preview: ${previewShot.byteLength} bytes.`);
+
+  console.log('Compositing OG image…');
+  const png = await composite(formShot, previewShot);
+  writeFileSync(OUT, png);
+  console.log(`Done → ${OUT} (${png.byteLength} bytes)`);
+} finally {
+  server.kill();
+}

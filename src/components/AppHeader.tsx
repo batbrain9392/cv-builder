@@ -1,18 +1,12 @@
 import type React from 'react';
 
 import { Menu } from '@base-ui/react/menu';
-import {
-  BotIcon,
-  DownloadIcon,
-  EllipsisVerticalIcon,
-  MoonIcon,
-  Share2Icon,
-  SunIcon,
-} from 'lucide-react';
+import { DownloadIcon, EllipsisVerticalIcon, MoonIcon, Share2Icon, SunIcon } from 'lucide-react';
 import { Link } from 'react-router';
 
 import { InstallPwa } from '@/components/InstallPwa';
 import { menuItemClass } from '@/components/menuItemClass';
+import { RobotIcon } from '@/components/RobotIcon';
 import { ShareButton } from '@/components/ShareButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
@@ -42,7 +36,7 @@ export function AppHeader({ children, mobileMenuItems }: AppHeaderProps) {
     >
       <div className="flex w-full max-w-[1728px] items-center justify-between px-4 lg:px-6 xl:px-8">
         <Link to="/" className="flex items-center gap-2 text-lg font-semibold tracking-tight">
-          <BotIcon className="size-6" aria-hidden="true" />
+          <RobotIcon className="size-6" aria-hidden="true" />
           BioBot
         </Link>
 

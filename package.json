@@ -20,6 +20,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "generate:og": "node scripts/generate-og-image.mjs",
     "prepare": "husky"
   },
   "dependencies": {

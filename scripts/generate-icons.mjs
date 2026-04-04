@@ -12,10 +12,10 @@ function drawIcon(size, maskable = false) {
 
   // Background
   if (maskable) {
-    ctx.fillStyle = '#18181b';
+    ctx.fillStyle = '#1c1c1c';
     ctx.fillRect(0, 0, size, size);
   } else {
-    ctx.fillStyle = '#18181b';
+    ctx.fillStyle = '#1c1c1c';
     ctx.beginPath();
     ctx.roundRect(0, 0, size, size, 80 * s);
     ctx.fill();
@@ -29,9 +29,9 @@ function drawIcon(size, maskable = false) {
   const rx = cx - iconW / 2;
   const ry = cy - iconH / 2 + 20 * s;
 
-  ctx.strokeStyle = '#60a5fa';
+  ctx.strokeStyle = '#3dc78c';
   ctx.lineWidth = 10 * s;
-  ctx.fillStyle = '#60a5fa';
+  ctx.fillStyle = '#3dc78c';
 
   // Head
   const headW = iconW;
@@ -66,6 +66,7 @@ function drawIcon(size, maskable = false) {
 }
 
 const sizes = [
+  { name: 'favicon-32.png', size: 32, maskable: false },
   { name: 'icon-192.png', size: 192, maskable: false },
   { name: 'icon-512.png', size: 512, maskable: false },
   { name: 'icon-maskable.png', size: 512, maskable: true },
