@@ -534,7 +534,7 @@ function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         aria-label="Download"
       >
         <FileDownIcon />
-        Download
+        Download CV
       </Button>
 
       <AlertDialog.Root open={apiKeyWarningOpen} onOpenChange={setApiKeyWarningOpen}>
