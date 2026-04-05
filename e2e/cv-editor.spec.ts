@@ -52,7 +52,7 @@ test('DOCX download triggers a file download', async ({ page }) => {
   await page.goto('/#/app');
 
   const preview = page.locator('#cv-preview-panel-desktop');
-  await preview.getByRole('button', { name: 'Download CV' }).click();
+  await preview.getByRole('button', { name: 'Download' }).click();
 
   await expect(page.getByText('Download your CV')).toBeVisible();
 
