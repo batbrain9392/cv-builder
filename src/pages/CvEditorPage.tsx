@@ -4,6 +4,7 @@ import {
   CheckIcon,
   ChevronDownIcon,
   ClipboardIcon,
+  DownloadIcon,
   EyeIcon,
   Loader2Icon,
   PenLineIcon,
@@ -185,11 +186,16 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
 
+  const handleDownloadClick = () => {
+    onSaveToBrowser();
+    setDownloadDialogOpen(true);
+  };
+
   return (
     <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground">
       <a
         href="#cv-editor"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-60 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg"
       >
         Skip to editor
       </a>
@@ -282,6 +288,13 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
 
                   <CollapsibleContent>
                     <CardContent className="space-y-6">
+                      <p className="text-sm text-muted-foreground">
+                        This app uses Google Gemini to parse your CV text or JSON into structured
+                        form data, and later to enhance your summary, cover letter, and experience
+                        highlights. Gemini has a free tier with no billing required &mdash; just a
+                        Google account and an API key.
+                      </p>
+
                       <AiSettingsFields register={register} errors={errors} />
 
                       <hr className="border-border/60" />
@@ -362,7 +375,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                       >
                         <Badge
                           variant="secondary"
-                          className="h-auto gap-1 text-xs [&>svg]:!size-3.5"
+                          className="h-auto gap-1 text-xs [&>svg]:size-3.5!"
                         >
                           <GeminiIcon className="size-3.5" />
                           <ChevronDownIcon
@@ -569,6 +582,10 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                   <SaveIcon data-icon="inline-start" />
                   Save to browser
                 </Button>
+                <Button type="button" size="sm" className="lg:hidden" onClick={handleDownloadClick}>
+                  <DownloadIcon data-icon="inline-start" />
+                  Download
+                </Button>
               </div>
             </form>
           </ErrorBoundary>
@@ -596,11 +613,13 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             </div>
           )}
 
-          <ScrollToTopFab
-            visible={isTopScrolledPast}
-            onClick={scrollToTop}
-            className="bottom-28 right-4 lg:bottom-6 lg:right-[calc(50%+1.5rem)] xl:right-[calc(50%+2.5rem)]"
-          />
+          {!isDesktop && (
+            <ScrollToTopFab
+              visible={isTopScrolledPast}
+              onClick={scrollToTop}
+              className="bottom-28 right-4"
+            />
+          )}
         </div>
 
         {/* Desktop preview — only mounted on lg+ to avoid duplicate useWatch + renders on mobile */}
@@ -622,11 +641,19 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             >
               <CvPreviewPanel control={control} defaultValues={defaultValues} />
             </ErrorBoundary>
+            <div className="px-4 pb-8 lg:px-6 xl:px-8">
+              <div className="flex items-center justify-end gap-3 border-t pt-6">
+                <Button size="sm" onClick={handleDownloadClick}>
+                  <DownloadIcon data-icon="inline-start" />
+                  Download
+                </Button>
+              </div>
+            </div>
           </aside>
         )}
       </main>
 
-      <FormActions onDownload={() => setDownloadDialogOpen(true)} />
+      <FormActions />
 
       {/* Mobile FAB — jump to preview */}
       <Button

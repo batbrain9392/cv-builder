@@ -21,11 +21,15 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
         Gemini API <span className="font-normal text-muted-foreground">(optional)</span>
       </h3>
       <FieldGroup>
-        <p className="text-xs text-muted-foreground">
-          This app uses Google Gemini to parse your CV text or JSON into structured form data, and
-          later to enhance your summary, cover letter, and experience highlights. Gemini has a free
-          tier with no billing required &mdash; just a Google account and an API key.
-        </p>
+        <ol className="list-inside list-decimal space-y-2 rounded-lg border bg-muted/50 p-3 text-xs text-muted-foreground">
+          {GEMINI_HELP_STEPS.map((step) => (
+            <li key={step.title}>
+              <strong className="text-foreground">{step.title}</strong>
+              <p className="ml-5">{step.body}</p>
+            </li>
+          ))}
+        </ol>
+
         <Field data-invalid={errors.aiApiKey ? true : undefined}>
           <FieldLabel htmlFor="aiApiKey">Gemini API Key</FieldLabel>
           <Input
@@ -37,21 +41,13 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
             aria-invalid={errors.aiApiKey ? true : undefined}
             aria-describedby="aiApiKey-warning"
           />
-          <p id="aiApiKey-warning" className="text-xs font-medium text-destructive">
+
+          <p id="aiApiKey-warning" className="text-xs text-amber-600 dark:text-amber-500">
             Your API key is saved in this browser&rsquo;s local storage alongside your CV data. It
             never leaves your device, but anyone with access to this browser can read it. Keep the
             key backed up safely (e.g.&nbsp;a password manager) &mdash; Google won&rsquo;t show it
             again after creation.
           </p>
-
-          <ol className="list-inside list-decimal space-y-2 rounded-lg border bg-muted/50 p-3 text-xs text-muted-foreground">
-            {GEMINI_HELP_STEPS.map((step) => (
-              <li key={step.title}>
-                <strong className="text-foreground">{step.title}</strong>
-                <p className="ml-5">{step.body}</p>
-              </li>
-            ))}
-          </ol>
 
           {errors.aiApiKey && <FieldError id="aiApiKey-error" errors={[errors.aiApiKey]} />}
         </Field>
