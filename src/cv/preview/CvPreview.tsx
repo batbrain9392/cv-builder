@@ -115,20 +115,13 @@ export function CvPreview({ data }: CvPreviewProps) {
         {data.skills && data.skills.length > 0 && (
           <>
             <SectionHeading>Skills</SectionHeading>
-            {data.skills.map((skillGroup, i) => (
-              <div key={i} className="mb-2">
-                {skillGroup.category && (
-                  <h3 className="cv-preview-entry-title">{skillGroup.category}</h3>
-                )}
-                <ul className="cv-preview-items">
-                  {skillGroup.items.map((item, j) => (
-                    <li key={j}>
-                      <InlineMarkdown text={item} />
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            <ul className="cv-preview-items">
+              {data.skills.map((line, i) => (
+                <li key={i}>
+                  <InlineMarkdown text={line} />
+                </li>
+              ))}
+            </ul>
           </>
         )}
 

@@ -54,9 +54,7 @@ export const cvFormSchema = z.object({
   jobDescriptionText: z.string(),
   personalInfo: personalInfoSchema,
   summary: z.string(),
-  skills: z
-    .array(z.object({ category: z.string(), items: z.array(itemSchema) }))
-    .min(1, 'At least one skills group is required'),
+  skills: z.array(itemSchema).min(1, 'At least one skill line is required'),
   aiSummaryPrompt: z.string(),
   coverLetterEnabled: z.boolean(),
   coverLetter: z.string(),

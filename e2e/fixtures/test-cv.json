@@ -11,6 +11,7 @@
   "coverLetter": "",
   "aiCoverLetterPrompt": "You are an expert cover letter writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's CV data and the job description (if provided), write a professional cover letter tailored for the role. Keep it to one page, with a clear opening, body highlighting relevant experience, and a closing paragraph. Do not invent claims or metrics not present in the source data.",
   "summary": "A test summary with enough characters to pass validation.",
+  "skills": ["Testing: Playwright"],
   "aiSummaryPrompt": "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's CV data and the job description (if provided), rewrite the professional summary to highlight the most relevant experience and skills. Do not invent claims or metrics not present in the source data. Keep the exact format of the current summary.",
   "experience": [
     {

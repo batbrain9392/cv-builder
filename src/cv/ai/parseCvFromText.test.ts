@@ -46,12 +46,7 @@ const VALID_CV_JSON = {
       items: ['Graduated with honours'],
     },
   ],
-  skills: [
-    {
-      category: 'Core',
-      items: ['React'],
-    },
-  ],
+  skills: ['Core: React'],
   others: [],
 };
 

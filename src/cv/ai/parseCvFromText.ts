@@ -22,10 +22,9 @@ const EXAMPLE_STRUCTURE = `{
   },
   "summary": "8+ years of experience building performant, accessible web applications.",
   "skills": [
-    {
-      "category": "Core Skills",
-      "items": ["TypeScript", "React", "Node.js"]
-    }
+    "Frontend: TypeScript, React, Node.js",
+    "Backend: PostgreSQL, Redis",
+    "Tools: Git, Docker, AWS"
   ],
   "experience": [
     {
@@ -78,7 +77,7 @@ RULES:
 - "personalInfo": name and email are required. title, location, and phone are optional (default "").
 - "experience" is for work/employment history. Each entry needs: role, company, startDate. Optional (default "" or []): url, endDate, location, items, tagsLabel, tags.
 - "education" is for degrees/academic qualifications. Each entry needs: degree, institution, startYear. Optional (default "" or []): institutionUrl, endYear, location, items.
-- "skills" is REQUIRED. Extract all skills into this array. Do NOT include skills inside the "summary" or "others". If skills are just a single list, put them under a generic category like "Core Skills"/"Frontend"/"Backend"/"Architecture"/"Tools"/etc.
+- "skills" is a flat array of strings. Each string is one line in the format "Category: skill1, skill2, skill3". Extract all skills from the CV and group them into relevant categories (e.g. "Frontend: React, TypeScript", "Backend: Node.js, PostgreSQL", "Tools: Git, Docker"). Do NOT include skills inside "summary" or "others". Categorise based on the candidate's role and the job description, if provided.
 - "others" is for everything else: certifications, projects, volunteer work, publications, awards. Use the same shape as experience entries. DO NOT put skills sections here.
 - "url", "institutionUrl" fields: set to "" unless a URL is explicitly present in the text. Never invent URLs.
 - Preserve dates exactly as written in the source text. For education, use year strings only (e.g. "2012").
@@ -132,14 +131,7 @@ const relaxedCvSchema = z.object({
     links: z.array(z.object({ label: z.string(), url: z.string() })).default([]),
   }),
   summary: z.string().default(''),
-  skills: z
-    .array(
-      z.object({
-        category: z.string().optional().default(''),
-        items: z.array(z.string()).default([]),
-      }),
-    )
-    .default([]),
+  skills: z.array(z.string()).default([]),
   experience: z.array(relaxedExperienceSchema).default([]),
   education: z.array(relaxedEducationSchema).default([]),
   others: z.array(relaxedExperienceSchema).default([]),

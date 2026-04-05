@@ -305,13 +305,7 @@ function createCvDocx(docx: Docx, data: CvFormData) {
       : []),
 
     ...(data.skills && data.skills.length > 0
-      ? [
-          sectionHeading(docx, 'Skills'),
-          ...data.skills.flatMap((skillGroup) => [
-            ...(skillGroup.category ? [entryTitle(docx, skillGroup.category)] : []),
-            ...skillGroup.items.map((item) => itemParagraph(docx, item)),
-          ]),
-        ]
+      ? [sectionHeading(docx, 'Skills'), ...data.skills.map((line) => itemParagraph(docx, line))]
       : []),
 
     sectionHeading(docx, 'Work Experience'),

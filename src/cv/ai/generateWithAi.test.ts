@@ -63,12 +63,7 @@ function makeCvData(overrides: Partial<CvFormData> = {}): CvFormData {
       },
     ],
     others: [],
-    skills: [
-      {
-        category: 'Core',
-        items: ['React'],
-      },
-    ],
+    skills: ['Core: React'],
     ...overrides,
   };
 }

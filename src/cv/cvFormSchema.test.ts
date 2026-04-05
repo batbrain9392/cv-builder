@@ -46,12 +46,7 @@ describe('cvFormSchema', () => {
           items: ['Graduated with 8.34 DGPA.'],
         },
       ],
-      skills: [
-        {
-          category: 'Core Skills',
-          items: ['React', 'TypeScript', 'Node.js'],
-        },
-      ],
+      skills: ['Core Skills: React, TypeScript, Node.js'],
       others: [],
     };
 
@@ -196,7 +191,7 @@ function makeValidData(overrides: Record<string, unknown> = {}) {
     summary: 'A professional summary with enough characters.',
     experience: [VALID_EXPERIENCE],
     education: [VALID_EDUCATION],
-    skills: [{ category: '', items: ['Testing'] }],
+    skills: ['Testing: Vitest'],
     others: [],
     ...overrides,
   };

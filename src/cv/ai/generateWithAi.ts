@@ -14,7 +14,7 @@ export interface AiResult<T> {
 }
 
 export function buildCvContext(data: CvFormData): string {
-  const { personalInfo, summary, experience, education, others } = data;
+  const { personalInfo, summary, skills, experience, education, others } = data;
 
   const lines: string[] = [
     `Name: ${personalInfo.name}`,
@@ -30,6 +30,11 @@ export function buildCvContext(data: CvFormData): string {
 
   if (summary) {
     lines.push('', '--- Current Summary ---', summary);
+  }
+
+  if (skills.length > 0) {
+    lines.push('', '--- Skills ---');
+    for (const line of skills) lines.push(`  • ${line}`);
   }
 
   if (experience.length > 0) {

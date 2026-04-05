@@ -13,16 +13,17 @@ type HighlightsPath =
   | `experience.${number}.items`
   | `education.${number}.items`
   | `others.${number}.items`
-  | `skills.${number}.items`;
+  | 'skills';
 
 interface HighlightsInputProps {
   control: Control<CvFormData>;
   name: HighlightsPath;
   id: string;
   label: string;
+  hint?: string;
 }
 
-export function HighlightsInput({ control, name, id, label }: HighlightsInputProps) {
+export function HighlightsInput({ control, name, id, label, hint }: HighlightsInputProps) {
   const { field, fieldState } = useController({ control, name });
 
   const arr: string[] = Array.isArray(field.value) ? field.value : [];
@@ -47,7 +48,7 @@ export function HighlightsInput({ control, name, id, label }: HighlightsInputPro
         aria-describedby={`${id}-hint` + (fieldState.invalid ? ` ${id}-error` : '')}
       />
       <MarkdownHint id={`${id}-hint`}>
-        One highlight per line, using markdown list format.
+        {hint ?? 'One highlight per line, using markdown list format.'}
       </MarkdownHint>
       {fieldState.invalid && <FieldError id={`${id}-error`} errors={[fieldState.error]} />}
     </Field>

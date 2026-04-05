@@ -45,11 +45,11 @@ import { DownloadDialog } from '../cv/form/DownloadDialog.tsx';
 import { EducationFields } from '../cv/form/EducationFields.tsx';
 import { ExperienceEntryFields } from '../cv/form/ExperienceEntryFields.tsx';
 import { FormActions } from '../cv/form/FormActions.tsx';
+import { HighlightsInput } from '../cv/form/HighlightsInput.tsx';
 import { ImportDataFields } from '../cv/form/ImportDataFields.tsx';
 import { JobDescriptionFields } from '../cv/form/JobDescriptionFields.tsx';
 import { PersonalInfoFields } from '../cv/form/PersonalInfoFields.tsx';
 import { SectionToolbar } from '../cv/form/SectionToolbar.tsx';
-import { SkillsFields } from '../cv/form/SkillsFields.tsx';
 import { EMPTY_DEFAULTS } from '../cv/loadDefaultValues.ts';
 import { CvPreviewPanel } from '../cv/preview/CvPreviewPanel.tsx';
 import { useAiGeneration } from '../cv/useAiGeneration.ts';
@@ -95,7 +95,6 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const [summaryAiOpen, setSummaryAiOpen] = useState(false);
   const [expSignal, setExpSignal] = useState({ n: 0, open: true });
   const [eduSignal, setEduSignal] = useState({ n: 0, open: true });
-  const [sklSignal, setSkSignal] = useState({ n: 0, open: true });
   const [othSignal, setOthSignal] = useState({ n: 0, open: true });
 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
@@ -124,7 +123,6 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const links = useFieldArray({ control, name: 'personalInfo.links' });
   const experience = useFieldArray({ control, name: 'experience' });
   const education = useFieldArray({ control, name: 'education' });
-  const skills = useFieldArray({ control, name: 'skills' });
   const others = useFieldArray({ control, name: 'others' });
 
   const {
@@ -474,17 +472,22 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               </Card>
 
               {/* Skills */}
-              <SkillsFields
-                fields={skills.fields}
-                register={register}
-                control={control}
-                errors={errors.skills}
-                onAdd={() => skills.append({ category: '', items: [''] })}
-                onRemove={skills.remove}
-                toggleSignal={sklSignal}
-                onCollapse={() => setSkSignal((s) => ({ n: s.n + 1, open: false }))}
-                onExpand={() => setSkSignal((s) => ({ n: s.n + 1, open: true }))}
-              />
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-1.5">
+                    <EmojiIcon emoji="🛠️" /> Skills
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <HighlightsInput
+                    control={control}
+                    name="skills"
+                    id="skills"
+                    label="Skills"
+                    hint="One category per line, e.g. &ldquo;Frontend: React, TypeScript, Next.js&rdquo;. ATS systems scan for keyword matches, so list tools and technologies explicitly."
+                  />
+                </CardContent>
+              </Card>
 
               {/* Experience */}
               <section aria-labelledby="section-experience" className="space-y-4">
