@@ -20,7 +20,7 @@
       "startDate": "Jan 2020",
       "endDate": "Present",
       "location": "Test City",
-      "bullets": ["Wrote end-to-end tests for the CV builder app."],
+      "items": ["Wrote end-to-end tests for the CV builder app."],
       "aiHighlightsPrompt": "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's experience entry and the job description (if provided), rewrite the highlights to be concise, impactful, and aligned with the role. Do not invent claims or metrics not present in the source data. Return exactly 1 highlight per line, no bullet characters.",
       "tagsLabel": "Tech",
       "tags": ["Playwright"]
@@ -34,7 +34,7 @@
       "startYear": "2016",
       "endYear": "2020",
       "location": "Test City",
-      "bullets": ["Graduated with test honours."],
+      "items": ["Graduated with test honours."],
       "aiHighlightsPrompt": "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's education entry and the job description (if provided), rewrite the highlights to be concise, impactful, and aligned with the role. Do not invent claims or metrics not present in the source data. Return exactly 1 highlight per line, no bullet characters."
     }
   ],

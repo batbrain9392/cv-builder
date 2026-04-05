@@ -56,6 +56,7 @@ function useFormData(control: Control<CvFormData>, defaultValues: CvFormData): C
     }),
     education: useWatch({ control, name: 'education', defaultValue: defaultValues.education }),
     others: useWatch({ control, name: 'others', defaultValue: defaultValues.others }),
+    skills: useWatch({ control, name: 'skills', defaultValue: defaultValues.skills }),
   };
 }
 

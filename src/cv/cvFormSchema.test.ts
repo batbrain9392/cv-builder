@@ -30,7 +30,7 @@ describe('cvFormSchema', () => {
           startDate: 'Dec 2022',
           endDate: 'Present',
           location: 'Dublin, Ireland',
-          bullets: ['Admin UI for Peakon...', 'Shipped scheduling model...'],
+          items: ['Admin UI for Peakon...', 'Shipped scheduling model...'],
           tagsLabel: 'Tech',
           tags: ['React', 'TypeScript', 'React Hook Form', 'Zod'],
         },
@@ -43,7 +43,13 @@ describe('cvFormSchema', () => {
           startYear: '2010',
           endYear: '2014',
           location: 'Kolkata, India',
-          bullets: ['Graduated with 8.34 DGPA.'],
+          items: ['Graduated with 8.34 DGPA.'],
+        },
+      ],
+      skills: [
+        {
+          category: 'Core Skills',
+          items: ['React', 'TypeScript', 'Node.js'],
         },
       ],
       others: [],
@@ -98,9 +104,9 @@ describe('cvFormSchema', () => {
     expect(cvFormSchema.safeParse(withEmpty).success).toBe(true);
   });
 
-  it('accepts empty bullets array in experience', () => {
+  it('accepts empty items array in experience', () => {
     const data = makeValidData({
-      experience: [{ ...VALID_EXPERIENCE, bullets: [] }],
+      experience: [{ ...VALID_EXPERIENCE, items: [] }],
     });
     expect(cvFormSchema.safeParse(data).success).toBe(true);
   });
@@ -165,7 +171,7 @@ const VALID_EXPERIENCE = {
   startDate: 'Jan 2020',
   endDate: 'Present',
   location: 'Dublin',
-  bullets: ['Built things'],
+  items: ['Built things'],
 };
 
 const VALID_EDUCATION = {
@@ -175,7 +181,7 @@ const VALID_EDUCATION = {
   startYear: '2016',
   endYear: '2020',
   location: 'Dublin',
-  bullets: ['Graduated'],
+  items: ['Graduated'],
 };
 
 function makeValidData(overrides: Record<string, unknown> = {}) {
@@ -190,6 +196,7 @@ function makeValidData(overrides: Record<string, unknown> = {}) {
     summary: 'A professional summary with enough characters.',
     experience: [VALID_EXPERIENCE],
     education: [VALID_EDUCATION],
+    skills: [{ category: '', items: ['Testing'] }],
     others: [],
     ...overrides,
   };

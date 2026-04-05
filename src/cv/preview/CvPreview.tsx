@@ -35,18 +35,18 @@ function SectionHeading({ children }: { children: string }) {
 interface EntryProps {
   title: string;
   meta: string;
-  bullets: string[];
+  items: string[];
   tagsLabel?: string;
   tags?: string[];
 }
 
-function Entry({ title, meta, bullets, tagsLabel, tags }: EntryProps) {
+function Entry({ title, meta, items, tagsLabel, tags }: EntryProps) {
   return (
     <>
       <h3 className="cv-preview-entry-title">{title}</h3>
       <div className="cv-preview-entry-meta">{meta}</div>
-      <ul className="cv-preview-bullets">
-        {bullets.map((b, i) => (
+      <ul className="cv-preview-items">
+        {items.map((b, i) => (
           <li key={i}>
             <InlineMarkdown text={b} />
           </li>
@@ -112,13 +112,33 @@ export function CvPreview({ data }: CvPreviewProps) {
           </>
         )}
 
+        {data.skills && data.skills.length > 0 && (
+          <>
+            <SectionHeading>Skills</SectionHeading>
+            {data.skills.map((skillGroup, i) => (
+              <div key={i} className="mb-2">
+                {skillGroup.category && (
+                  <h3 className="cv-preview-entry-title">{skillGroup.category}</h3>
+                )}
+                <ul className="cv-preview-items">
+                  {skillGroup.items.map((item, j) => (
+                    <li key={j}>
+                      <InlineMarkdown text={item} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </>
+        )}
+
         <SectionHeading>Work Experience</SectionHeading>
         {data.experience.map((exp, i) => (
           <Entry
             key={i}
             title={`${exp.role}, ${exp.company}`}
             meta={formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location)}
-            bullets={exp.bullets}
+            items={exp.items}
             tagsLabel={exp.tagsLabel}
             tags={exp.tags}
           />
@@ -130,7 +150,7 @@ export function CvPreview({ data }: CvPreviewProps) {
             key={i}
             title={`${edu.degree}, ${edu.institution}`}
             meta={formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location)}
-            bullets={edu.bullets}
+            items={edu.items}
           />
         ))}
 
@@ -145,7 +165,7 @@ export function CvPreview({ data }: CvPreviewProps) {
                   formatDateRange(other.startDate, other.endDate),
                   other.location,
                 )}
-                bullets={other.bullets}
+                items={other.items}
                 tagsLabel={other.tagsLabel}
                 tags={other.tags}
               />

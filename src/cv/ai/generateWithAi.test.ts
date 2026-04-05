@@ -44,7 +44,7 @@ function makeCvData(overrides: Partial<CvFormData> = {}): CvFormData {
         startDate: 'Jan 2020',
         endDate: 'Present',
         location: 'Dublin',
-        bullets: ['Built things'],
+        items: ['Built things'],
         tagsLabel: 'Tech',
         tags: ['React'],
         aiHighlightsPrompt: DEFAULT_HIGHLIGHTS_PROMPT,
@@ -58,11 +58,17 @@ function makeCvData(overrides: Partial<CvFormData> = {}): CvFormData {
         startYear: '2016',
         endYear: '2020',
         location: 'Dublin',
-        bullets: ['Graduated'],
+        items: ['Graduated'],
         aiHighlightsPrompt: DEFAULT_HIGHLIGHTS_PROMPT,
       },
     ],
     others: [],
+    skills: [
+      {
+        category: 'Core',
+        items: ['React'],
+      },
+    ],
     ...overrides,
   };
 }
@@ -127,7 +133,7 @@ describe('buildCvContext', () => {
           url: '',
           startDate: 'Jun 2023',
           location: 'Online',
-          bullets: ['Certified'],
+          items: ['Certified'],
           aiHighlightsPrompt: DEFAULT_HIGHLIGHTS_PROMPT,
         },
       ],

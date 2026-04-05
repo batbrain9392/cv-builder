@@ -199,7 +199,7 @@ function entryMeta({ Paragraph, TextRun }: Docx, text: string) {
   });
 }
 
-function bulletParagraph(docx: Docx, text: string) {
+function itemParagraph(docx: Docx, text: string) {
   return new docx.Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
     bullet: { level: 0 },
@@ -207,7 +207,7 @@ function bulletParagraph(docx: Docx, text: string) {
   });
 }
 
-function tagsBullet({ Paragraph, TextRun }: Docx, label: string | undefined, items: string[]) {
+function tagsItem({ Paragraph, TextRun }: Docx, label: string | undefined, items: string[]) {
   const text = label ? `${label}: ${items.join(', ')}` : items.join(', ');
   return new Paragraph({
     spacing: { after: CV_SPACING_PT.sm * TWIP },
@@ -239,17 +239,17 @@ function entryParagraphs(
   docx: Docx,
   title: string,
   meta: string,
-  bullets: string[],
+  items: string[],
   tagsLabel?: string,
   tags?: string[],
 ) {
   const paragraphs = [
     entryTitle(docx, title),
     entryMeta(docx, meta),
-    ...bullets.map((b) => bulletParagraph(docx, b)),
+    ...items.map((b) => itemParagraph(docx, b)),
   ];
   if (tags && tags.length > 0) {
-    paragraphs.push(tagsBullet(docx, tagsLabel, tags));
+    paragraphs.push(tagsItem(docx, tagsLabel, tags));
   }
   return paragraphs;
 }
@@ -304,13 +304,23 @@ function createCvDocx(docx: Docx, data: CvFormData) {
       ? [sectionHeading(docx, 'Professional Summary'), ...summaryParagraphs(docx, data.summary)]
       : []),
 
+    ...(data.skills && data.skills.length > 0
+      ? [
+          sectionHeading(docx, 'Skills'),
+          ...data.skills.flatMap((skillGroup) => [
+            ...(skillGroup.category ? [entryTitle(docx, skillGroup.category)] : []),
+            ...skillGroup.items.map((item) => itemParagraph(docx, item)),
+          ]),
+        ]
+      : []),
+
     sectionHeading(docx, 'Work Experience'),
     ...data.experience.flatMap((exp) =>
       entryParagraphs(
         docx,
         `${exp.role}, ${exp.company}`,
         formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location),
-        exp.bullets,
+        exp.items,
         exp.tagsLabel,
         exp.tags,
       ),
@@ -322,7 +332,7 @@ function createCvDocx(docx: Docx, data: CvFormData) {
         docx,
         `${edu.degree}, ${edu.institution}`,
         formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location),
-        edu.bullets,
+        edu.items,
       ),
     ),
   ];
@@ -335,7 +345,7 @@ function createCvDocx(docx: Docx, data: CvFormData) {
           docx,
           `${other.role}, ${other.company}`,
           formatEntryMeta(formatDateRange(other.startDate, other.endDate), other.location),
-          other.bullets,
+          other.items,
           other.tagsLabel,
           other.tags,
         ),

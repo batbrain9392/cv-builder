@@ -18,17 +18,17 @@ const MINIMAL_ENTRY = {
   tags: [] satisfies string[],
 };
 
-function Harness({ bullets = ['First bullet'] }) {
+function Harness({ items = ['First item'] }) {
   const { control } = useForm<CvFormData>({
     defaultValues: {
       ...EMPTY_DEFAULTS,
-      experience: [{ ...MINIMAL_ENTRY, bullets }],
+      experience: [{ ...MINIMAL_ENTRY, items }],
     },
   });
   return (
     <HighlightsInput
       control={control}
-      name="experience.0.bullets"
+      name="experience.0.items"
       id="highlights"
       label="Key highlights"
     />
@@ -38,8 +38,8 @@ function Harness({ bullets = ['First bullet'] }) {
 afterEach(cleanup);
 
 describe('HighlightsInput', () => {
-  it('renders bullets prefixed with dashes', () => {
-    render(<Harness bullets={['Built APIs', 'Led team']} />);
+  it('renders items prefixed with dashes', () => {
+    render(<Harness items={['Built APIs', 'Led team']} />);
     const textarea = screen.getByLabelText('Key highlights');
     expect(textarea).toHaveValue('- Built APIs\n- Led team');
   });
@@ -52,18 +52,18 @@ describe('HighlightsInput', () => {
 
   it('accepts typed text and preserves it in the display', async () => {
     const user = userEvent.setup();
-    render(<Harness bullets={['Existing']} />);
+    render(<Harness items={['Existing']} />);
 
     const textarea = screen.getByLabelText('Key highlights');
     await user.clear(textarea);
-    await user.type(textarea, 'New bullet');
+    await user.type(textarea, 'New item');
 
-    expect(textarea).toHaveValue('- New bullet');
+    expect(textarea).toHaveValue('- New item');
   });
 
   it('handles multiline input with newlines', async () => {
     const user = userEvent.setup();
-    render(<Harness bullets={['One']} />);
+    render(<Harness items={['One']} />);
 
     const textarea = screen.getByLabelText('Key highlights');
     await user.clear(textarea);

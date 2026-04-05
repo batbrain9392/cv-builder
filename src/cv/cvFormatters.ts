@@ -118,5 +118,6 @@ export function sortCvSections(data: CvFormData): CvFormData {
     experience: sortByStartDateDesc(data.experience),
     education: sortByStartDateDesc(data.education),
     others: sortByStartDateDesc(data.others),
+    skills: data.skills,
   };
 }

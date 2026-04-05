@@ -14,7 +14,7 @@ describe('starterCv.json', () => {
 describe('backfillEntryPrompts', () => {
   it('adds aiHighlightsPrompt to entries missing it', () => {
     const data = {
-      experience: [{ role: 'Dev', bullets: ['x'] }],
+      experience: [{ role: 'Dev', items: ['x'] }],
       education: [{ degree: 'BSc' }],
       others: [{ role: 'Cert' }],
     };

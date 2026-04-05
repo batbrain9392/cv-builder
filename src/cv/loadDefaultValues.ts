@@ -34,6 +34,7 @@ export function backfillEntryPrompts(data: Record<string, unknown>): Record<stri
   };
   return {
     ...data,
+    skills: data.skills || [],
     experience: patch(data.experience),
     education: patch(data.education),
     others: patch(data.others),
@@ -56,6 +57,7 @@ export const EMPTY_DEFAULTS: CvFormData = {
     links: [],
   },
   summary: '',
+  skills: [],
   experience: [],
   education: [],
   others: [],

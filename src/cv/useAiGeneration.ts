@@ -142,11 +142,11 @@ export function useAiGeneration(
       const opts = { shouldValidate: true, shouldDirty: true } as const;
 
       if (section === 'experience') {
-        setValue(`experience.${idx}.bullets`, state.result.content, opts);
+        setValue(`experience.${idx}.items`, state.result.content, opts);
       } else if (section === 'education') {
-        setValue(`education.${idx}.bullets`, state.result.content, opts);
+        setValue(`education.${idx}.items`, state.result.content, opts);
       } else {
-        setValue(`others.${idx}.bullets`, state.result.content, opts);
+        setValue(`others.${idx}.items`, state.result.content, opts);
       }
 
       setHighlightsAi((prev) => ({ ...prev, [path]: { generating: false, result: null } }));

@@ -21,6 +21,12 @@ const EXAMPLE_STRUCTURE = `{
     ]
   },
   "summary": "8+ years of experience building performant, accessible web applications.",
+  "skills": [
+    {
+      "category": "Core Skills",
+      "items": ["TypeScript", "React", "Node.js"]
+    }
+  ],
   "experience": [
     {
       "role": "Senior Software Engineer",
@@ -29,7 +35,7 @@ const EXAMPLE_STRUCTURE = `{
       "startDate": "Mar 2021",
       "endDate": "Present",
       "location": "San Francisco, CA",
-      "bullets": [
+      "items": [
         "Led a four-person team to redesign the customer-facing dashboard."
       ],
       "tagsLabel": "Tech",
@@ -44,7 +50,7 @@ const EXAMPLE_STRUCTURE = `{
       "startYear": "2012",
       "endYear": "2016",
       "location": "Austin, TX",
-      "bullets": ["Graduated magna cum laude."]
+      "items": ["Graduated magna cum laude."]
     }
   ],
   "others": [
@@ -55,7 +61,7 @@ const EXAMPLE_STRUCTURE = `{
       "startDate": "Jun 2023",
       "endDate": "",
       "location": "Online",
-      "bullets": ["Earned the Associate-level certification."],
+      "items": ["Earned the Associate-level certification."],
       "tagsLabel": "",
       "tags": []
     }
@@ -70,9 +76,10 @@ ${EXAMPLE_STRUCTURE}
 RULES:
 - Match the exact JSON format, data types, and array structures shown in the example above.
 - "personalInfo": name and email are required. title, location, and phone are optional (default "").
-- "experience" is for work/employment history. Each entry needs: role, company, startDate. Optional (default "" or []): url, endDate, location, bullets, tagsLabel, tags.
-- "education" is for degrees/academic qualifications. Each entry needs: degree, institution, startYear. Optional (default "" or []): institutionUrl, endYear, location, bullets.
-- "others" is for everything else: certifications, projects, volunteer work, skills sections, publications, awards. Use the same shape as experience entries. For skills sections, use role="Skills", company="" as the section label.
+- "experience" is for work/employment history. Each entry needs: role, company, startDate. Optional (default "" or []): url, endDate, location, items, tagsLabel, tags.
+- "education" is for degrees/academic qualifications. Each entry needs: degree, institution, startYear. Optional (default "" or []): institutionUrl, endYear, location, items.
+- "skills" is REQUIRED. Extract all skills into this array. Do NOT include skills inside the "summary" or "others". If skills are just a single list, put them under a generic category like "Core Skills"/"Frontend"/"Backend"/"Architecture"/"Tools"/etc.
+- "others" is for everything else: certifications, projects, volunteer work, publications, awards. Use the same shape as experience entries. DO NOT put skills sections here.
 - "url", "institutionUrl" fields: set to "" unless a URL is explicitly present in the text. Never invent URLs.
 - Preserve dates exactly as written in the source text. For education, use year strings only (e.g. "2012").
 - "summary": extract a professional summary. If none exists in the source text, leave as "".
@@ -98,7 +105,7 @@ const relaxedExperienceSchema = z.object({
   startDate: z.string(),
   endDate: z.string().optional().default(''),
   location: z.string(),
-  bullets: z.array(z.string()).default([]),
+  items: z.array(z.string()).default([]),
   tagsLabel: z.string().optional().default(''),
   tags: z.array(z.string()).optional().default([]),
   aiHighlightsPrompt: z.string().optional(),
@@ -111,7 +118,7 @@ const relaxedEducationSchema = z.object({
   startYear: z.string(),
   endYear: z.string().optional().default(''),
   location: z.string(),
-  bullets: z.array(z.string()).default([]),
+  items: z.array(z.string()).default([]),
   aiHighlightsPrompt: z.string().optional(),
 });
 
@@ -125,6 +132,14 @@ const relaxedCvSchema = z.object({
     links: z.array(z.object({ label: z.string(), url: z.string() })).default([]),
   }),
   summary: z.string().default(''),
+  skills: z
+    .array(
+      z.object({
+        category: z.string().optional().default(''),
+        items: z.array(z.string()).default([]),
+      }),
+    )
+    .default([]),
   experience: z.array(relaxedExperienceSchema).default([]),
   education: z.array(relaxedEducationSchema).default([]),
   others: z.array(relaxedExperienceSchema).default([]),
@@ -204,6 +219,7 @@ export async function parseCvFromText(apiKey: string, rawText: string): Promise<
     aiCoverLetterPrompt: String(relaxedWithDefaults.aiCoverLetterPrompt ?? ''),
     personalInfo: relaxed.data.personalInfo,
     summary: relaxed.data.summary,
+    skills: relaxed.data.skills,
     experience: relaxed.data.experience,
     education: relaxed.data.education,
     others: relaxed.data.others,

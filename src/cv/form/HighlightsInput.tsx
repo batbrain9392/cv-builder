@@ -10,9 +10,10 @@ import type { CvFormData } from '../cvFormSchema.ts';
 import { MarkdownHint } from './MarkdownHint.tsx';
 
 type HighlightsPath =
-  | `experience.${number}.bullets`
-  | `education.${number}.bullets`
-  | `others.${number}.bullets`;
+  | `experience.${number}.items`
+  | `education.${number}.items`
+  | `others.${number}.items`
+  | `skills.${number}.items`;
 
 interface HighlightsInputProps {
   control: Control<CvFormData>;

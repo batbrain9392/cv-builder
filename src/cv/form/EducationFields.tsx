@@ -198,7 +198,7 @@ function EducationEntry({
 
               <HighlightsInput
                 control={control}
-                name={`education.${index}.bullets`}
+                name={`education.${index}.items`}
                 id={`edu-highlights-${index}`}
                 label="Highlights"
               />
@@ -207,7 +207,7 @@ function EducationEntry({
                 <HighlightsAiEnhance
                   canGenerate={ai.canGenerate}
                   generating={ai.generatingHighlights}
-                  generatedBullets={ai.generatedHighlights}
+                  generatedItems={ai.generatedHighlights}
                   onGenerate={ai.onGenerateHighlights}
                   onUse={ai.onUseHighlights}
                   onCopy={ai.onCopyHighlights}

@@ -49,6 +49,7 @@ import { ImportDataFields } from '../cv/form/ImportDataFields.tsx';
 import { JobDescriptionFields } from '../cv/form/JobDescriptionFields.tsx';
 import { PersonalInfoFields } from '../cv/form/PersonalInfoFields.tsx';
 import { SectionToolbar } from '../cv/form/SectionToolbar.tsx';
+import { SkillsFields } from '../cv/form/SkillsFields.tsx';
 import { EMPTY_DEFAULTS } from '../cv/loadDefaultValues.ts';
 import { CvPreviewPanel } from '../cv/preview/CvPreviewPanel.tsx';
 import { useAiGeneration } from '../cv/useAiGeneration.ts';
@@ -60,7 +61,7 @@ const EMPTY_ENTRY = {
   url: '',
   startDate: '',
   location: '',
-  bullets: [''],
+  items: [''],
   tagsLabel: '',
   tags: [],
   aiHighlightsPrompt: DEFAULT_HIGHLIGHTS_PROMPT,
@@ -72,7 +73,7 @@ const EMPTY_EDUCATION = {
   institutionUrl: '',
   startYear: '',
   location: '',
-  bullets: [''],
+  items: [''],
   aiHighlightsPrompt: DEFAULT_HIGHLIGHTS_PROMPT,
 };
 
@@ -94,6 +95,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const [summaryAiOpen, setSummaryAiOpen] = useState(false);
   const [expSignal, setExpSignal] = useState({ n: 0, open: true });
   const [eduSignal, setEduSignal] = useState({ n: 0, open: true });
+  const [sklSignal, setSkSignal] = useState({ n: 0, open: true });
   const [othSignal, setOthSignal] = useState({ n: 0, open: true });
 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
@@ -122,6 +124,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const links = useFieldArray({ control, name: 'personalInfo.links' });
   const experience = useFieldArray({ control, name: 'experience' });
   const education = useFieldArray({ control, name: 'education' });
+  const skills = useFieldArray({ control, name: 'skills' });
   const others = useFieldArray({ control, name: 'others' });
 
   const {
@@ -395,7 +398,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                             {...register('aiSummaryPrompt')}
                             rows={4}
                             className="text-xs"
-                            placeholder="Rewrite the professional summary to highlight relevant experience and skills. Preserve the existing formatting (e.g., a paragraph followed by a bulleted list)."
+                            placeholder="Rewrite the professional summary to highlight relevant experience. Preserve the existing formatting."
                           />
                         </Field>
 
@@ -469,6 +472,19 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                   </FieldGroup>
                 </CardContent>
               </Card>
+
+              {/* Skills */}
+              <SkillsFields
+                fields={skills.fields}
+                register={register}
+                control={control}
+                errors={errors.skills}
+                onAdd={() => skills.append({ category: '', items: [''] })}
+                onRemove={skills.remove}
+                toggleSignal={sklSignal}
+                onCollapse={() => setSkSignal((s) => ({ n: s.n + 1, open: false }))}
+                onExpand={() => setSkSignal((s) => ({ n: s.n + 1, open: true }))}
+              />
 
               {/* Experience */}
               <section aria-labelledby="section-experience" className="space-y-4">

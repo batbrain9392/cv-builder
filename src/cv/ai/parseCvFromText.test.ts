@@ -30,7 +30,7 @@ const VALID_CV_JSON = {
       startDate: 'Jan 2020',
       endDate: 'Present',
       location: 'Dublin',
-      bullets: ['Built things'],
+      items: ['Built things'],
       tagsLabel: 'Tech',
       tags: ['React'],
     },
@@ -43,7 +43,13 @@ const VALID_CV_JSON = {
       startYear: '2016',
       endYear: '2020',
       location: 'Dublin',
-      bullets: ['Graduated with honours'],
+      items: ['Graduated with honours'],
+    },
+  ],
+  skills: [
+    {
+      category: 'Core',
+      items: ['React'],
     },
   ],
   others: [],
@@ -89,7 +95,7 @@ describe('parseCvFromText', () => {
     const minimalCv = {
       ...VALID_CV_JSON,
       summary: '',
-      experience: [{ ...VALID_CV_JSON.experience[0], location: '', bullets: [] }],
+      experience: [{ ...VALID_CV_JSON.experience[0], location: '', items: [] }],
     };
     mockGenerateContent.mockResolvedValueOnce({
       text: JSON.stringify(minimalCv),

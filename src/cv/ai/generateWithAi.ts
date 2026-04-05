@@ -38,7 +38,7 @@ export function buildCvContext(data: CvFormData): string {
       lines.push(
         `${exp.role} at ${exp.company} (${exp.startDate}${exp.endDate ? ` – ${exp.endDate}` : ''}, ${exp.location})`,
       );
-      for (const b of exp.bullets) lines.push(`  • ${b}`);
+      for (const b of exp.items) lines.push(`  • ${b}`);
       if (exp.tags?.length) lines.push(`  ${exp.tagsLabel ?? 'Tags'}: ${exp.tags.join(', ')}`);
     }
   }
@@ -49,7 +49,7 @@ export function buildCvContext(data: CvFormData): string {
       lines.push(
         `${edu.degree}, ${edu.institution} (${edu.startYear}${edu.endYear ? ` – ${edu.endYear}` : ''}, ${edu.location})`,
       );
-      for (const b of edu.bullets) lines.push(`  • ${b}`);
+      for (const b of edu.items) lines.push(`  • ${b}`);
     }
   }
 
@@ -59,7 +59,7 @@ export function buildCvContext(data: CvFormData): string {
       lines.push(
         `${o.role}, ${o.company} (${o.startDate}${o.endDate ? ` – ${o.endDate}` : ''}, ${o.location})`,
       );
-      for (const b of o.bullets) lines.push(`  • ${b}`);
+      for (const b of o.items) lines.push(`  • ${b}`);
     }
   }
 
@@ -122,7 +122,7 @@ function buildEntryContext(
     );
   }
   lines.push('', 'Current highlights:');
-  for (const b of entry.bullets) lines.push(`• ${b}`);
+  for (const b of entry.items) lines.push(`• ${b}`);
   return lines.join('\n');
 }
 
@@ -140,11 +140,11 @@ export async function generateHighlights(
 
   const raw = await generate(apiKey, prompt, input);
   const { content, reasoning } = splitReasoning(raw);
-  const bullets = content
+  const items = content
     .split('\n')
     .map((line) => line.replace(/^[\s•\-*]+/, '').trim())
     .filter(Boolean);
-  return { content: bullets, reasoning };
+  return { content: items, reasoning };
 }
 
 export async function generateCoverLetter(

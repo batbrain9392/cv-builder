@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-const bulletSchema = z.string().min(1, 'Bullet cannot be empty');
+const itemSchema = z.string().min(1, 'Item cannot be empty');
 
 const linkSchema = z.object({
   label: z.string().min(1, 'Label is required'),
@@ -23,7 +23,7 @@ const experienceSchema = z.object({
   startDate: z.string().min(1, 'Start date is required'),
   endDate: z.string().optional(),
   location: z.string(),
-  bullets: z.array(bulletSchema),
+  items: z.array(itemSchema),
   tagsLabel: z.string().optional(),
   tags: z.array(z.string().min(1)).optional(),
   aiHighlightsPrompt: z.string().optional(),
@@ -36,12 +36,12 @@ const educationSchema = z.object({
   startYear: z.string().min(1, 'Start year is required'),
   endYear: z.string().optional(),
   location: z.string(),
-  bullets: z.array(bulletSchema),
+  items: z.array(itemSchema),
   aiHighlightsPrompt: z.string().optional(),
 });
 
 export const DEFAULT_SUMMARY_PROMPT =
-  "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's CV data and the job description (if provided), rewrite the professional summary to highlight the most relevant experience and skills. Do not invent claims or metrics not present in the source data. If a manual summary is provided, use it as a starting point and strictly preserve its formatting (e.g., if it includes a short paragraph followed by a bulleted list of core skills, maintain that exact structure). ONLY use **bold** and *italic* for emphasis; do NOT use markdown headings, blockquotes, or HTML.";
+  "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's CV data and the job description (if provided), rewrite the professional summary to highlight the most relevant experience. Do not invent claims or metrics not present in the source data. If a manual summary is provided, use it as a starting point and strictly preserve its formatting. ONLY use **bold** and *italic* for emphasis; do NOT use markdown headings, blockquotes, or HTML.";
 
 export const DEFAULT_HIGHLIGHTS_PROMPT =
   "You are an expert resume writer. ATS compatibility is your top priority — use plain text, no tables or special formatting. Given the candidate's experience entry and the job description (if provided), rewrite the highlights to be concise, impactful, and aligned with the role. Do not invent claims or metrics not present in the source data. Return one highlight per line, no bullet characters. ONLY use **bold** and *italic* for emphasis; do NOT use markdown headings, blockquotes, or HTML.";
@@ -52,9 +52,12 @@ export const DEFAULT_COVER_LETTER_PROMPT =
 export const cvFormSchema = z.object({
   aiApiKey: z.string(),
   jobDescriptionText: z.string(),
-  aiSummaryPrompt: z.string(),
   personalInfo: personalInfoSchema,
   summary: z.string(),
+  skills: z
+    .array(z.object({ category: z.string(), items: z.array(itemSchema) }))
+    .min(1, 'At least one skills group is required'),
+  aiSummaryPrompt: z.string(),
   coverLetterEnabled: z.boolean(),
   coverLetter: z.string(),
   aiCoverLetterPrompt: z.string(),

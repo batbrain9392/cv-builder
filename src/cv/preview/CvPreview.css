@@ -86,14 +86,14 @@
   margin-bottom: var(--cv-gap-sm);
 }
 
-.cv-preview-bullets {
+.cv-preview-items {
   font-size: var(--cv-body-size);
   list-style-type: disc;
   margin: 0;
   padding-left: 6mm;
 }
 
-.cv-preview-bullets li {
+.cv-preview-items li {
   margin-bottom: var(--cv-gap-sm);
   display: list-item;
 }

@@ -207,7 +207,7 @@ export function ExperienceEntryFields({
 
               <HighlightsInput
                 control={control}
-                name={`${prefix}.bullets`}
+                name={`${prefix}.items`}
                 id={`${idPrefix}-highlights-${index}`}
                 label="Highlights"
               />
@@ -219,7 +219,7 @@ export function ExperienceEntryFields({
                   <HighlightsAiEnhance
                     canGenerate={canGenerate}
                     generating={generatingHighlights}
-                    generatedBullets={generatedHighlights}
+                    generatedItems={generatedHighlights}
                     onGenerate={onGenerateHighlights}
                     onUse={onUseHighlights}
                     onCopy={onCopyHighlights}

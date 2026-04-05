@@ -16,7 +16,7 @@ const MINIMAL_ENTRY = {
   url: '',
   startDate: '',
   location: '',
-  bullets: [''],
+  items: [''],
   tagsLabel: '',
 };
 

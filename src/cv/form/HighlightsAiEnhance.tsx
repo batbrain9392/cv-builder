@@ -16,7 +16,7 @@ import { InlineMarkdown } from '@/cv/preview/Markdown.tsx';
 interface HighlightsAiEnhanceProps {
   canGenerate: boolean;
   generating: boolean;
-  generatedBullets: AiResult<string[]> | null;
+  generatedItems: AiResult<string[]> | null;
   onGenerate: () => void;
   onUse: () => void;
   onCopy: () => void;
@@ -28,7 +28,7 @@ interface HighlightsAiEnhanceProps {
 export function HighlightsAiEnhance({
   canGenerate,
   generating,
-  generatedBullets,
+  generatedItems,
   onGenerate,
   onUse,
   onCopy,
@@ -89,13 +89,13 @@ export function HighlightsAiEnhance({
           {!canGenerate && <span className="text-xs text-muted-foreground">Requires API key</span>}
         </div>
 
-        {generatedBullets && (
+        {generatedItems && (
           <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
             <div className="flex items-center justify-between">
               <span className="text-xs font-medium text-muted-foreground">
                 AI-generated highlights
-                {generatedBullets.reasoning && (
-                  <span className="block font-normal">{generatedBullets.reasoning}</span>
+                {generatedItems.reasoning && (
+                  <span className="block font-normal">{generatedItems.reasoning}</span>
                 )}
               </span>
               <div className="flex gap-1">
@@ -120,9 +120,9 @@ export function HighlightsAiEnhance({
               </div>
             </div>
             <ul className="list-disc space-y-1 pl-4 text-sm">
-              {generatedBullets.content.map((bullet, i) => (
+              {generatedItems.content.map((item, i) => (
                 <li key={i}>
-                  <InlineMarkdown text={bullet} />
+                  <InlineMarkdown text={item} />
                 </li>
               ))}
             </ul>
