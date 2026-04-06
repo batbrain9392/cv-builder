@@ -187,9 +187,9 @@ export function ImportDataFields({
       {hasIssues && (
         <div
           role="alert"
-          className="space-y-2 rounded-lg border border-yellow-500/30 bg-yellow-500/5 px-3 py-2.5"
+          className="space-y-2 rounded-lg border border-warning-border bg-warning-bg px-3 py-2.5"
         >
-          <p className="text-sm font-medium text-yellow-700 dark:text-yellow-400">
+          <p className="text-sm font-medium text-warning-text">
             Parsed successfully, but some data needs your attention.
           </p>
           <p className="text-xs text-muted-foreground">

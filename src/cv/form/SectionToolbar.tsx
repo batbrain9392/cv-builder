@@ -23,9 +23,9 @@ export function SectionToolbar({
 }: SectionToolbarProps) {
   return (
     <div className="flex items-center justify-between">
-      <h2 id={id} className="flex items-center gap-1.5 text-base font-semibold text-primary-text">
+      <p id={id} className="flex items-center gap-1.5 text-base font-semibold text-primary-text">
         {title}
-      </h2>
+      </p>
       <div className="flex items-center gap-2">
         {count > 0 && (
           <>

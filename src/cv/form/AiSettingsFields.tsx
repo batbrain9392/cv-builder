@@ -51,7 +51,7 @@ export function AiSettingsFields({ register, errors, open, onOpenChange }: AiSet
             aria-describedby="aiApiKey-warning"
           />
 
-          <p id="aiApiKey-warning" className="text-xs text-amber-600 dark:text-amber-500">
+          <p id="aiApiKey-warning" className="text-xs text-warning-text">
             Your API key is saved in this browser&rsquo;s local storage alongside your CV data. It
             never leaves your device, but anyone with access to this browser can read it. Keep the
             key backed up safely (e.g.&nbsp;a password manager) &mdash; Google won&rsquo;t show it

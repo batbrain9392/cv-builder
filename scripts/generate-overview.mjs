@@ -155,9 +155,11 @@ ${markdownTable(
     ['Routing', 'react-router (HashRouter)', `${pkg.dependencies['react-router']}`],
     ['AI', '@google/genai (Gemini, client-side)', `${pkg.dependencies['@google/genai']}`],
     ['DOCX export', 'docx.js', `${pkg.dependencies.docx}`],
+    ['DOCX import', 'mammoth', `${pkg.dependencies.mammoth}`],
     ['Markdown', 'marked', `${pkg.dependencies.marked}`],
     ['Icons', 'lucide-react', `${pkg.dependencies['lucide-react']}`],
     ['Toasts', 'sonner', `${pkg.dependencies.sonner}`],
+    ['Error monitoring', '@sentry/react', `${pkg.dependencies['@sentry/react']}`],
     ['Font', 'Geist Variable', '@fontsource-variable/geist'],
   ],
 )}
@@ -234,7 +236,7 @@ ${markdownTable(
 - **react-hook-form** owns the entire CV form state (useForm, useFieldArray, useWatch, zodResolver).
 - **Local state** via \`useState\` / \`useRef\` / \`useCallback\` for UI concerns (dialogs, preview toggle, collapsibles).
 - **Custom hooks** encapsulate side effects: \`useAiGeneration\`, \`useCvExport\`, \`useTheme\`, \`useInstallPwa\`.
-- **Persistence:** CV data lives in memory only. Theme preference persists in \`localStorage\` (\`"theme"\` key). Nothing else is stored.
+- **Persistence:** CV data, Gemini API key, and theme preference persist in \`localStorage\` (via \`src/lib/cvStorage.ts\` and \`useTheme\`). Nothing is sent to any server.
 
 ### Styling
 
@@ -319,7 +321,7 @@ These rules are non-negotiable. Violating them will be flagged during review.
 
 - **Minimize dependencies.** Don't add a library for something that can be done in a few lines.
 - **No backend.** Everything runs client-side. Gemini API calls go directly from the browser.
-- **No cookies, no analytics, no tracking.** The only \`localStorage\` usage is theme preference.
+- **No cookies, no analytics, no tracking.** \`localStorage\` stores CV data, Gemini API key, and theme preference — all local-only.
 
 ### Git and CI
 

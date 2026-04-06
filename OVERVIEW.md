@@ -1,6 +1,6 @@
 # BioBot — Project Overview for AI Agents
 
-> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-04 (main@b15903a).
+> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-06 (main@4d43304).
 > Re-run with `npm run generate:overview` after structural changes.
 
 ---
@@ -20,19 +20,21 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 
 ## Tech stack
 
-| Layer        | Technology                           | Version                    |
-| ------------ | ------------------------------------ | -------------------------- |
-| UI framework | React + TypeScript                   | ^19.0.0, TS ~5.7.2         |
-| Build tool   | Vite                                 | ^6.0.7                     |
-| Styling      | Tailwind CSS v4 + shadcn (base-nova) | ^4.2.2                     |
-| Form state   | react-hook-form + Zod v4             | RHF ^7.72.0, Zod ^4.3.6    |
-| Routing      | react-router (HashRouter)            | ^7.14.0                    |
-| AI           | @google/genai (Gemini, client-side)  | ^1.48.0                    |
-| DOCX export  | docx.js                              | ^9.6.1                     |
-| Markdown     | marked                               | ^17.0.5                    |
-| Icons        | lucide-react                         | ^1.7.0                     |
-| Toasts       | sonner                               | ^2.0.7                     |
-| Font         | Geist Variable                       | @fontsource-variable/geist |
+| Layer            | Technology                           | Version                    |
+| ---------------- | ------------------------------------ | -------------------------- |
+| UI framework     | React + TypeScript                   | ^19.0.0, TS ~5.7.2         |
+| Build tool       | Vite                                 | ^6.0.7                     |
+| Styling          | Tailwind CSS v4 + shadcn (base-nova) | ^4.2.2                     |
+| Form state       | react-hook-form + Zod v4             | RHF ^7.72.0, Zod ^4.3.6    |
+| Routing          | react-router (HashRouter)            | ^7.14.0                    |
+| AI               | @google/genai (Gemini, client-side)  | ^1.48.0                    |
+| DOCX export      | docx.js                              | ^9.6.1                     |
+| DOCX import      | mammoth                              | ^1.12.0                    |
+| Markdown         | marked                               | ^17.0.5                    |
+| Icons            | lucide-react                         | ^1.7.0                     |
+| Toasts           | sonner                               | ^2.0.7                     |
+| Error monitoring | @sentry/react                        | ^10.47.0                   |
+| Font             | Geist Variable                       | @fontsource-variable/geist |
 
 ### Dev tooling
 
@@ -54,13 +56,14 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   ├── rules/
 │   │   ├── ats-compatibility.mdc
 │   │   ├── code-review.mdc
+│   │   ├── no-deprecated-apis.mdc
+│   │   ├── preview-docx-sync.mdc
 │   │   ├── testing.mdc
 │   │   └── theme.mdc
 │   └── mcp.json
 ├── .github/
 │   └── workflows/
-│       ├── ci.yml
-│       └── deploy.yml
+│       └── ci.yml
 ├── docs/
 │   ├── REVIEW.md
 │   ├── screenshot-desktop.png
@@ -90,6 +93,8 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   │   ├── card.tsx
 │   │   │   ├── collapsible.tsx
 │   │   │   ├── field.tsx
+│   │   │   ├── FileDropZone.test.tsx
+│   │   │   ├── FileDropZone.tsx
 │   │   │   ├── input.tsx
 │   │   │   ├── label.tsx
 │   │   │   ├── sonner.tsx
@@ -104,13 +109,18 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   ├── InstallPwa.tsx
 │   │   ├── menuItemClass.ts
 │   │   ├── RobotIcon.tsx
+│   │   ├── ScrollToTopFab.tsx
 │   │   ├── ShareButton.tsx
 │   │   └── ThemeToggle.tsx
 │   ├── cv/
 │   │   ├── ai/
+│   │   │   ├── extractTextFromFile.ts
+│   │   │   ├── fileUtils.ts
 │   │   │   ├── geminiHelpSteps.tsx
 │   │   │   ├── generateWithAi.test.ts
 │   │   │   ├── generateWithAi.ts
+│   │   │   ├── parseCvFromFile.test.ts
+│   │   │   ├── parseCvFromFile.ts
 │   │   │   ├── parseCvFromText.test.ts
 │   │   │   └── parseCvFromText.ts
 │   │   ├── export/
@@ -119,6 +129,8 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   ├── form/
 │   │   │   ├── AiSettingsFields.tsx
 │   │   │   ├── BackupReminder.tsx
+│   │   │   ├── CollapsibleCard.tsx
+│   │   │   ├── CollapsibleSection.tsx
 │   │   │   ├── CoverLetterFields.tsx
 │   │   │   ├── DownloadDialog.tsx
 │   │   │   ├── EducationFields.tsx
@@ -127,6 +139,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   │   ├── HighlightsAiEnhance.tsx
 │   │   │   ├── HighlightsInput.test.tsx
 │   │   │   ├── HighlightsInput.tsx
+│   │   │   ├── ImportDataFields.tsx
 │   │   │   ├── ImportDialog.test.tsx
 │   │   │   ├── ImportDialog.tsx
 │   │   │   ├── JobDescriptionFields.tsx
@@ -155,7 +168,9 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   └── useCvExport.ts
 │   ├── lib/
 │   │   ├── cvStorage.ts
+│   │   ├── patchIosKeyboardGap.ts
 │   │   ├── pwa.ts
+│   │   ├── sentry.ts
 │   │   ├── share.ts
 │   │   ├── useInstallPwa.ts
 │   │   ├── useIsInView.ts
@@ -166,6 +181,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   ├── useTheme.ts
 │   │   └── utils.ts
 │   ├── pages/
+│   │   ├── CvEditorPage.test.tsx
 │   │   ├── CvEditorPage.tsx
 │   │   └── LandingPage.tsx
 │   ├── App.tsx
@@ -173,6 +189,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   ├── main.tsx
 │   ├── test-setup.ts
 │   └── vite-env.d.ts
+├── .env
 ├── .gitignore
 ├── .npmrc
 ├── .nvmrc
@@ -190,7 +207,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 └── vitest.config.ts
 ```
 
-### Source files (66 source, 12 test, 1 e2e)
+### Source files (76 source, 15 test, 1 e2e)
 
 #### `src/` layout
 
@@ -234,7 +251,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 - **react-hook-form** owns the entire CV form state (useForm, useFieldArray, useWatch, zodResolver).
 - **Local state** via `useState` / `useRef` / `useCallback` for UI concerns (dialogs, preview toggle, collapsibles).
 - **Custom hooks** encapsulate side effects: `useAiGeneration`, `useCvExport`, `useTheme`, `useInstallPwa`.
-- **Persistence:** CV data lives in memory only. Theme preference persists in `localStorage` (`"theme"` key). Nothing else is stored.
+- **Persistence:** CV data, Gemini API key, and theme preference persist in `localStorage` (via `src/lib/cvStorage.ts` and `useTheme`). Nothing is sent to any server.
 
 ### Styling
 
@@ -319,7 +336,7 @@ These rules are non-negotiable. Violating them will be flagged during review.
 
 - **Minimize dependencies.** Don't add a library for something that can be done in a few lines.
 - **No backend.** Everything runs client-side. Gemini API calls go directly from the browser.
-- **No cookies, no analytics, no tracking.** The only `localStorage` usage is theme preference.
+- **No cookies, no analytics, no tracking.** `localStorage` stores CV data, Gemini API key, and theme preference — all local-only.
 
 ### Git and CI
 
@@ -481,42 +498,49 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 
 ## File inventory
 
-### Source files (66)
+### Source files (76)
 
 - `src/components/menuItemClass.ts` (3 lines)
-- `src/cv/ai/generateWithAi.ts` (171 lines)
-- `src/cv/ai/parseCvFromText.ts` (211 lines)
+- `src/cv/ai/extractTextFromFile.ts` (54 lines)
+- `src/cv/ai/fileUtils.ts` (92 lines)
+- `src/cv/ai/generateWithAi.ts` (170 lines)
+- `src/cv/ai/parseCvFromFile.ts` (75 lines)
+- `src/cv/ai/parseCvFromText.ts` (264 lines)
 - `src/cv/cvConstants.ts` (70 lines)
-- `src/cv/cvFormSchema.ts` (67 lines)
-- `src/cv/cvFormatters.ts` (22 lines)
+- `src/cv/cvFormSchema.ts` (68 lines)
+- `src/cv/cvFormatters.ts` (124 lines)
 - `src/cv/downloadBlob.ts` (11 lines)
-- `src/cv/export/CvDocxDocument.ts` (355 lines)
-- `src/cv/loadDefaultValues.ts` (75 lines)
+- `src/cv/export/CvDocxDocument.ts` (368 lines)
+- `src/cv/loadDefaultValues.ts` (77 lines)
 - `src/cv/preview/parseMarkdown.ts` (34 lines)
 - `src/cv/useAiGeneration.ts` (214 lines)
-- `src/cv/useCvExport.ts` (99 lines)
-- `src/lib/cvStorage.ts` (35 lines)
+- `src/cv/useCvExport.ts` (108 lines)
+- `src/lib/cvStorage.ts` (43 lines)
+- `src/lib/patchIosKeyboardGap.ts` (45 lines)
 - `src/lib/pwa.ts` (5 lines)
+- `src/lib/sentry.ts` (146 lines)
 - `src/lib/share.ts` (22 lines)
 - `src/lib/useInstallPwa.ts` (74 lines)
-- `src/lib/useIsInView.ts` (24 lines)
+- `src/lib/useIsInView.ts` (31 lines)
 - `src/lib/useIsKeyboardOpen.ts` (45 lines)
 - `src/lib/useIsScrolledPast.ts` (32 lines)
 - `src/lib/useMediaQuery.ts` (17 lines)
 - `src/lib/useTheme.ts` (29 lines)
 - `src/lib/utils.ts` (7 lines)
 - `src/test-setup.ts` (2 lines)
-- `src/vite-env.d.ts` (10 lines)
+- `src/vite-env.d.ts` (16 lines)
 - `src/App.tsx` (31 lines)
-- `src/components/AppHeader.tsx` (97 lines)
+- `src/components/AppHeader.tsx` (100 lines)
 - `src/components/AppLogo.tsx` (13 lines)
 - `src/components/EmojiIcon.tsx` (13 lines)
-- `src/components/ErrorBoundary.tsx` (38 lines)
+- `src/components/ErrorBoundary.tsx` (42 lines)
 - `src/components/GeminiIcon.tsx` (18 lines)
-- `src/components/InstallPwa.tsx` (116 lines)
+- `src/components/InstallPwa.tsx` (95 lines)
 - `src/components/RobotIcon.tsx` (81 lines)
+- `src/components/ScrollToTopFab.tsx` (32 lines)
 - `src/components/ShareButton.tsx` (23 lines)
 - `src/components/ThemeToggle.tsx` (25 lines)
+- `src/components/ui/FileDropZone.tsx` (264 lines)
 - `src/components/ui/badge.tsx` (50 lines)
 - `src/components/ui/button.tsx` (62 lines)
 - `src/components/ui/card.tsx` (64 lines)
@@ -528,62 +552,70 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/components/ui/textarea.tsx` (19 lines)
 - `src/components/ui/tooltip.tsx` (24 lines)
 - `src/cv/ai/geminiHelpSteps.tsx` (62 lines)
-- `src/cv/form/AiSettingsFields.tsx` (94 lines)
+- `src/cv/form/AiSettingsFields.tsx` (67 lines)
 - `src/cv/form/BackupReminder.tsx` (26 lines)
-- `src/cv/form/CoverLetterFields.tsx` (216 lines)
+- `src/cv/form/CollapsibleCard.tsx` (85 lines)
+- `src/cv/form/CollapsibleSection.tsx` (60 lines)
+- `src/cv/form/CoverLetterFields.tsx` (193 lines)
 - `src/cv/form/DownloadDialog.tsx` (84 lines)
-- `src/cv/form/EducationFields.tsx` (270 lines)
+- `src/cv/form/EducationFields.tsx` (211 lines)
 - `src/cv/form/ExperienceEntryFields.tsx` (263 lines)
 - `src/cv/form/FormActions.tsx` (74 lines)
-- `src/cv/form/HighlightsAiEnhance.tsx` (143 lines)
-- `src/cv/form/HighlightsInput.tsx` (55 lines)
+- `src/cv/form/HighlightsAiEnhance.tsx` (139 lines)
+- `src/cv/form/HighlightsInput.tsx` (57 lines)
+- `src/cv/form/ImportDataFields.tsx` (295 lines)
 - `src/cv/form/ImportDialog.tsx` (382 lines)
-- `src/cv/form/JobDescriptionFields.tsx` (78 lines)
+- `src/cv/form/JobDescriptionFields.tsx` (184 lines)
 - `src/cv/form/MarkdownHint.tsx` (18 lines)
-- `src/cv/form/PersonalInfoFields.tsx` (153 lines)
+- `src/cv/form/PersonalInfoFields.tsx` (139 lines)
 - `src/cv/form/SectionToolbar.tsx` (69 lines)
 - `src/cv/form/TagsInput.tsx` (94 lines)
-- `src/cv/preview/CvPreview.tsx` (155 lines)
-- `src/cv/preview/CvPreviewPanel.tsx` (108 lines)
+- `src/cv/preview/CvPreview.tsx` (180 lines)
+- `src/cv/preview/CvPreviewPanel.tsx` (150 lines)
 - `src/cv/preview/Markdown.tsx` (21 lines)
-- `src/main.tsx` (57 lines)
-- `src/pages/CvEditorPage.tsx` (684 lines)
-- `src/pages/LandingPage.tsx` (847 lines)
+- `src/main.tsx` (67 lines)
+- `src/pages/CvEditorPage.tsx` (974 lines)
+- `src/pages/LandingPage.tsx` (914 lines)
 
-### Test files (12)
+### Test files (15)
 
-- `src/cv/ai/generateWithAi.test.ts` (199 lines)
-- `src/cv/ai/parseCvFromText.test.ts` (133 lines)
-- `src/cv/cvFormSchema.test.ts` (183 lines)
-- `src/cv/cvFormatters.test.ts` (64 lines)
+- `src/cv/ai/generateWithAi.test.ts` (200 lines)
+- `src/cv/ai/parseCvFromFile.test.ts` (118 lines)
+- `src/cv/ai/parseCvFromText.test.ts` (233 lines)
+- `src/cv/cvFormSchema.test.ts` (199 lines)
+- `src/cv/cvFormatters.test.ts` (154 lines)
 - `src/cv/export/parseInlineSegments.test.ts` (50 lines)
 - `src/cv/loadDefaultValues.test.ts` (60 lines)
 - `src/cv/preview/parseMarkdown.test.ts` (76 lines)
 - `src/components/ErrorBoundary.test.tsx` (67 lines)
+- `src/components/ui/FileDropZone.test.tsx` (100 lines)
 - `src/cv/form/HighlightsInput.test.tsx` (75 lines)
 - `src/cv/form/ImportDialog.test.tsx` (146 lines)
 - `src/cv/form/TagsInput.test.tsx` (108 lines)
 - `src/lib/useIsScrolledPast.test.tsx` (89 lines)
+- `src/pages/CvEditorPage.test.tsx` (182 lines)
 
 ### E2E files (1)
 
-- `e2e/cv-editor.spec.ts` (83 lines)
+- `e2e/cv-editor.spec.ts` (87 lines)
 
 ---
 
 ## Dependencies
 
-### Runtime (19)
+### Runtime (21)
 
 - `@base-ui/react`: ^1.3.0
 - `@fontsource-variable/geist`: ^5.2.8
 - `@google/genai`: ^1.48.0
 - `@hookform/resolvers`: ^5.2.2
+- `@sentry/react`: ^10.47.0
 - `@tailwindcss/vite`: ^4.2.2
 - `class-variance-authority`: ^0.7.1
 - `clsx`: ^2.1.1
 - `docx`: ^9.6.1
 - `lucide-react`: ^1.7.0
+- `mammoth`: ^1.12.0
 - `marked`: ^17.0.5
 - `react`: ^19.0.0
 - `react-dom`: ^19.0.0
@@ -595,10 +627,12 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `tw-animate-css`: ^1.4.0
 - `zod`: ^4.3.6
 
-### Dev (24)
+### Dev (26)
 
 - `@eslint/js`: ^9.18.0
+- `@napi-rs/canvas`: ^0.1.97
 - `@playwright/test`: ^1.59.1
+- `@sentry/vite-plugin`: ^5.1.1
 - `@testing-library/jest-dom`: ^6.9.1
 - `@testing-library/react`: ^16.3.2
 - `@testing-library/user-event`: ^14.6.1

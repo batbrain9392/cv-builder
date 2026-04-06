@@ -1,6 +1,69 @@
 # Code Review Log
 
-Last reviewed: 2026-04-04
+Last reviewed: 2026-04-06
+
+## Review #2 — 2026-04-06
+
+**Overall: 8.4 / 10**
+
+TypeScript clean, ESLint clean, 130/130 tests pass (up from 79), production build succeeds. Test coverage improved significantly (+51 tests, +5 test files). New features (file upload/import via mammoth, Sentry error tracking) are well-integrated. Pattern uniformity across components is strong with a few minor inconsistencies addressed below.
+
+### Issues Found and Resolved
+
+| #   | Issue                                                                                    | Severity | Status    | Fix                                                                                            |
+| --- | ---------------------------------------------------------------------------------------- | -------- | --------- | ---------------------------------------------------------------------------------------------- |
+| 1   | `SectionToolbar` uses `<h2>` inside `<h3>` context — heading hierarchy violation         | Medium   | **Fixed** | Changed `<h2>` to `<p>` — it's a visual label, not a document heading                          |
+| 2   | `HighlightsAiEnhance` uses `[&>svg]:!size-3.5` vs `[&>svg]:size-3.5!` in other AI badges | Low      | **Fixed** | Normalized to `[&>svg]:size-3.5!` to match CvEditorPage and CoverLetterFields                  |
+| 3   | Hardcoded `amber-600`/`yellow-500` colors in AiSettingsFields and ImportDataFields       | Medium   | **Fixed** | Added `--warning-*` CSS variables to theme; replaced hardcoded classes                         |
+| 4   | `mammoth` chunk 500.56 KB triggers Vite build warning                                    | Low      | **Fixed** | Already in `manualChunks`; raised `chunkSizeWarningLimit` to 510 KB                            |
+| 5   | `OVERVIEW.md` stale: wrong file counts, missing deps, incorrect localStorage claims      | High     | **Fixed** | Fixed `generate-overview.mjs` script (persistence, localStorage, Sentry, mammoth); regenerated |
+
+### Known Issues (Not Fixed — Acceptable)
+
+| #   | Issue                                                                        | Severity | Reason                                                                                                                                                                   |
+| --- | ---------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 7   | `CvEditorPage` is now 944 lines (was 680 in Review #1)                       | Medium   | Grew due to new features (import, cover letter, starter data handling). Form sections are extracted into `*Fields.tsx`. Further splitting adds prop-drilling complexity. |
+| 8   | `EMPTY_DEFAULTS` has empty arrays that violate schema's `min(1)` constraints | Low      | Only used as form reset defaults (not validated on mount). Tests that reference `EMPTY_DEFAULTS.experience[0]` are fragile but passing.                                  |
+| 9   | Mobile "Install app" menu item does nothing for non-installable states       | Low      | Edge case (iOS hint flow). The desktop `InstallPwa` component handles it correctly via Popover.                                                                          |
+| 10  | `parseCvFromText` relaxed path returns structurally incomplete `CvFormData`  | Low      | By design — surfaces `issues[]` to caller. Users fix in the form.                                                                                                        |
+| 11  | CV preview hardcodes colors (`#000`, `#333`) instead of theme variables      | Low      | Intentional — preview simulates printed document appearance.                                                                                                             |
+| 12  | `GeminiIcon` and "built with" logos load from `cdn.simpleicons.org`          | Low      | Decorative images with `alt=""` — graceful failure.                                                                                                                      |
+| 13  | Index-based `key` props in `CvPreview` list rendering                        | Low      | Preview is read-only (no reorder/delete); React reconciliation risk is minimal.                                                                                          |
+| 14  | Landing page "step cards" use manual classes instead of `Card` component     | Low      | Intentional design variation — step cards have a different visual treatment (number badges, no border-left accent) than feature cards.                                   |
+
+### Metrics
+
+| Metric                  | Value                                                       |
+| ----------------------- | ----------------------------------------------------------- |
+| TypeScript              | 0 errors                                                    |
+| ESLint                  | 0 errors, 0 warnings                                        |
+| Tests                   | 130 passed, 0 failed (15 test files)                        |
+| Build time              | ~5.4s                                                       |
+| Largest chunk (mammoth) | 500 KB (130 KB gzip)                                        |
+| Largest chunk (vendor)  | 398 KB (126 KB gzip)                                        |
+| App chunk               | 351 KB (104 KB gzip)                                        |
+| Lazy chunks             | docx 407 KB, genai 284 KB, sentry 143 KB, LandingPage 31 KB |
+
+### Architecture Notes
+
+- **State**: Local component state + react-hook-form. No global store.
+- **Routing**: HashRouter with two routes (landing `/`, editor `/app`).
+- **AI**: Client-side Gemini calls via `@google/genai`, dynamically imported.
+- **Import**: CV file parsing via `mammoth` (DOCX) and Gemini (PDF/image), dynamically imported.
+- **Export**: DOCX via `docx` library, dynamically imported.
+- **Styling**: Tailwind CSS v4 + shadcn-style UI primitives. OKLCH CSS variables for theming, including new `--warning-*` semantic tokens.
+- **PWA**: Service worker with stale-while-revalidate, version-stamped cache.
+- **Error monitoring**: Sentry with PII scrubbing, lazy-loaded (143 KB chunk).
+- **Persistence**: CV data, API key, and theme in `localStorage` via `cvStorage.ts`.
+
+### Areas to Watch in Future Reviews
+
+- `CvEditorPage` complexity — now 944 lines, approaching the point where extraction would pay off
+- Bundle sizes: `mammoth` at 500 KB is the largest single chunk
+- Accessibility: verify Base UI tooltip wires `aria-describedby` correctly
+- Component test coverage improving (now 7 component test files, up from 3)
+
+---
 
 ## Review #1 — 2026-04-04
 

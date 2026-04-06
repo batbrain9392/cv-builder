@@ -49,7 +49,7 @@ export function HighlightsAiEnhance({
           />
         }
       >
-        <Badge variant="secondary" className="h-auto gap-1 text-xs [&>svg]:!size-3.5">
+        <Badge variant="secondary" className="h-auto gap-1 text-xs [&>svg]:size-3.5!">
           <GeminiIcon className="size-3.5" />
           <ChevronDownIcon
             className={'size-3.5 transition-transform' + (open ? ' rotate-180' : '')}
