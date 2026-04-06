@@ -5,7 +5,6 @@ import {
   ChevronDownIcon,
   ClipboardIcon,
   DownloadIcon,
-  EyeIcon,
   Loader2Icon,
   PenLineIcon,
   SaveIcon,
@@ -587,7 +586,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                 })}
               </section>
 
-              <div className="flex items-center justify-end gap-3 border-t pt-6">
+              <div className="hidden items-center justify-end gap-3 border-t pt-6 lg:flex">
                 <Button
                   type="button"
                   variant="ghost"
@@ -600,10 +599,6 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                 <Button type="button" size="sm" onClick={onSaveToBrowser}>
                   <SaveIcon data-icon="inline-start" />
                   Save to browser
-                </Button>
-                <Button type="button" size="sm" className="lg:hidden" onClick={handleDownloadClick}>
-                  <DownloadIcon data-icon="inline-start" />
-                  Download
                 </Button>
               </div>
             </form>
@@ -636,7 +631,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             <ScrollToTopFab
               visible={isTopScrolledPast}
               onClick={scrollToTop}
-              className="bottom-28 right-4"
+              className="bottom-16 right-4"
             />
           )}
         </div>
@@ -672,23 +667,13 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         )}
       </main>
 
-      <FormActions />
-
-      {/* Mobile FAB — jump to preview */}
-      <Button
-        size="lg"
-        className={
-          'fixed right-4 bottom-16 z-50 gap-2 shadow-lg transition-all duration-300 lg:hidden' +
-          (isPreviewInView
-            ? ' translate-y-24 opacity-0 pointer-events-none'
-            : ' translate-y-0 opacity-100')
-        }
-        onClick={scrollToPreview}
-        aria-label="Scroll to preview"
-      >
-        <EyeIcon />
-        Preview
-      </Button>
+      <FormActions
+        onClear={() => setClearConfirmOpen(true)}
+        onSave={onSaveToBrowser}
+        onDownload={handleDownloadClick}
+        onScrollToPreview={scrollToPreview}
+        previewVisible={isPreviewInView}
+      />
 
       <AlertDialog.Root open={apiKeyWarningOpen} onOpenChange={setApiKeyWarningOpen}>
         <AlertDialog.Portal>

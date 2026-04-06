@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { ZodError, type core } from 'zod';
 
 import { DEFAULT_HIGHLIGHTS_PROMPT } from '../cvFormSchema.ts';
 
@@ -10,7 +11,7 @@ vi.mock('@google/genai', () => ({
   })),
 }));
 
-import { parseCvFromText } from './parseCvFromText.ts';
+import { buildIssuesFromZodError, parseCvFromText, splitCamelCase } from './parseCvFromText.ts';
 
 const VALID_CV_JSON = {
   personalInfo: {
@@ -145,5 +146,87 @@ describe('parseCvFromText', () => {
     await expect(parseCvFromText('key', 'text')).rejects.toThrow(
       'Could not parse the CV data. Please check the text and try again.',
     );
+  });
+});
+
+function makeIssue(path: (string | number)[], message = 'Required'): core.$ZodIssue {
+  return { code: 'custom', path, message } as core.$ZodIssueCustom;
+}
+
+describe('splitCamelCase', () => {
+  it('inserts space before uppercase letters', () => {
+    expect(splitCamelCase('startDate')).toBe('start date');
+  });
+
+  it('handles consecutive uppercase correctly', () => {
+    expect(splitCamelCase('institutionUrl')).toBe('institution url');
+  });
+
+  it('returns single-word strings unchanged', () => {
+    expect(splitCamelCase('role')).toBe('role');
+  });
+
+  it('lowercases the entire result', () => {
+    expect(splitCamelCase('tagsLabel')).toBe('tags label');
+  });
+});
+
+describe('buildIssuesFromZodError', () => {
+  it('single section, single field error', () => {
+    const error = new ZodError([makeIssue(['personalInfo', 'name'])]);
+    expect(buildIssuesFromZodError(error)).toEqual(['Personal Info — missing or invalid: name.']);
+  });
+
+  it('array section with indexed entry and multiple fields', () => {
+    const error = new ZodError([
+      makeIssue(['experience', 0, 'role']),
+      makeIssue(['experience', 0, 'company']),
+    ]);
+    expect(buildIssuesFromZodError(error)).toEqual([
+      'Experience entry #1 — missing or invalid: role, company.',
+    ]);
+  });
+
+  it('groups separate entries independently', () => {
+    const error = new ZodError([
+      makeIssue(['experience', 0, 'role']),
+      makeIssue(['experience', 1, 'startDate']),
+    ]);
+    const issues = buildIssuesFromZodError(error);
+    expect(issues).toHaveLength(2);
+    expect(issues[0]).toBe('Experience entry #1 — missing or invalid: role.');
+    expect(issues[1]).toBe('Experience entry #2 — missing or invalid: start date.');
+  });
+
+  it('uses splitCamelCase fallback for unknown section keys', () => {
+    const error = new ZodError([makeIssue(['workExperience', 'role'])]);
+    expect(buildIssuesFromZodError(error)).toEqual(['work experience — missing or invalid: role.']);
+  });
+
+  it('uses known SECTION_LABELS for mapped sections', () => {
+    const error = new ZodError([makeIssue(['others', 0, 'role'])]);
+    expect(buildIssuesFromZodError(error)).toEqual(['Other entry #1 — missing or invalid: role.']);
+  });
+
+  it('produces "add at least one entry" when group has no field-level issues', () => {
+    const error = new ZodError([makeIssue(['skills'])]);
+    expect(buildIssuesFromZodError(error)).toEqual([
+      'Skills — add at least one entry to this section.',
+    ]);
+  });
+
+  it('deduplicates repeated field errors within the same group', () => {
+    const error = new ZodError([
+      makeIssue(['experience', 0, 'role'], 'too short'),
+      makeIssue(['experience', 0, 'role'], 'required'),
+    ]);
+    expect(buildIssuesFromZodError(error)).toEqual([
+      'Experience entry #1 — missing or invalid: role.',
+    ]);
+  });
+
+  it('skips issues with empty path', () => {
+    const error = new ZodError([makeIssue([]), makeIssue(['personalInfo', 'email'])]);
+    expect(buildIssuesFromZodError(error)).toEqual(['Personal Info — missing or invalid: email.']);
   });
 });

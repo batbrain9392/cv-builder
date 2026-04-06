@@ -1,0 +1,10 @@
+---
+description: Avoid using deprecated APIs, types, and imports in all code.
+globs: **/*.ts, **/*.tsx
+---
+# No Deprecated APIs
+
+- Do not use deprecated functions, types, classes, or imports from any dependency.
+- When a library marks an export as `@deprecated` and provides a replacement, use the replacement.
+- Before using any import, check its type declaration for `@deprecated` JSDoc tags. If present, find and use the recommended alternative.
+- When upgrading dependencies, audit changed type declarations for newly deprecated exports and migrate them.

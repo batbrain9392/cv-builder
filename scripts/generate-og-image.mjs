@@ -96,7 +96,7 @@ async function captureScreenshots() {
   await mobilePage.waitForTimeout(500);
   const formShot = await mobilePage.screenshot({ type: 'png' });
 
-  await mobilePage.click('button[aria-label="Open preview"]');
+  await mobilePage.locator('#cv-preview-panel-mobile').scrollIntoViewIfNeeded();
   await mobilePage.waitForTimeout(600);
   const previewShot = await mobilePage.screenshot({ type: 'png' });
 

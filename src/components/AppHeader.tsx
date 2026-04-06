@@ -16,10 +16,11 @@ import { useTheme } from '@/lib/useTheme';
 
 interface AppHeaderProps {
   children?: React.ReactNode;
+  mobileActionButtons?: React.ReactNode;
   mobileMenuItems?: React.ReactNode;
 }
 
-export function AppHeader({ children, mobileMenuItems }: AppHeaderProps) {
+export function AppHeader({ children, mobileActionButtons, mobileMenuItems }: AppHeaderProps) {
   const { theme, toggle: toggleTheme } = useTheme();
   const { state: installState, handleInstall } = useInstallPwa();
   const keyboardOpen = useIsKeyboardOpen();
@@ -37,15 +38,17 @@ export function AppHeader({ children, mobileMenuItems }: AppHeaderProps) {
         <AppLogo />
 
         <nav aria-label="App actions" className="flex items-center gap-2">
-          <div className="hidden sm:flex">
+          <div className="hidden lg:flex">
             <InstallPwa />
           </div>
-          <div className="hidden sm:flex">
+          <div className="hidden lg:flex">
             <ShareButton />
           </div>
-          <ThemeToggle className="hidden sm:inline-flex" />
+          <ThemeToggle className="hidden lg:inline-flex" />
 
           {children}
+
+          {mobileActionButtons}
 
           <Menu.Root>
             <Menu.Trigger
@@ -53,7 +56,7 @@ export function AppHeader({ children, mobileMenuItems }: AppHeaderProps) {
                 <Button
                   variant="inverted"
                   size="icon-sm"
-                  className="sm:hidden"
+                  className="lg:hidden"
                   aria-label="Actions"
                 />
               }

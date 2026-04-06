@@ -137,14 +137,52 @@ const relaxedCvSchema = z.object({
   others: z.array(relaxedExperienceSchema).default([]),
 });
 
-function buildIssuesFromZodError(error: z.ZodError): string[] {
-  const issues: string[] = [];
+const SECTION_LABELS: Record<string, string> = {
+  personalInfo: 'Personal Info',
+  experience: 'Experience',
+  education: 'Education',
+  others: 'Other',
+  skills: 'Skills',
+};
+
+export function splitCamelCase(str: string): string {
+  return str.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase();
+}
+
+export function buildIssuesFromZodError(error: z.ZodError): string[] {
+  const grouped = new Map<string, Set<string>>();
+
   for (const issue of error.issues) {
-    const path = issue.path.join('.');
-    if (path) {
-      issues.push(`${path}: ${issue.message}`);
+    if (issue.path.length === 0) continue;
+
+    const sectionKey = String(issue.path[0]);
+    const entryIndex = typeof issue.path[1] === 'number' ? issue.path[1] : undefined;
+    const groupKey = entryIndex !== undefined ? `${sectionKey}.${entryIndex}` : sectionKey;
+
+    if (!grouped.has(groupKey)) grouped.set(groupKey, new Set());
+
+    const fieldKey =
+      issue.path.length > 2
+        ? String(issue.path[2])
+        : issue.path.length === 2
+          ? String(issue.path[1])
+          : undefined;
+    if (fieldKey) grouped.get(groupKey)?.add(splitCamelCase(fieldKey));
+  }
+
+  const issues: string[] = [];
+  for (const [key, fields] of grouped) {
+    const [sectionKey, indexStr] = key.split('.');
+    const label = SECTION_LABELS[sectionKey] ?? splitCamelCase(sectionKey);
+
+    const fieldList = [...fields].join(', ');
+    if (indexStr !== undefined) {
+      const num = Number(indexStr) + 1;
+      issues.push(`${label} entry #${num} — missing or invalid: ${fieldList}.`);
+    } else if (fieldList) {
+      issues.push(`${label} — missing or invalid: ${fieldList}.`);
     } else {
-      issues.push(issue.message);
+      issues.push(`${label} — add at least one entry to this section.`);
     }
   }
   return issues;

@@ -120,25 +120,27 @@ export function ImportDataFields({
         )}
 
         {parseResult && parseResult.issues.length > 0 && (
-          <details className="rounded-lg border border-yellow-500/30 bg-yellow-500/5">
-            <summary className="cursor-pointer px-3 py-2 text-sm font-medium text-yellow-700 dark:text-yellow-400">
-              Parsed with {parseResult.issues.length} issue
-              {parseResult.issues.length > 1 ? 's' : ''}
-            </summary>
-            <div className="space-y-2 border-t border-yellow-500/20 px-3 py-2">
-              <ul className="list-inside list-disc space-y-1 text-xs text-muted-foreground">
-                {parseResult.issues.slice(0, 8).map((issue, i) => (
-                  <li key={i}>{issue}</li>
-                ))}
-                {parseResult.issues.length > 8 && (
-                  <li>...and {parseResult.issues.length - 8} more</li>
-                )}
-              </ul>
-              <p className="text-xs text-muted-foreground">
-                You can load the data anyway and fix issues in the editor.
-              </p>
-            </div>
-          </details>
+          <div
+            role="alert"
+            className="space-y-2 rounded-lg border border-yellow-500/30 bg-yellow-500/5 px-3 py-2.5"
+          >
+            <p className="text-sm font-medium text-yellow-700 dark:text-yellow-400">
+              Parsed successfully, but some data needs your attention.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Load the data and fix these in the editor:
+            </p>
+            <ul className="space-y-1 text-xs text-muted-foreground">
+              {parseResult.issues.map((issue, i) => (
+                <li key={i} className="flex items-start gap-1.5">
+                  <span className="mt-px shrink-0" aria-hidden="true">
+                    ☐
+                  </span>
+                  {issue}
+                </li>
+              ))}
+            </ul>
+          </div>
         )}
 
         <div className="flex items-center gap-2">
