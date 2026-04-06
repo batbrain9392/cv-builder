@@ -789,7 +789,7 @@ function FloatingCta({ visible }: { visible: boolean }) {
     <Link
       to="/app"
       className={
-        'fixed bottom-6 right-6 z-50 inline-flex h-10 items-center gap-1.5 rounded-full bg-primary pl-4 pr-3 text-sm font-medium text-primary-foreground shadow-lg transition-all duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none active:scale-100' +
+        'fixed bottom-6 right-[4.25rem] z-50 inline-flex h-10 items-center gap-1.5 rounded-full bg-primary pl-4 pr-3 text-sm font-medium text-primary-foreground shadow-lg transition-all duration-300 hover:scale-105 focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none active:scale-100' +
         (visible ? ' scale-100 opacity-100' : ' pointer-events-none scale-75 opacity-0')
       }
     >
@@ -930,7 +930,7 @@ export default function LandingPage() {
       <ScrollToTopFab
         visible={heroScrolledPast}
         onClick={scrollToTop}
-        className="bottom-20 right-6"
+        className="bottom-6 right-6"
       />
     </div>
   );

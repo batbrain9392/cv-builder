@@ -99,12 +99,12 @@ const TOOLS_SECTION_IDS = [
 ];
 
 describe('CvEditorPage card expansion', () => {
-  it('fresh user: Import card expanded, Your CV card expanded, all inner sections collapsed', () => {
+  it('fresh user: Import card collapsed, Your CV card expanded, all inner sections collapsed', () => {
     vi.spyOn(cvStorage, 'hasUserCv').mockReturnValue(false);
 
     renderPage();
 
-    expect(isCardExpanded('tools-import-title')).toBe(true);
+    expect(isCardExpanded('tools-import-title')).toBe(false);
     expect(isCardExpanded('main-cv-title')).toBe(true);
 
     const mainCard = getCard('main-cv-title');
@@ -161,6 +161,8 @@ describe('CvEditorPage card expansion', () => {
     const user = userEvent.setup();
 
     renderPage();
+
+    await user.click(getCardTrigger('tools-import-title'));
 
     const toolsCard = getCard('tools-import-title');
 

@@ -127,7 +127,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   const [isStarterData, setIsStarterData] = useState(() => !hasUserCv());
-  const [toolsOpen, setToolsOpen] = useState(() => !hasUserCv());
+  const [toolsOpen, setToolsOpen] = useState(false);
   const [mainCardOpen, setMainCardOpen] = useState(true);
   const [sections, setSections] = useState<Record<SectionKey, boolean>>(() => allSections(false));
   const [toolsSections, setToolsSections] = useState<Record<ToolsSectionKey, boolean>>(() =>
@@ -769,16 +769,11 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               </CollapsibleCard>
 
               <div className="hidden items-center justify-end gap-3 border-t pt-6 lg:flex">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setClearConfirmOpen(true)}
-                >
+                <Button type="button" variant="ghost" onClick={() => setClearConfirmOpen(true)}>
                   <Trash2Icon data-icon="inline-start" />
                   Clear all
                 </Button>
-                <Button type="button" size="sm" onClick={onSaveToBrowser}>
+                <Button type="button" onClick={onSaveToBrowser}>
                   <SaveIcon data-icon="inline-start" />
                   Save to browser
                 </Button>
@@ -817,7 +812,6 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           {!isDesktop && (
             <Button
               variant="secondary"
-              size="sm"
               className="fixed bottom-16 right-4 z-50 rounded-full border shadow-md"
               onClick={isPreviewInView ? scrollToTop : scrollToPreview}
               aria-label={isPreviewInView ? 'Back to editor' : 'Preview CV'}
@@ -863,7 +857,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             </ErrorBoundary>
             <div className="px-4 pb-8 lg:px-6 xl:px-8">
               <div className="flex items-center justify-end gap-3 border-t pt-6">
-                <Button size="sm" onClick={handleDownloadClick}>
+                <Button onClick={handleDownloadClick}>
                   <DownloadIcon data-icon="inline-start" />
                   Download
                 </Button>
