@@ -12,16 +12,18 @@ AI-powered CV and cover letter builder that runs entirely in your browser.
 
 - ✏️ Build and edit a CV with a **live side-by-side preview**
 - 🤖 **AI-powered generation** of professional summary, cover letter, and experience highlights using Google Gemini
-- 📄 Export to **DOCX** or **JSON** — import from JSON to pick up where you left off
+- 📥 **Import** a CV from Word (.docx), PDF, image, or plain text — or restore a JSON backup you exported earlier
+- 📄 Export to **DOCX** or **JSON** for submission or portable backup
 - 📝 **Markdown** support in text fields for rich formatting
 - 📲 Installable **Progressive Web App** with service worker caching
+- 📖 Built-in **[step-by-step guide](https://batbrain9392.github.io/cv-builder/#/guide)** covering every feature from first load to final export
 
 ## 🧑‍💻 Using the AI features (optional)
 
 The core CV builder works perfectly without AI — you can build, preview, and export without ever enabling it. AI tailoring is an **opt-in** feature that uses Google Gemini to rewrite your content to match a specific job description. You bring your own API key (free tier, no billing required).
 
-1. 👤 Fill in all your details — personal info, experience, education, skills — or **import a JSON** you exported earlier
-2. 📋 Paste a **job description** into the Job Description section and add your free [Gemini API key](https://aistudio.google.com/apikey)
+1. 👤 Fill in all your details — personal info, experience, education, skills — or **import** a CV file (Word, PDF, image, or text) or a **JSON backup** you exported earlier
+2. 📋 Paste or **upload a job description** (Word/text work without a key; PDF/image need one) and add your free [Gemini API key](https://aistudio.google.com/apikey)
 3. 🤖 Hit **Enhance with AI** to tailor your experience highlights, summary, and cover letter to the job, then tweak anything that still feels off
 4. 💾 Hit **Save** to store your progress in the browser, or export as DOCX for submission / JSON for a portable backup
 5. 📄 Need a PDF? Open the DOCX in Word, Google Docs, or LibreOffice and print to PDF
@@ -55,7 +57,7 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 
 ## 🚀 Deployment
 
-Deployed automatically to **GitHub Pages** on every push to `main` via [GitHub Actions](.github/workflows/ci.yml). CI runs lint, typecheck, tests, and build — deploy only happens if all checks pass. The app is served under a `/cv-builder/` subpath and uses `HashRouter` for client-side routing, so in-app URLs look like `/#/app`.
+Deployed automatically to **GitHub Pages** on every push to `main` via [GitHub Actions](.github/workflows/ci.yml). CI runs lint, typecheck, tests, and build — deploy only happens if all checks pass. The app is served under a `/cv-builder/` subpath and uses `HashRouter` for client-side routing — hash routes are `/#/` (landing), `/#/guide` (user guide), and `/#/app` (editor).
 
 To enable on a fresh fork: go to **Settings > Pages** and set the source to **GitHub Actions**.
 

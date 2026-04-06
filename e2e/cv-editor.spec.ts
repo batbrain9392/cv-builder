@@ -80,7 +80,8 @@ test('Landing page is the default route', async ({ page }) => {
 test('Editor links back to landing page', async ({ page }) => {
   await page.goto('/#/app');
 
-  await page.getByRole('link', { name: 'Why BioBot?' }).first().click();
+  await page.getByRole('button', { name: 'Help and info' }).click();
+  await page.getByRole('menuitem', { name: 'Why BioBot?' }).click();
 
   await expect(page.getByRole('heading', { name: /optimized for the machines/i })).toBeVisible();
 });

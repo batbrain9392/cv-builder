@@ -2,6 +2,58 @@
 
 Last reviewed: 2026-04-06
 
+## Review #3 — 2026-04-06
+
+**Scope: guide page and documentation sync**
+
+TypeScript clean, ESLint clean, 130/130 tests pass, production build succeeds (~4.9 s). No new test files — the guide is a static content page with no interactive logic requiring unit tests.
+
+### New feature: user guide (`/guide`)
+
+A full step-by-step guide page was added at `/#/guide`, accessible from the landing page, editor menu, and AppHeader. The implementation lives in:
+
+- `src/pages/GuidePage.tsx` — route-level page (lazy-loaded), 771 lines
+- `src/guide/` — five extracted components: `GuideCallout`, `GuidePathPicker`, `GuidePhase`, `GuideSection`, `GuideToc`
+
+The guide uses a path-first hub (user picks their starting point) with collapsible phases and a sticky sidebar TOC on desktop. All content is hardcoded JSX — no markdown rendering or external data fetching.
+
+### Documentation updates
+
+README.md, `generate-overview.mjs`, and OVERVIEW.md were updated to reflect:
+
+- The `/guide` route (was missing from all three)
+- CV file import (Word, PDF, image, text) and job description upload (was under-documented)
+- Correct hash route listing (`/#/`, `/#/guide`, `/#/app`)
+- New `src/guide/` directory in the source layout table
+
+### Metrics
+
+| Metric                  | Value                                                                        |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| TypeScript              | 0 errors                                                                     |
+| ESLint                  | 0 errors, 0 warnings                                                         |
+| Tests                   | 130 passed, 0 failed (15 test files)                                         |
+| Source files            | 82 (up from 76)                                                              |
+| Build time              | ~4.9 s                                                                       |
+| Largest chunk (mammoth) | 500 KB (130 KB gzip)                                                         |
+| Largest chunk (vendor)  | 398 KB (126 KB gzip)                                                         |
+| App chunk               | 352 KB (104 KB gzip)                                                         |
+| Lazy chunks             | docx 407 KB, genai 284 KB, sentry 143 KB, LandingPage 28 KB, GuidePage 25 KB |
+
+### Architecture Notes
+
+- **Routing:** Three hash routes now — `/` (landing), `/guide` (guide), `/app` (editor). Guide and landing are both lazy-loaded with `Suspense`.
+- **Guide structure:** Path picker + collapsible phases pattern. No form state, no API calls, no localStorage. Pure read-only content page.
+- **Bundle impact:** GuidePage adds a 25 KB lazy chunk (7 KB gzip) — negligible since it only loads on demand.
+
+### Areas to Watch in Future Reviews
+
+- `GuidePage.tsx` at 771 lines is large for a content page. If it grows further, consider extracting phase content into data arrays or separate modules.
+- The guide content is hardcoded — if features change, the guide must be manually updated to match.
+- `CvEditorPage` complexity remains a watch item (now 974 lines).
+
+---
+
 ## Review #2 — 2026-04-06
 
 **Overall: 8.4 / 10**

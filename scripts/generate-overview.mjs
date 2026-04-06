@@ -200,8 +200,9 @@ ${markdownTable(
     ['\`src/cv/preview/\`', 'Live preview panel, markdown rendering, preview CSS'],
     ['\`src/cv/ai/\`', 'AI generation helpers (Gemini calls, CV text parsing)'],
     ['\`src/cv/export/\`', 'DOCX document builder'],
+    ['\`src/guide/\`', 'User guide UI components (path picker, phases, sections, TOC)'],
     ['\`src/lib/\`', 'Utilities, custom hooks (theme, PWA install, media queries, viewport)'],
-    ['\`src/pages/\`', 'Route-level page components (LandingPage, CvEditorPage)'],
+    ['\`src/pages/\`', 'Route-level page components (LandingPage, GuidePage, CvEditorPage)'],
   ],
 )}
 
@@ -211,8 +212,9 @@ ${markdownTable(
   ['File', 'Role'],
   [
     ['\`src/main.tsx\`', 'App bootstrap: HashRouter, loadDefaultValues(), service worker registration'],
-    ['\`src/App.tsx\`', 'Route definitions (landing page + editor)'],
+    ['\`src/App.tsx\`', 'Route definitions (landing, guide, and editor)'],
     ['\`src/pages/CvEditorPage.tsx\`', 'Main CV editor UI (form, preview, dialogs, AI wiring)'],
+    ['\`src/pages/GuidePage.tsx\`', 'Step-by-step user guide with collapsible phases and TOC'],
     ['\`src/index.css\`', 'Global Tailwind imports, CSS variables, theme tokens (OKLCH)'],
     ['\`src/cv/cvFormSchema.ts\`', 'Zod schema and TypeScript types for the entire CV form'],
     ['\`src/cv/loadDefaultValues.ts\`', 'Merges starter data with schema defaults'],
@@ -225,9 +227,10 @@ ${markdownTable(
 
 ### Routing
 
-- **HashRouter** — serves from GitHub Pages subpath (\`/cv-builder/\`), so URLs look like \`/#/app\`.
+- **HashRouter** — serves from GitHub Pages subpath (\`/cv-builder/\`). Hash routes: \`/#/\`, \`/#/guide\`, \`/#/app\`.
 - **Routes:**
   - \`/\` → \`LandingPage\` (lazy-loaded, marketing/info page)
+  - \`/guide\` → \`GuidePage\` (lazy-loaded, step-by-step user guide)
   - \`/app\` → \`CvEditorPage\` (the full editor with form + live preview)
 
 ### State management

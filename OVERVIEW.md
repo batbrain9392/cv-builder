@@ -1,6 +1,6 @@
 # BioBot — Project Overview for AI Agents
 
-> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-06 (main@4d43304).
+> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-06 (main@d059ea4).
 > Re-run with `npm run generate:overview` after structural changes.
 
 ---
@@ -166,6 +166,12 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   ├── starterCv.json
 │   │   ├── useAiGeneration.ts
 │   │   └── useCvExport.ts
+│   ├── guide/
+│   │   ├── GuideCallout.tsx
+│   │   ├── GuidePathPicker.tsx
+│   │   ├── GuidePhase.tsx
+│   │   ├── GuideSection.tsx
+│   │   └── GuideToc.tsx
 │   ├── lib/
 │   │   ├── cvStorage.ts
 │   │   ├── patchIosKeyboardGap.ts
@@ -183,6 +189,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   ├── pages/
 │   │   ├── CvEditorPage.test.tsx
 │   │   ├── CvEditorPage.tsx
+│   │   ├── GuidePage.tsx
 │   │   └── LandingPage.tsx
 │   ├── App.tsx
 │   ├── index.css
@@ -207,7 +214,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 └── vitest.config.ts
 ```
 
-### Source files (76 source, 15 test, 1 e2e)
+### Source files (82 source, 15 test, 1 e2e)
 
 #### `src/` layout
 
@@ -220,16 +227,18 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 | `src/cv/preview/`    | Live preview panel, markdown rendering, preview CSS                                 |
 | `src/cv/ai/`         | AI generation helpers (Gemini calls, CV text parsing)                               |
 | `src/cv/export/`     | DOCX document builder                                                               |
+| `src/guide/`         | User guide UI components (path picker, phases, sections, TOC)                       |
 | `src/lib/`           | Utilities, custom hooks (theme, PWA install, media queries, viewport)               |
-| `src/pages/`         | Route-level page components (LandingPage, CvEditorPage)                             |
+| `src/pages/`         | Route-level page components (LandingPage, GuidePage, CvEditorPage)                  |
 
 #### Key entry points
 
 | File                          | Role                                                                        |
 | ----------------------------- | --------------------------------------------------------------------------- |
 | `src/main.tsx`                | App bootstrap: HashRouter, loadDefaultValues(), service worker registration |
-| `src/App.tsx`                 | Route definitions (landing page + editor)                                   |
+| `src/App.tsx`                 | Route definitions (landing, guide, and editor)                              |
 | `src/pages/CvEditorPage.tsx`  | Main CV editor UI (form, preview, dialogs, AI wiring)                       |
+| `src/pages/GuidePage.tsx`     | Step-by-step user guide with collapsible phases and TOC                     |
 | `src/index.css`               | Global Tailwind imports, CSS variables, theme tokens (OKLCH)                |
 | `src/cv/cvFormSchema.ts`      | Zod schema and TypeScript types for the entire CV form                      |
 | `src/cv/loadDefaultValues.ts` | Merges starter data with schema defaults                                    |
@@ -240,9 +249,10 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 
 ### Routing
 
-- **HashRouter** — serves from GitHub Pages subpath (`/cv-builder/`), so URLs look like `/#/app`.
+- **HashRouter** — serves from GitHub Pages subpath (`/cv-builder/`). Hash routes: `/#/`, `/#/guide`, `/#/app`.
 - **Routes:**
   - `/` → `LandingPage` (lazy-loaded, marketing/info page)
+  - `/guide` → `GuidePage` (lazy-loaded, step-by-step user guide)
   - `/app` → `CvEditorPage` (the full editor with form + live preview)
 
 ### State management
@@ -498,7 +508,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 
 ## File inventory
 
-### Source files (76)
+### Source files (82)
 
 - `src/components/menuItemClass.ts` (3 lines)
 - `src/cv/ai/extractTextFromFile.ts` (54 lines)
@@ -529,7 +539,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/lib/utils.ts` (7 lines)
 - `src/test-setup.ts` (2 lines)
 - `src/vite-env.d.ts` (16 lines)
-- `src/App.tsx` (31 lines)
+- `src/App.tsx` (46 lines)
 - `src/components/AppHeader.tsx` (100 lines)
 - `src/components/AppLogo.tsx` (13 lines)
 - `src/components/EmojiIcon.tsx` (13 lines)
@@ -560,7 +570,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/form/DownloadDialog.tsx` (84 lines)
 - `src/cv/form/EducationFields.tsx` (211 lines)
 - `src/cv/form/ExperienceEntryFields.tsx` (263 lines)
-- `src/cv/form/FormActions.tsx` (74 lines)
+- `src/cv/form/FormActions.tsx` (108 lines)
 - `src/cv/form/HighlightsAiEnhance.tsx` (139 lines)
 - `src/cv/form/HighlightsInput.tsx` (57 lines)
 - `src/cv/form/ImportDataFields.tsx` (295 lines)
@@ -573,9 +583,15 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/preview/CvPreview.tsx` (180 lines)
 - `src/cv/preview/CvPreviewPanel.tsx` (150 lines)
 - `src/cv/preview/Markdown.tsx` (21 lines)
+- `src/guide/GuideCallout.tsx` (23 lines)
+- `src/guide/GuidePathPicker.tsx` (36 lines)
+- `src/guide/GuidePhase.tsx` (70 lines)
+- `src/guide/GuideSection.tsx` (40 lines)
+- `src/guide/GuideToc.tsx` (52 lines)
 - `src/main.tsx` (67 lines)
-- `src/pages/CvEditorPage.tsx` (974 lines)
-- `src/pages/LandingPage.tsx` (914 lines)
+- `src/pages/CvEditorPage.tsx` (968 lines)
+- `src/pages/GuidePage.tsx` (771 lines)
+- `src/pages/LandingPage.tsx` (938 lines)
 
 ### Test files (15)
 
@@ -593,7 +609,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/form/ImportDialog.test.tsx` (146 lines)
 - `src/cv/form/TagsInput.test.tsx` (108 lines)
 - `src/lib/useIsScrolledPast.test.tsx` (89 lines)
-- `src/pages/CvEditorPage.test.tsx` (182 lines)
+- `src/pages/CvEditorPage.test.tsx` (184 lines)
 
 ### E2E files (1)
 
