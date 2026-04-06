@@ -1,5 +1,5 @@
 import { Menu } from '@base-ui/react/menu';
-import { DownloadIcon, EyeIcon, InfoIcon, SaveIcon, Trash2Icon } from 'lucide-react';
+import { DownloadIcon, InfoIcon, SaveIcon, Trash2Icon } from 'lucide-react';
 import { Link } from 'react-router';
 
 import { AppHeader } from '@/components/AppHeader';
@@ -11,17 +11,10 @@ interface FormActionsProps {
   onClear: () => void;
   onSave: () => void;
   onDownload: () => void;
-  onScrollToPreview: () => void;
   previewVisible: boolean;
 }
 
-export function FormActions({
-  onClear,
-  onSave,
-  onDownload,
-  onScrollToPreview,
-  previewVisible,
-}: FormActionsProps) {
+export function FormActions({ onClear, onSave, onDownload, previewVisible }: FormActionsProps) {
   return (
     <AppHeader
       mobileActionButtons={
@@ -39,7 +32,7 @@ export function FormActions({
           </Tooltip>
           <Tooltip label="Save to browser">
             <Button
-              variant="inverted"
+              variant={previewVisible ? 'inverted' : 'inverted-fill'}
               size="icon-sm"
               className="lg:hidden"
               onClick={onSave}
@@ -50,27 +43,13 @@ export function FormActions({
           </Tooltip>
           <Tooltip label="Download">
             <Button
-              variant="inverted-fill"
+              variant={previewVisible ? 'inverted-fill' : 'inverted'}
               size="icon-sm"
               className="lg:hidden"
               onClick={onDownload}
               aria-label="Download"
             >
               <DownloadIcon />
-            </Button>
-          </Tooltip>
-          <Tooltip label="Scroll to preview">
-            <Button
-              variant="inverted"
-              size="icon-sm"
-              className={
-                'lg:hidden transition-all duration-300' +
-                (previewVisible ? ' opacity-40 pointer-events-none' : '')
-              }
-              onClick={onScrollToPreview}
-              aria-label="Scroll to preview"
-            >
-              <EyeIcon />
             </Button>
           </Tooltip>
         </>

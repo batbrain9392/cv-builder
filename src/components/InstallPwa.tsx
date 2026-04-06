@@ -1,32 +1,11 @@
 import type React from 'react';
 
 import { Popover } from '@base-ui/react/popover';
+import { MonitorDownIcon } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Tooltip } from '@/components/ui/tooltip';
 import { useInstallPwa } from '@/lib/useInstallPwa';
-
-function PwaIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <rect x="2" y="3" width="20" height="14" rx="2" />
-      <line x1="8" y1="21" x2="16" y2="21" />
-      <line x1="12" y1="17" x2="12" y2="21" />
-      <path d="M12 7v5" />
-      <path d="M9 10l3 3 3-3" />
-    </svg>
-  );
-}
 
 interface InstallPwaProps {
   variant?: 'inverted' | 'inverted-fill' | 'default' | 'outline' | 'secondary' | 'ghost';
@@ -51,7 +30,7 @@ export function InstallPwa({
     return wrap(
       <Tooltip label="Install app">
         <Button variant={variant} size={size} onClick={handleInstall} aria-label="Install app">
-          <PwaIcon />
+          <MonitorDownIcon />
           {label && <span>{label}</span>}
         </Button>
       </Tooltip>,
@@ -79,7 +58,7 @@ export function InstallPwa({
     <Popover.Root>
       <Tooltip label="Install app">
         <Popover.Trigger render={<Button variant={variant} size={size} aria-label="Install app" />}>
-          <PwaIcon />
+          <MonitorDownIcon />
           {label && <span>{label}</span>}
         </Popover.Trigger>
       </Tooltip>

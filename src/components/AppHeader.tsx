@@ -1,7 +1,7 @@
 import type React from 'react';
 
 import { Menu } from '@base-ui/react/menu';
-import { DownloadIcon, EllipsisVerticalIcon, MoonIcon, Share2Icon, SunIcon } from 'lucide-react';
+import { EllipsisVerticalIcon, MonitorDownIcon, MoonIcon, Share2Icon, SunIcon } from 'lucide-react';
 
 import { AppLogo } from '@/components/AppLogo';
 import { InstallPwa } from '@/components/InstallPwa';
@@ -71,7 +71,7 @@ export function AppHeader({ children, mobileActionButtons, mobileMenuItems }: Ap
                       className={menuItemClass}
                       onClick={installState === 'installable' ? handleInstall : undefined}
                     >
-                      <DownloadIcon className="size-4" />
+                      <MonitorDownIcon className="size-4" />
                       Install app
                     </Menu.Item>
                   )}

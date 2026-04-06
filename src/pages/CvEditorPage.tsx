@@ -5,6 +5,7 @@ import {
   ChevronDownIcon,
   ClipboardIcon,
   DownloadIcon,
+  EyeIcon,
   Loader2Icon,
   PenLineIcon,
   SaveIcon,
@@ -19,7 +20,6 @@ import { toast } from 'sonner';
 import { EmojiIcon } from '@/components/EmojiIcon';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { GeminiIcon } from '@/components/GeminiIcon';
-import { ScrollToTopFab } from '@/components/ScrollToTopFab.tsx';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,7 +31,6 @@ import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
 import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
 import { clearCv, saveCv } from '@/lib/cvStorage.ts';
 import { useIsInView } from '@/lib/useIsInView';
-import { useIsScrolledPast } from '@/lib/useIsScrolledPast.ts';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 
 import type { CvFormData } from '../cv/cvFormSchema.ts';
@@ -77,10 +76,8 @@ const EMPTY_EDUCATION = {
 };
 
 export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
-  const topRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const mobilePreviewRef = useRef<HTMLDivElement>(null);
-  const isTopScrolledPast = useIsScrolledPast(topRef);
   const isPreviewInView = useIsInView(mobilePreviewRef);
 
   const scrollToTop = () => {
@@ -203,7 +200,6 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       <main className="mx-auto flex min-h-0 w-full max-w-[1728px] flex-1 overflow-hidden lg:flex-row">
         {/* Form panel */}
         <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto scroll-smooth">
-          <div ref={topRef} />
           <ErrorBoundary
             fallback={(reset) => (
               <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
@@ -635,11 +631,25 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           )}
 
           {!isDesktop && (
-            <ScrollToTopFab
-              visible={isTopScrolledPast}
-              onClick={scrollToTop}
-              className="bottom-16 right-4"
-            />
+            <Button
+              variant="secondary"
+              size="sm"
+              className="fixed bottom-16 right-4 z-50 rounded-full border shadow-md"
+              onClick={isPreviewInView ? scrollToTop : scrollToPreview}
+              aria-label={isPreviewInView ? 'Back to editor' : 'Preview CV'}
+            >
+              {isPreviewInView ? (
+                <>
+                  <PenLineIcon data-icon="inline-start" />
+                  Edit
+                </>
+              ) : (
+                <>
+                  <EyeIcon data-icon="inline-start" />
+                  Preview
+                </>
+              )}
+            </Button>
           )}
         </div>
 
@@ -678,7 +688,6 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         onClear={() => setClearConfirmOpen(true)}
         onSave={onSaveToBrowser}
         onDownload={handleDownloadClick}
-        onScrollToPreview={scrollToPreview}
         previewVisible={isPreviewInView}
       />
 
