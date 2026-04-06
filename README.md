@@ -5,7 +5,6 @@ AI-powered CV and cover letter builder that runs entirely in your browser.
 ✍️ Writing a CV is hard. 🎯 Tailoring it for every job you apply to is even harder. This app lets you load your full career history once, paste a job description, let AI reshape your experience highlights and summary to match, then tweak the result before you export. 📋 The Word (DOCX) output uses clean, structured formatting designed to be parsed correctly by most applicant tracking systems (ATS).
 
 [![CI](https://github.com/batbrain9392/cv-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/batbrain9392/cv-builder/actions/workflows/ci.yml)
-[![Deploy](https://github.com/batbrain9392/cv-builder/actions/workflows/deploy.yml/badge.svg)](https://github.com/batbrain9392/cv-builder/actions/workflows/deploy.yml)
 
 <img src="docs/screenshot-desktop.png" alt="Desktop view" height="280" /> &nbsp; <img src="docs/screenshot-form.png" alt="Mobile editor" height="280" /> &nbsp; <img src="docs/screenshot-preview.png" alt="Mobile preview" height="280" />
 
@@ -56,7 +55,7 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 
 ## 🚀 Deployment
 
-Deployed automatically to **GitHub Pages** on every push to `main` via [GitHub Actions](.github/workflows/deploy.yml). The app is served under a `/cv-builder/` subpath and uses `HashRouter` for client-side routing, so in-app URLs look like `/#/app`.
+Deployed automatically to **GitHub Pages** on every push to `main` via [GitHub Actions](.github/workflows/ci.yml). CI runs lint, typecheck, tests, and build — deploy only happens if all checks pass. The app is served under a `/cv-builder/` subpath and uses `HashRouter` for client-side routing, so in-app URLs look like `/#/app`.
 
 To enable on a fresh fork: go to **Settings > Pages** and set the source to **GitHub Actions**.
 
