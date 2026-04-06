@@ -46,6 +46,51 @@ import { PersonalInfoFields } from '../cv/form/PersonalInfoFields.tsx';
 import { SectionToolbar } from '../cv/form/SectionToolbar.tsx';
 import { EMPTY_EDUCATION, EMPTY_ENTRY } from './useCvEditorForm.ts';
 
+interface GeneratedSummaryCardProps {
+  summary: { content: string; reasoning: string };
+  onCopy: (text: string) => void;
+  onDismiss: () => void;
+  onUse: () => void;
+}
+
+function GeneratedSummaryCard({ summary, onCopy, onDismiss, onUse }: GeneratedSummaryCardProps) {
+  return (
+    <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-medium text-muted-foreground">
+          AI-generated summary
+          {summary.reasoning && <span className="block font-normal">{summary.reasoning}</span>}
+        </span>
+        <div className="flex gap-1">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            onClick={() => onCopy(summary.content)}
+            aria-label="Copy to clipboard"
+          >
+            <ClipboardIcon />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-xs"
+            onClick={onDismiss}
+            aria-label="Dismiss"
+          >
+            <XIcon />
+          </Button>
+        </div>
+      </div>
+      <BlockMarkdown text={summary.content} className="text-sm" />
+      <Button type="button" variant="default" size="sm" onClick={onUse}>
+        <CheckIcon data-icon="inline-start" />
+        Use this summary
+      </Button>
+    </div>
+  );
+}
+
 interface CvFormPanelProps {
   register: UseFormRegister<CvFormData>;
   control: Control<CvFormData>;
@@ -379,47 +424,14 @@ export function CvFormPanel({
                   )}
                 </div>
 
-                {ai.generatedSummary &&
-                  (() => {
-                    const summary = ai.generatedSummary;
-                    return (
-                      <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs font-medium text-muted-foreground">
-                            AI-generated summary
-                            {summary.reasoning && (
-                              <span className="block font-normal">{summary.reasoning}</span>
-                            )}
-                          </span>
-                          <div className="flex gap-1">
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon-xs"
-                              onClick={() => ai.onCopyGenerated(summary.content)}
-                              aria-label="Copy to clipboard"
-                            >
-                              <ClipboardIcon />
-                            </Button>
-                            <Button
-                              type="button"
-                              variant="ghost"
-                              size="icon-xs"
-                              onClick={() => ai.setGeneratedSummary(null)}
-                              aria-label="Dismiss"
-                            >
-                              <XIcon />
-                            </Button>
-                          </div>
-                        </div>
-                        <BlockMarkdown text={summary.content} className="text-sm" />
-                        <Button type="button" variant="default" size="sm" onClick={ai.onUseSummary}>
-                          <CheckIcon data-icon="inline-start" />
-                          Use this summary
-                        </Button>
-                      </div>
-                    );
-                  })()}
+                {ai.generatedSummary && (
+                  <GeneratedSummaryCard
+                    summary={ai.generatedSummary}
+                    onCopy={ai.onCopyGenerated}
+                    onDismiss={() => ai.setGeneratedSummary(null)}
+                    onUse={ai.onUseSummary}
+                  />
+                )}
               </CollapsibleContent>
             </Collapsible>
           </FieldGroup>
