@@ -1,5 +1,5 @@
-import { FileTextIcon } from 'lucide-react';
-import { useCallback, useEffect, useRef } from 'react';
+import { FileTextIcon, InfoIcon, XIcon } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useWatch, type Control } from 'react-hook-form';
 
 import type { CvFormData } from '../cvFormSchema.ts';
@@ -63,10 +63,19 @@ function useFormData(control: Control<CvFormData>, defaultValues: CvFormData): C
 interface CvPreviewPanelProps {
   control: Control<CvFormData>;
   defaultValues: CvFormData;
+  isStarterData?: boolean;
+  onGoToImport?: () => void;
 }
 
-export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) {
+export function CvPreviewPanel({
+  control,
+  defaultValues,
+  isStarterData,
+  onGoToImport,
+}: CvPreviewPanelProps) {
   const data = useFormData(control, defaultValues);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
+  const showBanner = isStarterData && !bannerDismissed;
   const wrapperRef = useRef<HTMLDivElement>(null);
 
   const updateScale = useCallback(() => {
@@ -99,6 +108,39 @@ export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) 
           below to export a DOCX &mdash; open in Word or Google Docs and save as PDF.
         </p>
       </div>
+      {showBanner && (
+        <div
+          role="status"
+          className="mb-6 flex items-start gap-2.5 rounded-lg border border-primary/20 bg-primary/10 px-3.5 py-3 text-sm text-foreground"
+        >
+          <InfoIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
+          <p className="flex-1">
+            This is <strong>sample data</strong> to show how the editor works.{' '}
+            {onGoToImport ? (
+              <>
+                <button
+                  type="button"
+                  onClick={onGoToImport}
+                  className="font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
+                >
+                  Import your CV
+                </button>{' '}
+                or fill in your details to get started.
+              </>
+            ) : (
+              'Fill in your details to get started.'
+            )}
+          </p>
+          <button
+            type="button"
+            onClick={() => setBannerDismissed(true)}
+            className="mt-0.5 shrink-0 rounded-sm p-0.5 text-foreground/60 transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            aria-label="Dismiss sample data notice"
+          >
+            <XIcon className="size-3.5" />
+          </button>
+        </div>
+      )}
       <div ref={wrapperRef} className="flex justify-center">
         <CvPreview data={data} />
       </div>

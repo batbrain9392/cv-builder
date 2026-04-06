@@ -126,6 +126,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
+  const [isStarterData, setIsStarterData] = useState(() => !hasUserCv());
   const [toolsOpen, setToolsOpen] = useState(() => !hasUserCv());
   const [mainCardOpen, setMainCardOpen] = useState(true);
   const [sections, setSections] = useState<Record<SectionKey, boolean>>(() => allSections(false));
@@ -202,6 +203,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const afterImport = useCallback(
     (data: CvFormData) => {
       saveCv(data);
+      setIsStarterData(false);
       setShowBackupBanner(true);
       setToolsOpen(false);
       setMainCardOpen(true);
@@ -260,18 +262,29 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const onClearAll = useCallback(() => {
     reset(EMPTY_DEFAULTS);
     clearCv();
+    setIsStarterData(false);
     setClearConfirmOpen(false);
     toast.success('All data cleared.');
   }, [reset]);
 
   const onSaveToBrowser = useCallback(() => {
     saveCv(getValues());
+    setIsStarterData(false);
     toast.success('Saved to browser.');
   }, [getValues]);
 
   const onValidationError = useCallback(() => {
     toast.error('Please fix the highlighted errors before downloading.');
     setDownloadDialogOpen(false);
+  }, []);
+
+  const scrollToImport = useCallback(() => {
+    setToolsOpen(true);
+    requestAnimationFrame(() => {
+      document
+        .getElementById('tools-import-title')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
   }, []);
 
   const onPickJsonFile = () => fileInputRef.current?.click();
@@ -412,25 +425,32 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                   </>
                 }
                 description={
-                  <>
-                    This starts with sample data to show you how the editor works. Clear it and add
-                    your own, or use{' '}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setToolsOpen(true);
-                        requestAnimationFrame(() => {
-                          document
-                            .getElementById('tools-import-title')
-                            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                        });
-                      }}
-                      className="inline font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
-                    >
-                      Import existing CV
-                    </button>{' '}
-                    above to load a previous backup or parse an existing CV.
-                  </>
+                  isStarterData ? (
+                    <>
+                      This starts with sample data to show you how the editor works. Clear it and
+                      add your own, or use{' '}
+                      <button
+                        type="button"
+                        onClick={scrollToImport}
+                        className="inline font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
+                      >
+                        Import existing CV
+                      </button>{' '}
+                      above to load a previous backup or parse an existing CV.
+                    </>
+                  ) : (
+                    <>
+                      Edit your CV details below. Use{' '}
+                      <button
+                        type="button"
+                        onClick={scrollToImport}
+                        className="inline font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
+                      >
+                        Import existing CV
+                      </button>{' '}
+                      above to load a previous backup or parse an existing CV.
+                    </>
+                  )
                 }
                 open={mainCardOpen}
                 onOpenChange={setMainCardOpen}
@@ -784,7 +804,12 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                   </div>
                 )}
               >
-                <CvPreviewPanel control={control} defaultValues={defaultValues} />
+                <CvPreviewPanel
+                  control={control}
+                  defaultValues={defaultValues}
+                  isStarterData={isStarterData}
+                  onGoToImport={scrollToImport}
+                />
               </ErrorBoundary>
             </div>
           )}
@@ -829,7 +854,12 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                 </div>
               )}
             >
-              <CvPreviewPanel control={control} defaultValues={defaultValues} />
+              <CvPreviewPanel
+                control={control}
+                defaultValues={defaultValues}
+                isStarterData={isStarterData}
+                onGoToImport={scrollToImport}
+              />
             </ErrorBoundary>
             <div className="px-4 pb-8 lg:px-6 xl:px-8">
               <div className="flex items-center justify-end gap-3 border-t pt-6">

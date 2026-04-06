@@ -8,6 +8,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 test('app boots with starter data and preview updates on edit', async ({ page }) => {
   await page.goto('/#/app');
 
+  await page.getByRole('button', { name: /Personal Information/ }).click();
+
   const nameInput = page.locator('#name');
   await expect(nameInput).toHaveValue('Jane Doe');
 
@@ -35,6 +37,8 @@ test('import JSON file populates the form', async ({ page }) => {
 
 test('clear all resets the form after confirmation', async ({ page }) => {
   await page.goto('/#/app');
+
+  await page.getByRole('button', { name: /Personal Information/ }).click();
 
   await expect(page.locator('#name')).toHaveValue('Jane Doe');
 
