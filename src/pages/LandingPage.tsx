@@ -338,7 +338,7 @@ function GetStartedSection() {
 
 function AtsSectionsGrid() {
   return (
-    <SectionWrapper className="bg-secondary text-secondary-foreground">
+    <SectionWrapper className="bg-background text-foreground">
       <SectionHeading>Sections that matter to the machine</SectionHeading>
 
       <p className="mx-auto -mt-4 mb-8 max-w-2xl text-center text-sm text-muted-foreground sm:text-base">
@@ -389,7 +389,7 @@ const AI_STEPS = [
 
 function AiTailoringSection() {
   return (
-    <SectionWrapper className="bg-background text-foreground" id="ai-tailoring">
+    <SectionWrapper className="bg-secondary text-secondary-foreground" id="ai-tailoring">
       <div className="mx-auto max-w-3xl text-center">
         <div className="mb-4 flex items-center justify-center gap-2.5">
           <GeminiIcon className="size-6" />
@@ -440,7 +440,7 @@ function AiTailoringSection() {
 
 function FeaturesSection() {
   return (
-    <SectionWrapper className="bg-secondary text-secondary-foreground">
+    <SectionWrapper className="bg-background text-foreground">
       <SectionHeading>How BioBot helps you land the interview</SectionHeading>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
