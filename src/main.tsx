@@ -5,7 +5,10 @@ import { toast } from 'sonner';
 
 import { App } from './App.tsx';
 import { loadDefaultValues } from './cv/loadDefaultValues.ts';
+import { patchIosKeyboardGap } from './lib/patchIosKeyboardGap.ts';
 import './index.css';
+
+patchIosKeyboardGap();
 
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   navigator.serviceWorker.register('/cv-builder/sw.js').then((reg) => {
