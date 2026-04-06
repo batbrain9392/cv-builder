@@ -33,6 +33,7 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 - 💾 **`localStorage`** is used to save your CV data, Gemini API key, and theme preference in your browser so you can pick up where you left off. Nothing is sent to any server.
 - 🔑 Your Gemini API key is stored locally on your device — never on a server. Anyone with access to this browser can read it, so use a device you trust.
 - 📤 You can also export your data as JSON or DOCX at any time. Use **Clear all** in the editor to wipe both the form and local storage.
+- 🐛 **Error monitoring** uses [Sentry](https://sentry.io) in production to track crashes and failed API calls so bugs can be fixed quickly. All events are scrubbed of API keys, email addresses, phone numbers, and UUIDs **in the browser** before anything is sent. The SDK does not attach IP addresses or user identifiers to events (`sendDefaultPii` is off, `event.user` is deleted). Sentry's server-side **"Prevent Storing IP Addresses"** setting is also enabled. Only console warnings and errors are captured — not general logs.
 
 ## ⚙️ Tech stack
 
@@ -45,6 +46,7 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 | 🔀  | [react-router](https://reactrouter.com)                                      | Client-side routing       |
 | 📄  | [docx.js](https://docx.js.org)                                               | Word document generation  |
 | 📝  | [marked](https://marked.js.org)                                              | Markdown rendering        |
+| 🐛  | [Sentry](https://sentry.io)                                                  | Error monitoring          |
 | 🌐  | Fully client-side                                                            | No backend required       |
 
 ## 🛠️ Built with
