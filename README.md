@@ -59,7 +59,7 @@ To enable on a fresh fork: go to **Settings > Pages** and set the source to **Gi
 
 ## 💻 Local development
 
-Requires **Node 20+**.
+Requires **Node 24+**.
 
 ```bash
 npm ci
