@@ -1,3 +1,4 @@
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import react from '@vitejs/plugin-react';
 import { execSync } from 'node:child_process';
@@ -31,19 +32,31 @@ function stampServiceWorker(): Plugin {
 
 export default defineConfig({
   base: '/cv-builder/',
-  plugins: [tailwindcss(), react(), stampServiceWorker()],
+  plugins: [
+    tailwindcss(),
+    react(),
+    stampServiceWorker(),
+    sentryVitePlugin({
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      sourcemaps: { filesToDeleteAfterUpload: ['./dist/**/*.map'] },
+      disable: !process.env.SENTRY_AUTH_TOKEN,
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
   build: {
+    sourcemap: 'hidden',
     rollupOptions: {
       output: {
         manualChunks: {
           docx: ['docx'],
           genai: ['@google/genai'],
           mammoth: ['mammoth'],
+          sentry: ['@sentry/react'],
           vendor: [
             'react',
             'react-dom',
