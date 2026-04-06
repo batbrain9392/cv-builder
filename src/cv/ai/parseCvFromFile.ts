@@ -1,62 +1,24 @@
 import type { ParseCvResult } from './parseCvFromText.ts';
 
-import { extractTextFromDocx, fileToBase64, fileToText } from './fileUtils.ts';
+import {
+  extractTextFromDocx,
+  fileToBase64,
+  fileToText,
+  INLINE_GEMINI_MIME_TYPES,
+  MAX_FILE_SIZE,
+  resolveMimeType,
+  SUPPORTED_MIME_TYPES,
+} from './fileUtils.ts';
 import { parseCvFromText, SYSTEM_PROMPT, validateParsedCv } from './parseCvFromText.ts';
 
-const SUPPORTED_MIME_TYPES = new Set([
-  'application/pdf',
-  'image/png',
-  'image/jpeg',
-  'image/webp',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  'text/plain',
-]);
-
-const INLINE_GEMINI_MIME_TYPES = new Set([
-  'application/pdf',
-  'image/png',
-  'image/jpeg',
-  'image/webp',
-]);
-
-const MAX_FILE_SIZE = 10 * 1024 * 1024;
-
 const MODEL = 'gemini-2.5-flash';
-
-function inferMimeFromFileName(fileName: string): string | undefined {
-  const lower = fileName.toLowerCase();
-  const dot = lower.lastIndexOf('.');
-  if (dot === -1) return undefined;
-  const ext = lower.slice(dot + 1);
-  switch (ext) {
-    case 'pdf':
-      return 'application/pdf';
-    case 'docx':
-      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    case 'txt':
-      return 'text/plain';
-    case 'png':
-      return 'image/png';
-    case 'jpg':
-    case 'jpeg':
-      return 'image/jpeg';
-    case 'webp':
-      return 'image/webp';
-    default:
-      return undefined;
-  }
-}
 
 export async function parseCvFromFile(apiKey: string, file: File): Promise<ParseCvResult> {
   if (file.size > MAX_FILE_SIZE) {
     throw new Error('File exceeds maximum size of 10 MB.');
   }
 
-  let mimeType = file.type.trim();
-  if (!mimeType) {
-    const inferred = inferMimeFromFileName(file.name);
-    if (inferred) mimeType = inferred;
-  }
+  const mimeType = resolveMimeType(file);
 
   if (!SUPPORTED_MIME_TYPES.has(mimeType)) {
     throw new Error('Unsupported file type.');

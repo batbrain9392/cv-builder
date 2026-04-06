@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import type { CvFormData } from '../cvFormSchema.ts';
 
 import { extractTextFromFile } from '../ai/extractTextFromFile.ts';
+import { INLINE_GEMINI_MIME_TYPES, resolveMimeType } from '../ai/fileUtils.ts';
 
 interface JobDescriptionFieldsProps {
   register: UseFormRegister<CvFormData>;
@@ -19,37 +20,8 @@ interface JobDescriptionFieldsProps {
   onJobDescriptionExtracted: (text: string) => void;
 }
 
-function resolveMimeForExtraction(file: File): string {
-  const trimmedType = file.type.trim();
-  if (trimmedType) return trimmedType;
-  const ext = file.name.toLowerCase().split('.').pop();
-  switch (ext) {
-    case 'pdf':
-      return 'application/pdf';
-    case 'docx':
-      return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-    case 'txt':
-      return 'text/plain';
-    case 'png':
-      return 'image/png';
-    case 'jpg':
-    case 'jpeg':
-      return 'image/jpeg';
-    case 'webp':
-      return 'image/webp';
-    default:
-      return '';
-  }
-}
-
 function fileNeedsGeminiExtraction(file: File): boolean {
-  const mime = resolveMimeForExtraction(file);
-  return (
-    mime === 'application/pdf' ||
-    mime === 'image/png' ||
-    mime === 'image/jpeg' ||
-    mime === 'image/webp'
-  );
+  return INLINE_GEMINI_MIME_TYPES.has(resolveMimeType(file));
 }
 
 export function JobDescriptionFields({
