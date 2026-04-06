@@ -73,8 +73,8 @@ export function CollapsibleCard({
         </div>
 
         <CollapsibleContent>
-          <CardContent className="space-y-6">
-            {description && <p className="text-sm text-muted-foreground">{description}</p>}
+          <CardContent className="divided-sections">
+            {description && <p className="mb-2 text-sm text-muted-foreground">{description}</p>}
             {children}
           </CardContent>
         </CollapsibleContent>

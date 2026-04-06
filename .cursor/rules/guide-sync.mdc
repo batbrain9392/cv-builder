@@ -1,0 +1,15 @@
+---
+description: Keep the guide page in sync when editor features, AI workflows, or export logic change
+globs: ["src/pages/CvEditorPage.tsx", "src/cv/form/**", "src/cv/ai/**", "src/cv/export/**", "src/cv/preview/**", "src/components/InstallPwa.tsx"]
+---
+# Guide Page Sync
+
+`src/pages/GuidePage.tsx` documents how to use the app. When you modify any feature covered by the guide, check whether the guide text still accurately describes the current behavior.
+
+## Rules
+
+- After changing import, export, AI tailoring, preview, form sections, or PWA install behavior, read the relevant section in `GuidePage.tsx` and update it if the description no longer matches.
+- Do not add or remove guide sections without explicit user confirmation.
+- Keep guide text concise and factual — no marketing language.
+- If you rename a UI element (button label, section title, etc.) that the guide references by name, update the guide to match.
+- Screenshot placeholder slots (`ScreenshotSlot`) should not be removed or reordered without asking.

@@ -2,6 +2,7 @@ import type React from 'react';
 
 import {
   ArrowRightIcon,
+  BookOpenIcon,
   BriefcaseIcon,
   ExternalLinkIcon,
   FileTextIcon,
@@ -325,6 +326,24 @@ function GetStartedSection() {
             <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
           </div>
         ))}
+      </div>
+
+      <div className="mx-auto mt-10 max-w-lg rounded-xl border bg-card p-6 text-center ring-1 ring-foreground/5">
+        <BookOpenIcon className="mx-auto mb-3 size-6 text-primary-text" aria-hidden="true" />
+        <p className="mb-1 text-sm font-semibold text-card-foreground">
+          Need a detailed walkthrough?
+        </p>
+        <p className="mb-4 text-xs text-muted-foreground">
+          Step-by-step instructions for every feature — from importing your CV to exporting the
+          final DOCX.
+        </p>
+        <Link
+          to="/guide"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2 text-sm font-medium text-primary-text transition-colors hover:bg-primary/10"
+        >
+          <BookOpenIcon className="size-4" />
+          Read the full guide
+        </Link>
       </div>
     </SectionWrapper>
   );
@@ -798,6 +817,13 @@ function LandingNav({ shadow }: { shadow: boolean }) {
         <div className="flex items-center gap-2">
           <InstallPwa />
           <ThemeToggle />
+          <Link
+            to="/guide"
+            className="hidden items-center gap-1 rounded-lg border border-primary-foreground/30 px-2.5 py-1 text-[0.8rem] font-medium text-primary-foreground hover:bg-primary-foreground/15 sm:inline-flex"
+          >
+            <BookOpenIcon className="size-3.5" />
+            How to use
+          </Link>
           <Link
             to="/app"
             className="hidden items-center gap-1 rounded-lg border border-primary-foreground/30 px-2.5 py-1 text-[0.8rem] font-medium text-primary-foreground hover:bg-primary-foreground/15 sm:inline-flex"

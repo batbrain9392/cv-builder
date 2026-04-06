@@ -6,6 +6,7 @@ import type { CvFormData } from './cv/cvFormSchema.ts';
 import { CvEditorPage } from './pages/CvEditorPage.tsx';
 
 const LandingPage = lazy(() => import('./pages/LandingPage.tsx'));
+const GuidePage = lazy(() => import('./pages/GuidePage.tsx'));
 
 export function App({ defaultValues }: { defaultValues: CvFormData }) {
   return (
@@ -21,6 +22,20 @@ export function App({ defaultValues }: { defaultValues: CvFormData }) {
             }
           >
             <LandingPage />
+          </Suspense>
+        }
+      />
+      <Route
+        path="guide"
+        element={
+          <Suspense
+            fallback={
+              <div className="flex h-dvh items-center justify-center bg-background text-muted-foreground">
+                Loading…
+              </div>
+            }
+          >
+            <GuidePage />
           </Suspense>
         }
       />

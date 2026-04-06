@@ -125,3 +125,12 @@ body {
     @apply font-sans;
   }
 }
+
+@layer utilities {
+  .divided-sections > section {
+    padding-block: 1rem;
+  }
+  .divided-sections > section + section {
+    border-top: 1px solid var(--color-border);
+  }
+}
