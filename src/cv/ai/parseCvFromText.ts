@@ -67,7 +67,7 @@ const EXAMPLE_STRUCTURE = `{
   ]
 }`;
 
-const SYSTEM_PROMPT = `You are an expert CV/resume parser. ATS COMPATIBILITY IS THE PRIMARY OBJECTIVE — preserve the original structure and content faithfully. Given raw text from a CV, extract structured data and return ONLY valid JSON matching the exact schema below.
+export const SYSTEM_PROMPT = `You are an expert CV/resume parser. ATS COMPATIBILITY IS THE PRIMARY OBJECTIVE — preserve the original structure and content faithfully. Given raw text from a CV, extract structured data and return ONLY valid JSON matching the exact schema below.
 
 TARGET JSON STRUCTURE (follow this exactly):
 ${EXAMPLE_STRUCTURE}
@@ -188,29 +188,7 @@ export function buildIssuesFromZodError(error: z.ZodError): string[] {
   return issues;
 }
 
-export async function parseCvFromText(apiKey: string, rawText: string): Promise<ParseCvResult> {
-  const { GoogleGenAI } = await import('@google/genai');
-  const ai = new GoogleGenAI({ apiKey });
-
-  const response = await ai.models.generateContent({
-    model: MODEL,
-    config: {
-      systemInstruction: SYSTEM_PROMPT,
-      responseMimeType: 'application/json',
-    },
-    contents: rawText,
-  });
-
-  const text = response.text;
-  if (!text) throw new Error('Gemini returned an empty response.');
-
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(text);
-  } catch {
-    throw new Error('Gemini returned invalid JSON. Please try again.');
-  }
-
+export function validateParsedCv(parsed: unknown): ParseCvResult {
   if (typeof parsed !== 'object' || parsed === null) {
     throw new Error('Gemini returned unexpected data. Please try again.');
   }
@@ -256,4 +234,30 @@ export async function parseCvFromText(apiKey: string, rawText: string): Promise<
   };
 
   return { data: sortCvSections(typed), issues };
+}
+
+export async function parseCvFromText(apiKey: string, rawText: string): Promise<ParseCvResult> {
+  const { GoogleGenAI } = await import('@google/genai');
+  const ai = new GoogleGenAI({ apiKey });
+
+  const response = await ai.models.generateContent({
+    model: MODEL,
+    config: {
+      systemInstruction: SYSTEM_PROMPT,
+      responseMimeType: 'application/json',
+    },
+    contents: rawText,
+  });
+
+  const text = response.text;
+  if (!text) throw new Error('Gemini returned an empty response.');
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(text);
+  } catch {
+    throw new Error('Gemini returned invalid JSON. Please try again.');
+  }
+
+  return validateParsedCv(parsed);
 }

@@ -43,6 +43,7 @@ export default defineConfig({
         manualChunks: {
           docx: ['docx'],
           genai: ['@google/genai'],
+          mammoth: ['mammoth'],
           vendor: [
             'react',
             'react-dom',

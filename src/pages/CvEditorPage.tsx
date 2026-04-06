@@ -307,7 +307,14 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
 
                       <hr className="border-border/60" />
 
-                      <JobDescriptionFields register={register} errors={errors} />
+                      <JobDescriptionFields
+                        register={register}
+                        errors={errors}
+                        currentApiKey={aiApiKey ?? ''}
+                        onJobDescriptionExtracted={(text) =>
+                          setValue('jobDescriptionText', text, { shouldDirty: true })
+                        }
+                      />
 
                       <hr className="border-border/60" />
 

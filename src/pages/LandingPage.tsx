@@ -3,7 +3,6 @@ import type React from 'react';
 import {
   ArrowRightIcon,
   BriefcaseIcon,
-  ClipboardPasteIcon,
   ExternalLinkIcon,
   FileTextIcon,
   GraduationCapIcon,
@@ -16,6 +15,7 @@ import {
   SendIcon,
   ShieldCheckIcon,
   SparklesIcon,
+  UploadIcon,
   UserIcon,
   WandSparklesIcon,
 } from 'lucide-react';
@@ -86,7 +86,12 @@ const FEATURES = [
   {
     icon: SparklesIcon,
     title: 'AI-powered tailoring',
-    desc: 'Paste a job description and let Gemini rewrite your experience highlights with matching keywords — in seconds.',
+    desc: 'Upload or paste a job description and let Gemini rewrite your experience highlights with matching keywords — in seconds.',
+  },
+  {
+    icon: UploadIcon,
+    title: 'Upload any CV format',
+    desc: 'Drop in a PDF, Word document, or even a screenshot of your CV. Gemini reads it and populates every field automatically.',
   },
   {
     icon: FileTextIcon,
@@ -110,8 +115,8 @@ const FEATURES = [
   },
   {
     icon: KeyRoundIcon,
-    title: 'JSON import / export',
-    desc: 'Save your full career data as JSON. Reload it anytime to tailor for the next application.',
+    title: 'JSON backup & restore',
+    desc: 'Save your full career data as a JSON backup. Reload it anytime to tailor for the next application.',
   },
 ] as const;
 
@@ -169,8 +174,8 @@ function HeroSection({
 
         <p className="mt-4 max-w-xl text-base text-primary-foreground/80 sm:text-lg">
           Most CVs are rejected by applicant tracking systems before a human ever sees them. BioBot
-          helps you build an ATS-friendly CV — and optionally lets AI tailor your achievements to
-          the job description.
+          helps you build an ATS-friendly CV — upload your existing CV as a PDF, Word doc, or even a
+          screenshot, and AI fills in the editor for you.
         </p>
 
         <Link
@@ -249,6 +254,9 @@ function AtsExplainerSection() {
           </p>
           <ul className="space-y-1.5 text-sm text-muted-foreground">
             <li className="flex gap-2">
+              ✅ <span>Upload your existing CV and BioBot restructures it for ATS</span>
+            </li>
+            <li className="flex gap-2">
               ✅ <span>Single-column, structured headings</span>
             </li>
             <li className="flex gap-2">
@@ -273,6 +281,53 @@ function AtsExplainerSection() {
       <p className="mt-8 text-center text-xs text-muted-foreground">
         Estimates suggest that over 90% of large employers use an ATS as a first-pass filter.
       </p>
+    </SectionWrapper>
+  );
+}
+
+const GET_STARTED_STEPS = [
+  {
+    step: 1,
+    icon: UploadIcon,
+    title: 'Upload your CV',
+    desc: 'PDF, Word document, or a screenshot — just drag and drop.',
+  },
+  {
+    step: 2,
+    icon: KeyRoundIcon,
+    title: 'Add your free Gemini API key',
+    desc: 'Get a key from Google AI Studio in seconds — no billing required.',
+  },
+  {
+    step: 3,
+    icon: SparklesIcon,
+    title: 'Your CV is ready',
+    desc: 'Every field is populated. Review, tweak, and export as a clean DOCX.',
+  },
+] as const;
+
+function GetStartedSection() {
+  return (
+    <SectionWrapper className="bg-secondary text-secondary-foreground">
+      <SectionHeading>Get started in seconds</SectionHeading>
+      <p className="mx-auto -mt-4 mb-10 max-w-2xl text-center text-sm text-muted-foreground sm:text-base">
+        Already have a CV? Upload it and let Gemini do the rest. No manual data entry.
+      </p>
+      <div className="mx-auto grid max-w-4xl gap-5 sm:grid-cols-3">
+        {GET_STARTED_STEPS.map(({ step, icon: Icon, title, desc }) => (
+          <div
+            key={step}
+            className="relative rounded-xl border bg-card p-5 text-card-foreground ring-1 ring-foreground/5"
+          >
+            <span className="absolute -top-3 left-4 flex size-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
+              {step}
+            </span>
+            <Icon className="mb-3 size-5 text-primary-text" aria-hidden="true" />
+            <p className="mb-1 text-sm font-semibold">{title}</p>
+            <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
+          </div>
+        ))}
+      </div>
     </SectionWrapper>
   );
 }
@@ -314,9 +369,9 @@ function AtsSectionsGrid() {
 const AI_STEPS = [
   {
     step: 1,
-    icon: ClipboardPasteIcon,
-    title: 'Paste the job description',
-    desc: 'Drop in the full job posting. The AI uses it to identify the keywords, skills, and tone the employer is looking for.',
+    icon: UploadIcon,
+    title: 'Upload or paste the job description',
+    desc: 'Upload the job posting as a PDF, screenshot, or paste the text directly. The AI identifies keywords, skills, and tone.',
   },
   {
     step: 2,
@@ -839,6 +894,7 @@ export default function LandingPage() {
       <main>
         <HeroSection ctaRef={ctaRef} sectionRef={heroRef} />
         <AtsExplainerSection />
+        <GetStartedSection />
         <AtsSectionsGrid />
         <AiTailoringSection />
         <FeaturesSection />
