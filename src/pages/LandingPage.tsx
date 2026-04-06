@@ -158,13 +158,13 @@ function HeroSection({
   return (
     <section
       ref={sectionRef}
-      className="relative flex min-h-dvh flex-col items-center justify-center overflow-hidden bg-primary px-4 text-primary-foreground"
+      className="relative bg-primary px-4 pt-24 pb-16 text-primary-foreground sm:pb-20"
     >
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,var(--hero-glow),transparent_70%)]" />
 
-      <div className="relative z-10 flex max-w-3xl flex-col items-center text-center">
+      <div className="relative z-10 mx-auto flex max-w-3xl flex-col items-center text-center">
         <RobotIcon
-          className="mb-6 size-20 drop-shadow-lg [--background:var(--primary)] sm:size-28"
+          className="mb-5 size-16 drop-shadow-lg [--background:var(--primary)] sm:size-20"
           aria-hidden="true"
         />
 
@@ -187,8 +187,6 @@ function HeroSection({
           <ArrowRightIcon className="size-4" />
         </Link>
       </div>
-
-      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-background/10 to-transparent" />
     </section>
   );
 }

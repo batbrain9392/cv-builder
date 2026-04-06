@@ -63,8 +63,8 @@ export function InstallPwa({
         </Popover.Trigger>
       </Tooltip>
       <Popover.Portal>
-        <Popover.Positioner align="end" sideOffset={12}>
-          <Popover.Popup className="z-50 max-w-64 rounded-lg border bg-popover p-3 text-sm text-popover-foreground shadow-md">
+        <Popover.Positioner align="end" sideOffset={12} className="z-60">
+          <Popover.Popup className="max-w-64 rounded-lg border bg-popover p-3 text-sm text-popover-foreground shadow-md">
             {hint}
           </Popover.Popup>
         </Popover.Positioner>
