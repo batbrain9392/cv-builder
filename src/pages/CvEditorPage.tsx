@@ -617,7 +617,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               ref={mobilePreviewRef}
               id="cv-preview-panel-mobile"
               aria-label="CV preview"
-              className="border-t bg-muted pb-32"
+              className="border-t bg-muted pb-20"
             >
               <ErrorBoundary
                 fallback={(reset) => (
@@ -769,7 +769,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         exporting={exporting}
       />
 
-      <Toaster position="bottom-left" />
+      <Toaster position="bottom-left" offset={isDesktop ? undefined : { bottom: 72 }} />
     </div>
   );
 }
