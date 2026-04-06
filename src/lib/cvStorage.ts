@@ -25,6 +25,14 @@ export function loadCv(): CvFormData | null {
   }
 }
 
+export function hasUserCv(): boolean {
+  try {
+    return localStorage.getItem(STORAGE_KEY) !== null;
+  } catch {
+    return false;
+  }
+}
+
 export function clearCv(): void {
   try {
     localStorage.removeItem(STORAGE_KEY);

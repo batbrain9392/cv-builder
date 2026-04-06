@@ -308,27 +308,35 @@ function createCvDocx(docx: Docx, data: CvFormData) {
       ? [sectionHeading(docx, 'Skills'), ...data.skills.map((line) => itemParagraph(docx, line))]
       : []),
 
-    sectionHeading(docx, 'Work Experience'),
-    ...data.experience.flatMap((exp) =>
-      entryParagraphs(
-        docx,
-        `${exp.role}, ${exp.company}`,
-        formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location),
-        exp.items,
-        exp.tagsLabel,
-        exp.tags,
-      ),
-    ),
+    ...(data.experience.length > 0
+      ? [
+          sectionHeading(docx, 'Work Experience'),
+          ...data.experience.flatMap((exp) =>
+            entryParagraphs(
+              docx,
+              `${exp.role}, ${exp.company}`,
+              formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location),
+              exp.items,
+              exp.tagsLabel,
+              exp.tags,
+            ),
+          ),
+        ]
+      : []),
 
-    sectionHeading(docx, 'Education'),
-    ...data.education.flatMap((edu) =>
-      entryParagraphs(
-        docx,
-        `${edu.degree}, ${edu.institution}`,
-        formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location),
-        edu.items,
-      ),
-    ),
+    ...(data.education.length > 0
+      ? [
+          sectionHeading(docx, 'Education'),
+          ...data.education.flatMap((edu) =>
+            entryParagraphs(
+              docx,
+              `${edu.degree}, ${edu.institution}`,
+              formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location),
+              edu.items,
+            ),
+          ),
+        ]
+      : []),
   ];
 
   if (data.others.length > 0) {

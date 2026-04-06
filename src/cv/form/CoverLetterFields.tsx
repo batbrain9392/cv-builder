@@ -16,6 +16,7 @@ import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
 import type { AiResult } from '../ai/generateWithAi.ts';
 import type { CvFormData } from '../cvFormSchema.ts';
 
+import { CollapsibleSection } from './CollapsibleSection.tsx';
 import { MarkdownHint } from './MarkdownHint.tsx';
 
 interface CoverLetterFieldsProps {
@@ -28,6 +29,8 @@ interface CoverLetterFieldsProps {
   onUse: () => void;
   onCopy: (text: string) => void;
   onDismiss: () => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function CoverLetterFields({
@@ -40,6 +43,8 @@ export function CoverLetterFields({
   onUse,
   onCopy,
   onDismiss,
+  open,
+  onOpenChange,
 }: CoverLetterFieldsProps) {
   const [aiOpen, setAiOpen] = useState(false);
   const apiKey = useWatch({ control, name: 'aiApiKey' });
@@ -47,11 +52,17 @@ export function CoverLetterFields({
   const canGenerate = Boolean(apiKey) && Boolean(jdText);
 
   return (
-    <section aria-labelledby="cover-letter-title" className="space-y-1.5">
-      <h3 id="cover-letter-title" className="flex items-center gap-1.5 text-sm font-semibold">
-        <EmojiIcon emoji="✉️" />
-        Cover Letter <span className="font-normal text-muted-foreground">(optional)</span>
-      </h3>
+    <CollapsibleSection
+      id="cover-letter-title"
+      open={open}
+      onOpenChange={onOpenChange}
+      title={
+        <>
+          <EmojiIcon emoji="✉️" />
+          Cover Letter <span className="font-normal text-muted-foreground">(optional)</span>
+        </>
+      }
+    >
       <FieldGroup>
         <Field orientation="horizontal">
           <label htmlFor="coverLetterEnabled" className="flex items-center gap-2 text-sm">
@@ -94,7 +105,7 @@ export function CoverLetterFields({
               />
             }
           >
-            <Badge variant="secondary" className="h-auto gap-1 text-xs [&>svg]:!size-3.5">
+            <Badge variant="secondary" className="h-auto gap-1 text-xs [&>svg]:size-3.5!">
               <GeminiIcon className="size-3.5" />
               <ChevronDownIcon
                 className={'size-3.5 transition-transform' + (aiOpen ? ' rotate-180' : '')}
@@ -176,6 +187,6 @@ export function CoverLetterFields({
           </CollapsibleContent>
         </Collapsible>
       </FieldGroup>
-    </section>
+    </CollapsibleSection>
   );
 }

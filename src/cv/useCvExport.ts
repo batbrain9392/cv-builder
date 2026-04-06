@@ -11,7 +11,11 @@ import { downloadBlob } from './downloadBlob.ts';
 import { createCvDocxBlob } from './export/CvDocxDocument.ts';
 import { AI_FIELD_DEFAULTS, backfillEntryPrompts } from './loadDefaultValues.ts';
 
-export function useCvExport(reset: UseFormReset<CvFormData>, onExported?: () => void) {
+export function useCvExport(
+  reset: UseFormReset<CvFormData>,
+  onExported?: () => void,
+  onJsonImported?: (data: CvFormData) => void,
+) {
   const [exporting, setExporting] = useState(false);
   const [apiKeyWarningOpen, setApiKeyWarningOpen] = useState(false);
   const pendingExportData = useRef<CvFormData | null>(null);
@@ -76,7 +80,9 @@ export function useCvExport(reset: UseFormReset<CvFormData>, onExported?: () => 
         const withDefaults = backfillEntryPrompts({ ...AI_FIELD_DEFAULTS, ...data });
         const parsed = cvFormSchema.safeParse(withDefaults);
         if (parsed.success) {
-          reset(sortCvSections(parsed.data));
+          const sorted = sortCvSections(parsed.data);
+          reset(sorted);
+          onJsonImported?.(sorted);
           toast.success('CV data loaded successfully.');
         } else {
           toast.error('Invalid cv.json format.');

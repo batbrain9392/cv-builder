@@ -1,11 +1,10 @@
 import type { UseFormRegister, Control, FieldErrors } from 'react-hook-form';
 
-import { ChevronsDownUpIcon, ChevronsUpDownIcon, TrashIcon } from 'lucide-react';
+import { ChevronDownIcon, TrashIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -67,17 +66,18 @@ export function ExperienceEntryFields({
   const summary = [role, company].filter(Boolean).join(' at ') || 'New entry';
 
   return (
-    <Card>
+    <div className="rounded-lg border border-border/60 py-3">
       <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
         <div className="flex items-center justify-between px-4">
           <CollapsibleTrigger
-            render={<Button variant="ghost" className="flex-1 justify-start gap-2 text-left" />}
+            render={<Button variant="ghost" className="flex-1 justify-start gap-1.5 text-left" />}
           >
-            {open ? (
-              <ChevronsDownUpIcon className="size-4 shrink-0 text-muted-foreground" />
-            ) : (
-              <ChevronsUpDownIcon className="size-4 shrink-0 text-muted-foreground" />
-            )}
+            <ChevronDownIcon
+              className={
+                'size-3.5 shrink-0 text-muted-foreground transition-transform' +
+                (open ? ' rotate-180' : '')
+              }
+            />
             <span className="truncate text-sm font-medium">{summary}</span>
           </CollapsibleTrigger>
           <Button
@@ -93,7 +93,7 @@ export function ExperienceEntryFields({
         </div>
 
         <CollapsibleContent>
-          <CardContent>
+          <div className="px-4">
             <FieldGroup>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field data-invalid={entryErrors?.role ? true : undefined}>
@@ -254,9 +254,9 @@ export function ExperienceEntryFields({
                 </Field>
               </div>
             </FieldGroup>
-          </CardContent>
+          </div>
         </CollapsibleContent>
       </Collapsible>
-    </Card>
+    </div>
   );
 }

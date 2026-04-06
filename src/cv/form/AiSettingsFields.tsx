@@ -7,19 +7,28 @@ import { Input } from '@/components/ui/input';
 import type { CvFormData } from '../cvFormSchema.ts';
 
 import { GEMINI_HELP_STEPS } from '../ai/geminiHelpSteps.tsx';
+import { CollapsibleSection } from './CollapsibleSection.tsx';
 
 interface AiSettingsFieldsProps {
   register: UseFormRegister<CvFormData>;
   errors: FieldErrors<CvFormData>;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
-export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
+export function AiSettingsFields({ register, errors, open, onOpenChange }: AiSettingsFieldsProps) {
   return (
-    <section aria-labelledby="ai-settings-title" className="space-y-1.5">
-      <h3 id="ai-settings-title" className="flex items-center gap-1.5 text-sm font-semibold">
-        <GeminiIcon className="h-4" />
-        Gemini API <span className="font-normal text-muted-foreground">(optional)</span>
-      </h3>
+    <CollapsibleSection
+      id="ai-settings-title"
+      open={open}
+      onOpenChange={onOpenChange}
+      title={
+        <>
+          <GeminiIcon className="h-4" />
+          Gemini API <span className="font-normal text-muted-foreground">(optional)</span>
+        </>
+      }
+    >
       <FieldGroup>
         <ol className="list-inside list-decimal space-y-2 rounded-lg border bg-muted/50 p-3 text-xs text-muted-foreground">
           {GEMINI_HELP_STEPS.map((step) => (
@@ -52,6 +61,6 @@ export function AiSettingsFields({ register, errors }: AiSettingsFieldsProps) {
           {errors.aiApiKey && <FieldError id="aiApiKey-error" errors={[errors.aiApiKey]} />}
         </Field>
       </FieldGroup>
-    </section>
+    </CollapsibleSection>
   );
 }

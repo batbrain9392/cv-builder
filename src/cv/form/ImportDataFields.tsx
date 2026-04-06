@@ -19,17 +19,22 @@ import type { CvFormData } from '../cvFormSchema.ts';
 
 import { parseCvFromFile } from '../ai/parseCvFromFile.ts';
 import { parseCvFromText, type ParseCvResult } from '../ai/parseCvFromText.ts';
+import { CollapsibleSection } from './CollapsibleSection.tsx';
 
 interface ImportDataFieldsProps {
   currentApiKey: string;
   onPickJsonFile: () => void;
   onImportParsed: (data: CvFormData) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function ImportDataFields({
   currentApiKey,
   onPickJsonFile,
   onImportParsed,
+  open,
+  onOpenChange,
 }: ImportDataFieldsProps) {
   const [file, setFile] = useState<File | null>(null);
   const [dropZoneKey, setDropZoneKey] = useState(0);
@@ -99,11 +104,17 @@ export function ImportDataFields({
   const hasIssues = parseResult !== null && parseResult.issues.length > 0;
 
   return (
-    <section aria-labelledby="import-data-title" className="space-y-3">
-      <h3 id="import-data-title" className="flex items-center gap-1.5 text-sm font-semibold">
-        <FolderOpenIcon className="size-4" />
-        Load Existing Data
-      </h3>
+    <CollapsibleSection
+      id="import-data-title"
+      open={open}
+      onOpenChange={onOpenChange}
+      title={
+        <>
+          <FolderOpenIcon className="size-4" />
+          Load Existing Data <span className="font-normal text-muted-foreground">(optional)</span>
+        </>
+      }
+    >
       <p className="text-xs text-muted-foreground">
         Already have a CV? Upload a file or paste text and let Gemini parse it.
       </p>
@@ -278,6 +289,6 @@ export function ImportDataFields({
           </span>
         </span>
       </button>
-    </section>
+    </CollapsibleSection>
   );
 }

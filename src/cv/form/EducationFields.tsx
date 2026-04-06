@@ -1,12 +1,10 @@
-import type { UseFormRegister, Control, FieldArrayWithId, FieldErrors } from 'react-hook-form';
+import type { UseFormRegister, Control, FieldErrors } from 'react-hook-form';
 
-import { ChevronsDownUpIcon, ChevronsUpDownIcon, TrashIcon } from 'lucide-react';
+import { ChevronDownIcon, TrashIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useWatch } from 'react-hook-form';
 
-import { EmojiIcon } from '@/components/EmojiIcon';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
@@ -15,7 +13,6 @@ import type { CvFormData } from '../cvFormSchema.ts';
 
 import { HighlightsAiEnhance } from './HighlightsAiEnhance.tsx';
 import { HighlightsInput } from './HighlightsInput.tsx';
-import { SectionToolbar } from './SectionToolbar.tsx';
 
 interface EducationAiProps {
   canGenerate: boolean;
@@ -27,20 +24,7 @@ interface EducationAiProps {
   onDismissHighlights: () => void;
 }
 
-interface EducationFieldsProps {
-  fields: FieldArrayWithId<CvFormData, 'education', 'id'>[];
-  register: UseFormRegister<CvFormData>;
-  control: Control<CvFormData>;
-  errors?: FieldErrors<CvFormData>['education'];
-  onAdd: () => void;
-  onRemove: (index: number) => void;
-  toggleSignal?: { n: number; open: boolean };
-  onCollapse: () => void;
-  onExpand: () => void;
-  getAiProps?: (index: number) => EducationAiProps;
-}
-
-function EducationEntry({
+export function EducationEntry({
   index,
   register,
   control,
@@ -69,17 +53,18 @@ function EducationEntry({
   const summary = [degree, institution].filter(Boolean).join(' at ') || 'New entry';
 
   return (
-    <Card>
+    <div className="rounded-lg border border-border/60 py-3">
       <Collapsible open={open} onOpenChange={setOpen} className="flex flex-col gap-2">
         <div className="flex items-center justify-between px-4">
           <CollapsibleTrigger
-            render={<Button variant="ghost" className="flex-1 justify-start gap-2 text-left" />}
+            render={<Button variant="ghost" className="flex-1 justify-start gap-1.5 text-left" />}
           >
-            {open ? (
-              <ChevronsDownUpIcon className="size-4 shrink-0 text-muted-foreground" />
-            ) : (
-              <ChevronsUpDownIcon className="size-4 shrink-0 text-muted-foreground" />
-            )}
+            <ChevronDownIcon
+              className={
+                'size-3.5 shrink-0 text-muted-foreground transition-transform' +
+                (open ? ' rotate-180' : '')
+              }
+            />
             <span className="truncate text-sm font-medium">{summary}</span>
           </CollapsibleTrigger>
           <Button
@@ -95,7 +80,7 @@ function EducationEntry({
         </div>
 
         <CollapsibleContent>
-          <CardContent>
+          <div className="px-4">
             <FieldGroup>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field data-invalid={entryErrors?.degree ? true : undefined}>
@@ -217,53 +202,9 @@ function EducationEntry({
                 />
               )}
             </FieldGroup>
-          </CardContent>
+          </div>
         </CollapsibleContent>
       </Collapsible>
-    </Card>
-  );
-}
-
-export function EducationFields({
-  fields,
-  register,
-  control,
-  errors,
-  onAdd,
-  onRemove,
-  toggleSignal,
-  onCollapse,
-  onExpand,
-  getAiProps,
-}: EducationFieldsProps) {
-  return (
-    <section aria-labelledby="section-education" className="space-y-4">
-      <SectionToolbar
-        id="section-education"
-        title={
-          <>
-            <EmojiIcon emoji="🎓" /> Education
-          </>
-        }
-        count={fields.length}
-        onCollapse={onCollapse}
-        onExpand={onExpand}
-        onAdd={onAdd}
-        addLabel="Add Education"
-      />
-
-      {fields.map((field, index) => (
-        <EducationEntry
-          key={field.id}
-          index={index}
-          register={register}
-          control={control}
-          errors={errors}
-          onRemove={() => onRemove(index)}
-          toggleSignal={toggleSignal}
-          ai={getAiProps?.(index)}
-        />
-      ))}
-    </section>
+    </div>
   );
 }

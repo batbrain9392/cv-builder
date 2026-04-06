@@ -95,9 +95,8 @@ export function CvPreviewPanel({ control, defaultValues }: CvPreviewPanelProps) 
           <FileTextIcon className="size-5" aria-hidden="true" /> Preview
         </h2>
         <p className="text-sm text-muted-foreground">
-          ATS-friendly layout, designed to pass automated screeners and look great to recruiters.
-          What you see here is what they&rsquo;ll get. Use the <strong>Download</strong> button to
-          export a DOCX &mdash; open it in Word or Google Docs and save as PDF if needed.
+          ATS-friendly layout, built to pass automated screeners. Use <strong>Download</strong>{' '}
+          below to export a DOCX &mdash; open in Word or Google Docs and save as PDF.
         </p>
       </div>
       <div ref={wrapperRef} className="flex justify-center">

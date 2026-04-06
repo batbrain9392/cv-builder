@@ -125,27 +125,35 @@ export function CvPreview({ data }: CvPreviewProps) {
           </>
         )}
 
-        <SectionHeading>Work Experience</SectionHeading>
-        {data.experience.map((exp, i) => (
-          <Entry
-            key={i}
-            title={`${exp.role}, ${exp.company}`}
-            meta={formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location)}
-            items={exp.items}
-            tagsLabel={exp.tagsLabel}
-            tags={exp.tags}
-          />
-        ))}
+        {data.experience.length > 0 && (
+          <>
+            <SectionHeading>Work Experience</SectionHeading>
+            {data.experience.map((exp, i) => (
+              <Entry
+                key={i}
+                title={`${exp.role}, ${exp.company}`}
+                meta={formatEntryMeta(formatDateRange(exp.startDate, exp.endDate), exp.location)}
+                items={exp.items}
+                tagsLabel={exp.tagsLabel}
+                tags={exp.tags}
+              />
+            ))}
+          </>
+        )}
 
-        <SectionHeading>Education</SectionHeading>
-        {data.education.map((edu, i) => (
-          <Entry
-            key={i}
-            title={`${edu.degree}, ${edu.institution}`}
-            meta={formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location)}
-            items={edu.items}
-          />
-        ))}
+        {data.education.length > 0 && (
+          <>
+            <SectionHeading>Education</SectionHeading>
+            {data.education.map((edu, i) => (
+              <Entry
+                key={i}
+                title={`${edu.degree}, ${edu.institution}`}
+                meta={formatEntryMeta(formatDateRange(edu.startYear, edu.endYear), edu.location)}
+                items={edu.items}
+              />
+            ))}
+          </>
+        )}
 
         {data.others.length > 0 && (
           <>
