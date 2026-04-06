@@ -1,10 +1,8 @@
-# 🤖 BioBot &nbsp;<a href="https://batbrain9392.github.io/cv-builder/"><img src="https://img.shields.io/badge/Live_demo-visit-blue" alt="Live demo" /></a>
+# 🤖 BioBot &nbsp;<a href="https://batbrain9392.github.io/cv-builder/"><img src="https://img.shields.io/badge/Live_demo-visit-blue" alt="Live demo" /></a> <a href="https://github.com/batbrain9392/cv-builder/actions/workflows/ci.yml"><img src="https://github.com/batbrain9392/cv-builder/actions/workflows/ci.yml/badge.svg" alt="CI & Deploy" /></a>
 
 AI-powered CV and cover letter builder that runs entirely in your browser.
 
 ✍️ Writing a CV is hard. 🎯 Tailoring it for every job you apply to is even harder. This app lets you load your full career history once, paste a job description, let AI reshape your experience highlights and summary to match, then tweak the result before you export. 📋 The Word (DOCX) output uses clean, structured formatting designed to be parsed correctly by most applicant tracking systems (ATS).
-
-[![CI](https://github.com/batbrain9392/cv-builder/actions/workflows/ci.yml/badge.svg)](https://github.com/batbrain9392/cv-builder/actions/workflows/ci.yml)
 
 <img src="docs/screenshot-desktop.png" alt="Desktop view" height="280" /> &nbsp; <img src="docs/screenshot-form.png" alt="Mobile editor" height="280" /> &nbsp; <img src="docs/screenshot-preview.png" alt="Mobile preview" height="280" />
 
