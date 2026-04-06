@@ -18,6 +18,10 @@ export function useTheme() {
   useEffect(() => {
     document.documentElement.classList.toggle('dark', theme === 'dark');
     localStorage.setItem('theme', theme);
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', theme === 'dark' ? '#3d3d3d' : '#ffffff');
+    }
   }, [theme]);
 
   const toggle = useCallback(() => {

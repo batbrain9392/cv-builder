@@ -29,6 +29,7 @@ import { GuidePathPicker } from '@/guide/GuidePathPicker';
 import { GuidePhase } from '@/guide/GuidePhase';
 import { GuideSection } from '@/guide/GuideSection';
 import { GuideToc, type TocGroup } from '@/guide/GuideToc';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import { useIsInView } from '@/lib/useIsInView';
 import { useIsScrolledPast } from '@/lib/useIsScrolledPast';
 import { useMediaQuery } from '@/lib/useMediaQuery';
@@ -252,6 +253,7 @@ function ImportHint({ section }: { section: string }) {
 // ---------------------------------------------------------------------------
 
 export default function GuidePage() {
+  useDocumentTitle('Guide');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const ctaRef = useRef<HTMLElement>(null);

@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test",
+    "test:e2e": "playwright test --project=chromium",
     "generate:icons": "node scripts/generate-icons.mjs",
     "generate:og": "node scripts/generate-og-image.mjs",
     "generate:overview": "node scripts/generate-overview.mjs",

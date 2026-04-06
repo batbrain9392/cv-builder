@@ -39,13 +39,7 @@ export default tseslint.config(
   },
   {
     files: ['src/**/*.tsx'],
-    plugins: jsxA11y.flatConfigs.recommended.plugins,
-    rules: Object.fromEntries(
-      Object.entries(jsxA11y.flatConfigs.recommended.rules).map(([key, val]) => [
-        key,
-        Array.isArray(val) ? ['warn', ...val.slice(1)] : 'warn',
-      ]),
-    ),
+    ...jsxA11y.flatConfigs.recommended,
   },
   {
     files: ['src/**/*.test.ts'],

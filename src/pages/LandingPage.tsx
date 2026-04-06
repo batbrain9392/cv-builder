@@ -35,6 +35,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Field, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import { useIsInView } from '@/lib/useIsInView';
 import { useIsScrolledPast } from '@/lib/useIsScrolledPast';
 
@@ -900,6 +901,7 @@ function LandingFooter({ ref }: { ref: React.RefObject<HTMLElement | null> }) {
 // ---------------------------------------------------------------------------
 
 export default function LandingPage() {
+  useDocumentTitle();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const heroRef = useRef<HTMLElement>(null);

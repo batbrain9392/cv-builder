@@ -98,8 +98,8 @@ export function CvPreviewPanel({
   }, [updateScale]);
 
   return (
-    <div className="px-4 py-8 lg:p-6 xl:p-8">
-      <div className="mb-8 space-y-2">
+    <div className="space-y-6 px-4 py-8 lg:p-6 xl:p-8">
+      <div className="space-y-2">
         <h2 className="flex items-center gap-3 text-xl font-bold tracking-tight">
           <FileTextIcon className="size-5" aria-hidden="true" /> Preview
         </h2>
@@ -111,7 +111,7 @@ export function CvPreviewPanel({
       {showBanner && (
         <div
           role="status"
-          className="mb-6 flex items-start gap-2.5 rounded-lg border border-primary/20 bg-primary/10 px-3.5 py-3 text-sm text-foreground"
+          className="flex items-start gap-2.5 rounded-lg border border-primary/20 bg-primary/10 px-3.5 py-3 text-sm text-foreground"
         >
           <InfoIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
           <p className="flex-1">

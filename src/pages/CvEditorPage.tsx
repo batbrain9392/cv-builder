@@ -1,118 +1,26 @@
-import { AlertDialog } from '@base-ui/react/alert-dialog';
-import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  CheckIcon,
-  ChevronDownIcon,
-  ClipboardIcon,
-  DownloadIcon,
-  EyeIcon,
-  Loader2Icon,
-  PenLineIcon,
-  SaveIcon,
-  SettingsIcon,
-  Trash2Icon,
-  XIcon,
-} from 'lucide-react';
-import { useCallback, useMemo, useRef, useState } from 'react';
-import { useFieldArray, useForm, useWatch } from 'react-hook-form';
-import { toast } from 'sonner';
+import { DownloadIcon, EyeIcon, PenLineIcon } from 'lucide-react';
+import { useRef } from 'react';
 
-import { EmojiIcon } from '@/components/EmojiIcon';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
-import { GeminiIcon } from '@/components/GeminiIcon';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
-import { Field, FieldError, FieldGroup, FieldLabel } from '@/components/ui/field';
 import { Toaster } from '@/components/ui/sonner';
-import { Textarea } from '@/components/ui/textarea';
-import { CollapsibleCard } from '@/cv/form/CollapsibleCard.tsx';
-import { CollapsibleSection } from '@/cv/form/CollapsibleSection.tsx';
-import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
-import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
-import { clearCv, hasUserCv, saveCv } from '@/lib/cvStorage.ts';
+import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import { useIsInView } from '@/lib/useIsInView';
-import { useMediaQuery } from '@/lib/useMediaQuery';
 
 import type { CvFormData } from '../cv/cvFormSchema.ts';
 
-import { cvFormSchema, DEFAULT_HIGHLIGHTS_PROMPT } from '../cv/cvFormSchema.ts';
-import { AiSettingsFields } from '../cv/form/AiSettingsFields.tsx';
-import { BackupReminder } from '../cv/form/BackupReminder.tsx';
-import { CoverLetterFields } from '../cv/form/CoverLetterFields.tsx';
-import { DownloadDialog } from '../cv/form/DownloadDialog.tsx';
-import { EducationEntry } from '../cv/form/EducationFields.tsx';
-import { ExperienceEntryFields } from '../cv/form/ExperienceEntryFields.tsx';
 import { FormActions } from '../cv/form/FormActions.tsx';
-import { HighlightsInput } from '../cv/form/HighlightsInput.tsx';
-import { ImportDataFields } from '../cv/form/ImportDataFields.tsx';
-import { JobDescriptionFields } from '../cv/form/JobDescriptionFields.tsx';
-import { PersonalInfoFields } from '../cv/form/PersonalInfoFields.tsx';
-import { SectionToolbar } from '../cv/form/SectionToolbar.tsx';
-import { EMPTY_DEFAULTS } from '../cv/loadDefaultValues.ts';
 import { CvPreviewPanel } from '../cv/preview/CvPreviewPanel.tsx';
-import { useAiGeneration } from '../cv/useAiGeneration.ts';
-import { useCvExport } from '../cv/useCvExport.ts';
-
-const SECTION_KEYS = [
-  'personalInfo',
-  'summary',
-  'skills',
-  'experience',
-  'education',
-  'others',
-] as const;
-type SectionKey = (typeof SECTION_KEYS)[number];
-
-function allSections(open: boolean): Record<SectionKey, boolean> {
-  return {
-    personalInfo: open,
-    summary: open,
-    skills: open,
-    experience: open,
-    education: open,
-    others: open,
-  };
-}
-
-const TOOLS_SECTION_KEYS = ['aiSettings', 'importData', 'jobDescription', 'coverLetter'] as const;
-type ToolsSectionKey = (typeof TOOLS_SECTION_KEYS)[number];
-
-function allToolsSections(open: boolean): Record<ToolsSectionKey, boolean> {
-  return {
-    aiSettings: open,
-    importData: open,
-    jobDescription: open,
-    coverLetter: open,
-  };
-}
-
-const EMPTY_ENTRY = {
-  role: '',
-  company: '',
-  url: '',
-  startDate: '',
-  location: '',
-  items: [''],
-  tagsLabel: '',
-  tags: [],
-  aiHighlightsPrompt: DEFAULT_HIGHLIGHTS_PROMPT,
-};
-
-const EMPTY_EDUCATION = {
-  degree: '',
-  institution: '',
-  institutionUrl: '',
-  startYear: '',
-  location: '',
-  items: [''],
-  aiHighlightsPrompt: DEFAULT_HIGHLIGHTS_PROMPT,
-};
+import { CvEditorDialogs } from './CvEditorDialogs.tsx';
+import { CvFormPanel } from './CvFormPanel.tsx';
+import { useCvEditorForm } from './useCvEditorForm.ts';
 
 export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
+  useDocumentTitle('Editor');
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const mobilePreviewRef = useRef<HTMLDivElement>(null);
-  const isPreviewInView = useIsInView(mobilePreviewRef, {
+  const form = useCvEditorForm(defaultValues);
+
+  const isPreviewInView = useIsInView(form.mobilePreviewRef, {
     root: scrollContainerRef,
     threshold: 0.3,
   });
@@ -121,182 +29,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
     scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
   };
   const scrollToPreview = () => {
-    mobilePreviewRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
-
-  const [isStarterData, setIsStarterData] = useState(() => !hasUserCv());
-  const [toolsOpen, setToolsOpen] = useState(false);
-  const [mainCardOpen, setMainCardOpen] = useState(true);
-  const [sections, setSections] = useState<Record<SectionKey, boolean>>(() => allSections(false));
-  const [toolsSections, setToolsSections] = useState<Record<ToolsSectionKey, boolean>>(() =>
-    allToolsSections(false),
-  );
-  const [summaryAiOpen, setSummaryAiOpen] = useState(false);
-  const [expSignal, setExpSignal] = useState({ n: 0, open: true });
-  const [eduSignal, setEduSignal] = useState({ n: 0, open: true });
-  const [othSignal, setOthSignal] = useState({ n: 0, open: true });
-
-  const setSectionOpen = useCallback((key: SectionKey, open: boolean) => {
-    setSections((prev) => ({ ...prev, [key]: open }));
-  }, []);
-
-  const setToolsSectionOpen = useCallback((key: ToolsSectionKey, open: boolean) => {
-    setToolsSections((prev) => ({ ...prev, [key]: open }));
-  }, []);
-
-  const expandAllSections = useCallback(() => {
-    setSections(allSections(true));
-    setExpSignal((s) => ({ n: s.n + 1, open: true }));
-    setEduSignal((s) => ({ n: s.n + 1, open: true }));
-    setOthSignal((s) => ({ n: s.n + 1, open: true }));
-  }, []);
-
-  const collapseAllSections = useCallback(() => {
-    setSections(allSections(false));
-    setExpSignal((s) => ({ n: s.n + 1, open: false }));
-    setEduSignal((s) => ({ n: s.n + 1, open: false }));
-    setOthSignal((s) => ({ n: s.n + 1, open: false }));
-  }, []);
-
-  const expandAllToolsSections = useCallback(() => {
-    setToolsSections(allToolsSections(true));
-  }, []);
-
-  const collapseAllToolsSections = useCallback(() => {
-    setToolsSections(allToolsSections(false));
-  }, []);
-
-  const anySectionOpen = useMemo(() => SECTION_KEYS.some((k) => sections[k]), [sections]);
-  const anyToolsSectionOpen = useMemo(
-    () => TOOLS_SECTION_KEYS.some((k) => toolsSections[k]),
-    [toolsSections],
-  );
-
-  const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
-  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
-  const [showBackupBanner, setShowBackupBanner] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const {
-    register,
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-    setValue,
-    getValues,
-  } = useForm<CvFormData>({
-    resolver: zodResolver(cvFormSchema),
-    defaultValues,
-  });
-
-  const aiApiKey = useWatch({ control, name: 'aiApiKey' });
-  const canGenerate = Boolean(aiApiKey);
-
-  const links = useFieldArray({ control, name: 'personalInfo.links' });
-  const experience = useFieldArray({ control, name: 'experience' });
-  const education = useFieldArray({ control, name: 'education' });
-  const others = useFieldArray({ control, name: 'others' });
-
-  const afterImport = useCallback(
-    (data: CvFormData) => {
-      saveCv(data);
-      setIsStarterData(false);
-      setShowBackupBanner(true);
-      setToolsOpen(false);
-      setMainCardOpen(true);
-      setSections(allSections(true));
-      if (!isDesktop) {
-        requestAnimationFrame(() => {
-          mobilePreviewRef.current?.scrollIntoView({ behavior: 'smooth' });
-        });
-      }
-    },
-    [isDesktop],
-  );
-
-  const {
-    exporting,
-    apiKeyWarningOpen,
-    setApiKeyWarningOpen,
-    onImport,
-    onExportJson,
-    onExportDocx,
-    onExportJsonWithKey,
-    onExportJsonWithoutKey,
-  } = useCvExport(
-    reset,
-    () => {
-      setShowBackupBanner(false);
-      setDownloadDialogOpen(false);
-    },
-    afterImport,
-  );
-
-  const {
-    generatingSummary,
-    generatedSummary,
-    setGeneratedSummary,
-    onGenerateSummary,
-    onUseSummary,
-    onCopyGenerated,
-    generatingCoverLetter,
-    generatedCoverLetter,
-    setGeneratedCoverLetter,
-    onGenerateCoverLetter,
-    onUseCoverLetter,
-    buildEntryAiProps,
-  } = useAiGeneration(getValues, setValue, canGenerate);
-
-  const onImportParsed = useCallback(
-    (data: CvFormData) => {
-      reset(data);
-      afterImport(data);
-      toast.success('CV imported. Review and edit your data.');
-    },
-    [reset, afterImport],
-  );
-
-  const onClearAll = useCallback(() => {
-    reset(EMPTY_DEFAULTS);
-    clearCv();
-    setIsStarterData(false);
-    setClearConfirmOpen(false);
-    toast.success('All data cleared.');
-  }, [reset]);
-
-  const onSaveToBrowser = useCallback(() => {
-    saveCv(getValues());
-    setIsStarterData(false);
-    toast.success('Saved to browser.');
-  }, [getValues]);
-
-  const onValidationError = useCallback(() => {
-    toast.error('Please fix the highlighted errors before downloading.');
-    setDownloadDialogOpen(false);
-  }, []);
-
-  const scrollToImport = useCallback(() => {
-    setToolsOpen(true);
-    requestAnimationFrame(() => {
-      document
-        .getElementById('tools-import-title')
-        ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-  }, []);
-
-  const onPickJsonFile = () => fileInputRef.current?.click();
-
-  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onImport(e);
-    if (fileInputRef.current) fileInputRef.current.value = '';
-  };
-
-  const handleDownloadClick = () => {
-    onSaveToBrowser();
-    setDownloadDialogOpen(true);
+    form.mobilePreviewRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -324,467 +57,56 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               </div>
             )}
           >
-            <form
-              id="cv-editor"
-              aria-label="CV editor"
-              onSubmit={(e) => e.preventDefault()}
-              className="px-4 py-8 lg:p-6 xl:p-8 space-y-8"
-            >
-              <div className="space-y-2">
-                <h1 className="flex items-center gap-3 text-xl font-bold tracking-tight">
-                  <PenLineIcon className="size-5" aria-hidden="true" /> Edit your CV
-                </h1>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept=".json"
-                  aria-label="Import CV JSON"
-                  onChange={handleImport}
-                  className="hidden"
-                />
-                <p className="text-sm text-muted-foreground">
-                  Hit <strong>Save</strong> to store your data in this browser&rsquo;s local
-                  storage. Use <strong>Download</strong> to export a DOCX &mdash; open it in Word or
-                  Google Docs and save as PDF.
-                </p>
-              </div>
-
-              {showBackupBanner && <BackupReminder onDismiss={() => setShowBackupBanner(false)} />}
-
-              <CollapsibleCard
-                id="tools-import-title"
-                title={
-                  <>
-                    <SettingsIcon className="size-4" />
-                    Import existing CV
-                  </>
-                }
-                description={
-                  <>
-                    This app uses Google Gemini to parse your CV text or JSON into structured form
-                    data, and later to enhance your summary, cover letter, and experience
-                    highlights. Gemini has a free tier with no billing required &mdash; just a
-                    Google account and an API key.
-                  </>
-                }
-                open={toolsOpen}
-                onOpenChange={setToolsOpen}
-                expandCollapseAll={{
-                  anyOpen: anyToolsSectionOpen,
-                  onExpand: expandAllToolsSections,
-                  onCollapse: collapseAllToolsSections,
-                }}
-              >
-                <AiSettingsFields
-                  register={register}
-                  errors={errors}
-                  open={toolsSections.aiSettings}
-                  onOpenChange={(open) => setToolsSectionOpen('aiSettings', open)}
-                />
-
-                <ImportDataFields
-                  currentApiKey={aiApiKey}
-                  onPickJsonFile={onPickJsonFile}
-                  onImportParsed={onImportParsed}
-                  open={toolsSections.importData}
-                  onOpenChange={(open) => setToolsSectionOpen('importData', open)}
-                />
-
-                <JobDescriptionFields
-                  register={register}
-                  errors={errors}
-                  currentApiKey={aiApiKey ?? ''}
-                  onJobDescriptionExtracted={(text) =>
-                    setValue('jobDescriptionText', text, { shouldDirty: true })
-                  }
-                  open={toolsSections.jobDescription}
-                  onOpenChange={(open) => setToolsSectionOpen('jobDescription', open)}
-                />
-
-                <CoverLetterFields
-                  register={register}
-                  control={control}
-                  errors={errors}
-                  generating={generatingCoverLetter}
-                  generatedText={generatedCoverLetter}
-                  onGenerate={onGenerateCoverLetter}
-                  onUse={onUseCoverLetter}
-                  onCopy={onCopyGenerated}
-                  onDismiss={() => setGeneratedCoverLetter(null)}
-                  open={toolsSections.coverLetter}
-                  onOpenChange={(open) => setToolsSectionOpen('coverLetter', open)}
-                />
-              </CollapsibleCard>
-
-              <CollapsibleCard
-                id="main-cv-title"
-                title={
-                  <>
-                    <PenLineIcon className="size-4" />
-                    Your CV
-                  </>
-                }
-                description={
-                  isStarterData ? (
-                    <>
-                      This starts with sample data to show you how the editor works. Clear it and
-                      add your own, or use{' '}
-                      <button
-                        type="button"
-                        onClick={scrollToImport}
-                        className="inline font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
-                      >
-                        Import existing CV
-                      </button>{' '}
-                      above to load a previous backup or parse an existing CV.
-                    </>
-                  ) : (
-                    <>
-                      Edit your CV details below. Use{' '}
-                      <button
-                        type="button"
-                        onClick={scrollToImport}
-                        className="inline font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
-                      >
-                        Import existing CV
-                      </button>{' '}
-                      above to load a previous backup or parse an existing CV.
-                    </>
-                  )
-                }
-                open={mainCardOpen}
-                onOpenChange={setMainCardOpen}
-                expandCollapseAll={{
-                  anyOpen: anySectionOpen,
-                  onExpand: expandAllSections,
-                  onCollapse: collapseAllSections,
-                }}
-              >
-                <CollapsibleSection
-                  id="section-personal-info"
-                  title={
-                    <>
-                      <EmojiIcon emoji="👤" /> Personal Information
-                    </>
-                  }
-                  open={sections.personalInfo}
-                  onOpenChange={(open) => setSectionOpen('personalInfo', open)}
-                >
-                  <PersonalInfoFields
-                    register={register}
-                    errors={errors.personalInfo}
-                    linkFields={links.fields}
-                    onAppendLink={() => links.append({ label: '', url: '' })}
-                    onRemoveLink={links.remove}
-                  />
-                </CollapsibleSection>
-
-                <CollapsibleSection
-                  id="section-summary"
-                  title={
-                    <>
-                      <EmojiIcon emoji="📜" /> Professional Summary
-                    </>
-                  }
-                  open={sections.summary}
-                  onOpenChange={(open) => setSectionOpen('summary', open)}
-                >
-                  <FieldGroup>
-                    <Field data-invalid={errors.summary ? true : undefined}>
-                      <FieldLabel htmlFor="summary" className="sr-only">
-                        Summary
-                      </FieldLabel>
-                      <Textarea
-                        id="summary"
-                        {...register('summary')}
-                        rows={6}
-                        aria-invalid={errors.summary ? true : undefined}
-                        aria-describedby={'summary-hint' + (errors.summary ? ' summary-error' : '')}
-                      />
-                      <MarkdownHint id="summary-hint">
-                        A concise professional summary highlighting your key strengths.
-                      </MarkdownHint>
-                      {errors.summary && (
-                        <FieldError id="summary-error" errors={[errors.summary]} />
-                      )}
-                    </Field>
-
-                    <Collapsible open={summaryAiOpen} onOpenChange={setSummaryAiOpen}>
-                      <CollapsibleTrigger
-                        render={
-                          <button
-                            type="button"
-                            aria-label="Enhance with AI"
-                            className="flex items-center hover:opacity-80"
-                          />
-                        }
-                      >
-                        <Badge
-                          variant="secondary"
-                          className="h-auto gap-1 text-xs [&>svg]:size-3.5!"
-                        >
-                          <GeminiIcon className="size-3.5" />
-                          <ChevronDownIcon
-                            className={
-                              'size-3.5 transition-transform' + (summaryAiOpen ? ' rotate-180' : '')
-                            }
-                          />
-                          Enhance with AI
-                        </Badge>
-                      </CollapsibleTrigger>
-
-                      <CollapsibleContent className="space-y-3 pt-2">
-                        <Field>
-                          <FieldLabel htmlFor="aiSummaryPrompt">AI prompt</FieldLabel>
-                          <Textarea
-                            id="aiSummaryPrompt"
-                            {...register('aiSummaryPrompt')}
-                            rows={4}
-                            className="text-xs"
-                            placeholder="Rewrite the professional summary to highlight relevant experience. Preserve the existing formatting."
-                          />
-                        </Field>
-
-                        <div className="flex items-center gap-2">
-                          <Button
-                            type="button"
-                            variant="secondary"
-                            size="sm"
-                            disabled={!canGenerate || generatingSummary}
-                            onClick={onGenerateSummary}
-                            aria-busy={generatingSummary || undefined}
-                          >
-                            {generatingSummary ? (
-                              <Loader2Icon className="animate-spin" data-icon="inline-start" />
-                            ) : (
-                              <GeminiIcon className="size-4" data-icon="inline-start" />
-                            )}
-                            {generatingSummary ? 'Generating…' : 'Generate with AI'}
-                          </Button>
-                          {!canGenerate && (
-                            <span className="text-xs text-muted-foreground">Requires API key</span>
-                          )}
-                        </div>
-
-                        {generatedSummary && (
-                          <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs font-medium text-muted-foreground">
-                                AI-generated summary
-                                {generatedSummary.reasoning && (
-                                  <span className="block font-normal">
-                                    {generatedSummary.reasoning}
-                                  </span>
-                                )}
-                              </span>
-                              <div className="flex gap-1">
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="icon-xs"
-                                  onClick={() => onCopyGenerated(generatedSummary.content)}
-                                  aria-label="Copy to clipboard"
-                                >
-                                  <ClipboardIcon />
-                                </Button>
-                                <Button
-                                  type="button"
-                                  variant="ghost"
-                                  size="icon-xs"
-                                  onClick={() => setGeneratedSummary(null)}
-                                  aria-label="Dismiss"
-                                >
-                                  <XIcon />
-                                </Button>
-                              </div>
-                            </div>
-                            <BlockMarkdown text={generatedSummary.content} className="text-sm" />
-                            <Button
-                              type="button"
-                              variant="default"
-                              size="sm"
-                              onClick={onUseSummary}
-                            >
-                              <CheckIcon data-icon="inline-start" />
-                              Use this summary
-                            </Button>
-                          </div>
-                        )}
-                      </CollapsibleContent>
-                    </Collapsible>
-                  </FieldGroup>
-                </CollapsibleSection>
-
-                <CollapsibleSection
-                  id="section-skills"
-                  title={
-                    <>
-                      <EmojiIcon emoji="🛠️" /> Skills
-                    </>
-                  }
-                  open={sections.skills}
-                  onOpenChange={(open) => setSectionOpen('skills', open)}
-                >
-                  <HighlightsInput
-                    control={control}
-                    name="skills"
-                    id="skills"
-                    label="Skills"
-                    hint="One category per line, e.g. &ldquo;Frontend: React, TypeScript, Next.js&rdquo;. ATS systems scan for keyword matches, so list tools and technologies explicitly."
-                  />
-                </CollapsibleSection>
-
-                <CollapsibleSection
-                  id="section-experience"
-                  title={
-                    <>
-                      <EmojiIcon emoji="💼" /> Experience
-                    </>
-                  }
-                  open={sections.experience}
-                  onOpenChange={(open) => setSectionOpen('experience', open)}
-                >
-                  <div className="space-y-4">
-                    <SectionToolbar
-                      id="section-experience-toolbar"
-                      title="Entries"
-                      count={experience.fields.length}
-                      onCollapse={() => setExpSignal((s) => ({ n: s.n + 1, open: false }))}
-                      onExpand={() => setExpSignal((s) => ({ n: s.n + 1, open: true }))}
-                      onAdd={() => experience.insert(0, EMPTY_ENTRY)}
-                      addLabel="Add Experience"
-                    />
-
-                    {experience.fields.map((field, index) => {
-                      const ai = buildEntryAiProps(`experience.${index}`);
-                      return (
-                        <ExperienceEntryFields
-                          key={field.id}
-                          index={index}
-                          prefix={`experience.${index}`}
-                          idPrefix="exp"
-                          register={register}
-                          control={control}
-                          errors={errors.experience}
-                          onRemove={() => experience.remove(index)}
-                          removeLabel="Remove Experience"
-                          toggleSignal={expSignal}
-                          canGenerate={ai.canGenerate}
-                          generatingHighlights={ai.generatingHighlights}
-                          generatedHighlights={ai.generatedHighlights}
-                          onGenerateHighlights={ai.onGenerateHighlights}
-                          onUseHighlights={ai.onUseHighlights}
-                          onCopyHighlights={ai.onCopyHighlights}
-                          onDismissHighlights={ai.onDismissHighlights}
-                        />
-                      );
-                    })}
-                  </div>
-                </CollapsibleSection>
-
-                <CollapsibleSection
-                  id="section-education"
-                  title={
-                    <>
-                      <EmojiIcon emoji="🎓" /> Education
-                    </>
-                  }
-                  open={sections.education}
-                  onOpenChange={(open) => setSectionOpen('education', open)}
-                >
-                  <div className="space-y-4">
-                    <SectionToolbar
-                      id="section-education-toolbar"
-                      title="Entries"
-                      count={education.fields.length}
-                      onCollapse={() => setEduSignal((s) => ({ n: s.n + 1, open: false }))}
-                      onExpand={() => setEduSignal((s) => ({ n: s.n + 1, open: true }))}
-                      onAdd={() => education.append(EMPTY_EDUCATION)}
-                      addLabel="Add Education"
-                    />
-
-                    {education.fields.map((field, index) => (
-                      <EducationEntry
-                        key={field.id}
-                        index={index}
-                        register={register}
-                        control={control}
-                        errors={errors.education}
-                        onRemove={() => education.remove(index)}
-                        toggleSignal={eduSignal}
-                        ai={buildEntryAiProps(`education.${index}`)}
-                      />
-                    ))}
-                  </div>
-                </CollapsibleSection>
-
-                <CollapsibleSection
-                  id="section-others"
-                  title={
-                    <>
-                      <EmojiIcon emoji="🧩" /> Others{' '}
-                      <span className="font-normal text-muted-foreground">(optional)</span>
-                    </>
-                  }
-                  open={sections.others}
-                  onOpenChange={(open) => setSectionOpen('others', open)}
-                >
-                  <div className="space-y-4">
-                    <SectionToolbar
-                      id="section-others-toolbar"
-                      title="Entries"
-                      count={others.fields.length}
-                      onCollapse={() => setOthSignal((s) => ({ n: s.n + 1, open: false }))}
-                      onExpand={() => setOthSignal((s) => ({ n: s.n + 1, open: true }))}
-                      onAdd={() => others.insert(0, EMPTY_ENTRY)}
-                      addLabel="Add Other"
-                    />
-
-                    {others.fields.map((field, index) => {
-                      const ai = buildEntryAiProps(`others.${index}`);
-                      return (
-                        <ExperienceEntryFields
-                          key={field.id}
-                          index={index}
-                          prefix={`others.${index}`}
-                          idPrefix="other"
-                          register={register}
-                          control={control}
-                          errors={errors.others}
-                          onRemove={() => others.remove(index)}
-                          removeLabel="Remove"
-                          toggleSignal={othSignal}
-                          canGenerate={ai.canGenerate}
-                          generatingHighlights={ai.generatingHighlights}
-                          generatedHighlights={ai.generatedHighlights}
-                          onGenerateHighlights={ai.onGenerateHighlights}
-                          onUseHighlights={ai.onUseHighlights}
-                          onCopyHighlights={ai.onCopyHighlights}
-                          onDismissHighlights={ai.onDismissHighlights}
-                        />
-                      );
-                    })}
-                  </div>
-                </CollapsibleSection>
-              </CollapsibleCard>
-
-              <div className="hidden items-center justify-end gap-3 border-t pt-6 lg:flex">
-                <Button type="button" variant="ghost" onClick={() => setClearConfirmOpen(true)}>
-                  <Trash2Icon data-icon="inline-start" />
-                  Clear all
-                </Button>
-                <Button type="button" onClick={onSaveToBrowser}>
-                  <SaveIcon data-icon="inline-start" />
-                  Save to browser
-                </Button>
-              </div>
-            </form>
+            <CvFormPanel
+              register={form.register}
+              control={form.control}
+              errors={form.errors}
+              setValue={form.setValue}
+              links={form.links}
+              experience={form.experience}
+              education={form.education}
+              others={form.others}
+              fileInputRef={form.fileInputRef}
+              handleImport={form.handleImport}
+              isStarterData={form.isStarterData}
+              showBackupBanner={form.showBackupBanner}
+              onDismissBackup={() => form.setShowBackupBanner(false)}
+              toolsOpen={form.toolsOpen}
+              setToolsOpen={form.setToolsOpen}
+              mainCardOpen={form.mainCardOpen}
+              setMainCardOpen={form.setMainCardOpen}
+              sections={form.sections}
+              setSectionOpen={form.setSectionOpen}
+              toolsSections={form.toolsSections}
+              setToolsSectionOpen={form.setToolsSectionOpen}
+              summaryAiOpen={form.summaryAiOpen}
+              setSummaryAiOpen={form.setSummaryAiOpen}
+              anySectionOpen={form.anySectionOpen}
+              anyToolsSectionOpen={form.anyToolsSectionOpen}
+              expandAllSections={form.expandAllSections}
+              collapseAllSections={form.collapseAllSections}
+              expandAllToolsSections={form.expandAllToolsSections}
+              collapseAllToolsSections={form.collapseAllToolsSections}
+              expSignal={form.expSignal}
+              setExpSignal={form.setExpSignal}
+              eduSignal={form.eduSignal}
+              setEduSignal={form.setEduSignal}
+              othSignal={form.othSignal}
+              setOthSignal={form.setOthSignal}
+              aiApiKey={form.aiApiKey}
+              canGenerate={form.canGenerate}
+              ai={form.ai}
+              onImportParsed={form.onImportParsed}
+              scrollToImport={form.scrollToImport}
+              onSaveToBrowser={form.onSaveToBrowser}
+              onClearConfirm={() => form.setClearConfirmOpen(true)}
+            />
           </ErrorBoundary>
 
           {/* Mobile preview — shown below form on mobile, hidden on desktop */}
-          {!isDesktop && (
+          {!form.isDesktop && (
             <div
-              ref={mobilePreviewRef}
+              ref={form.mobilePreviewRef}
               id="cv-preview-panel-mobile"
               aria-label="CV preview"
               className="border-t bg-muted pb-20"
@@ -800,16 +122,16 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
                 )}
               >
                 <CvPreviewPanel
-                  control={control}
+                  control={form.control}
                   defaultValues={defaultValues}
-                  isStarterData={isStarterData}
-                  onGoToImport={scrollToImport}
+                  isStarterData={form.isStarterData}
+                  onGoToImport={form.scrollToImport}
                 />
               </ErrorBoundary>
             </div>
           )}
 
-          {!isDesktop && (
+          {!form.isDesktop && (
             <Button
               variant="secondary"
               className="fixed bottom-16 right-4 z-50 rounded-full border shadow-md"
@@ -832,7 +154,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         </div>
 
         {/* Desktop preview — only mounted on lg+ to avoid duplicate useWatch + renders on mobile */}
-        {isDesktop && (
+        {form.isDesktop && (
           <aside
             id="cv-preview-panel-desktop"
             aria-label="CV preview"
@@ -849,15 +171,15 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               )}
             >
               <CvPreviewPanel
-                control={control}
+                control={form.control}
                 defaultValues={defaultValues}
-                isStarterData={isStarterData}
-                onGoToImport={scrollToImport}
+                isStarterData={form.isStarterData}
+                onGoToImport={form.scrollToImport}
               />
             </ErrorBoundary>
             <div className="px-4 pb-8 lg:px-6 xl:px-8">
               <div className="flex items-center justify-end gap-3 border-t pt-6">
-                <Button onClick={handleDownloadClick}>
+                <Button onClick={form.handleDownloadClick}>
                   <DownloadIcon data-icon="inline-start" />
                   Download
                 </Button>
@@ -868,97 +190,25 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
       </main>
 
       <FormActions
-        onClear={() => setClearConfirmOpen(true)}
-        onSave={onSaveToBrowser}
-        onDownload={handleDownloadClick}
+        onClear={() => form.setClearConfirmOpen(true)}
+        onSave={form.onSaveToBrowser}
+        onDownload={form.handleDownloadClick}
         previewVisible={isPreviewInView}
       />
 
-      <AlertDialog.Root open={apiKeyWarningOpen} onOpenChange={setApiKeyWarningOpen}>
-        <AlertDialog.Portal>
-          <AlertDialog.Backdrop className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs" />
-          <AlertDialog.Popup className="fixed top-1/2 left-1/2 z-50 w-[90vw] max-w-md -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-popover p-6 text-popover-foreground shadow-lg">
-            <AlertDialog.Title className="text-base font-semibold">
-              Your export contains a Gemini API key
-            </AlertDialog.Title>
-            <AlertDialog.Description
-              render={<div />}
-              className="mt-3 space-y-3 text-sm text-muted-foreground"
-            >
-              <p>
-                The JSON file you&rsquo;re about to download includes your Gemini API key. Choose
-                how to proceed:
-              </p>
-              <ul className="space-y-2">
-                <li className="rounded-md border bg-muted/40 p-2.5">
-                  <strong className="text-foreground">Export without key</strong>
-                  <p className="mt-0.5">
-                    Strips the key from the file. Safe to share or commit. You&rsquo;ll need to
-                    re-enter the key next time you load this file.
-                  </p>
-                </li>
-                <li className="rounded-md border bg-muted/40 p-2.5">
-                  <strong className="text-foreground">Export with key</strong>
-                  <p className="mt-0.5">
-                    Keeps the key in the file for convenience. Do not share this file publicly —
-                    anyone with it can use your key.
-                  </p>
-                </li>
-              </ul>
-            </AlertDialog.Description>
-            <div className="mt-4 flex flex-wrap justify-end gap-2">
-              <AlertDialog.Close render={<Button variant="secondary" size="sm" />}>
-                Cancel
-              </AlertDialog.Close>
-              <Button variant="outline" size="sm" onClick={onExportJsonWithoutKey}>
-                Export without key
-              </Button>
-              <Button variant="default" size="sm" onClick={onExportJsonWithKey}>
-                Export with key
-              </Button>
-            </div>
-          </AlertDialog.Popup>
-        </AlertDialog.Portal>
-      </AlertDialog.Root>
-
-      <AlertDialog.Root open={clearConfirmOpen} onOpenChange={setClearConfirmOpen}>
-        <AlertDialog.Portal>
-          <AlertDialog.Backdrop className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs" />
-          <AlertDialog.Popup className="fixed top-1/2 left-1/2 z-50 w-[90vw] max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-xl border bg-popover p-6 text-popover-foreground shadow-lg">
-            <AlertDialog.Title className="text-base font-semibold">
-              Clear all data?
-            </AlertDialog.Title>
-            <AlertDialog.Description
-              render={<div />}
-              className="mt-3 space-y-2 text-sm text-muted-foreground"
-            >
-              <p>
-                This will erase all CV data from the form and from your browser&rsquo;s local
-                storage. You can&rsquo;t undo this.
-              </p>
-              <p>
-                If you haven&rsquo;t already, use the <strong>Download</strong> button first to save
-                a JSON backup.
-              </p>
-            </AlertDialog.Description>
-            <div className="mt-4 flex justify-end gap-2">
-              <AlertDialog.Close render={<Button variant="secondary" size="sm" />}>
-                Cancel
-              </AlertDialog.Close>
-              <Button variant="destructive" size="sm" onClick={onClearAll}>
-                Clear everything
-              </Button>
-            </div>
-          </AlertDialog.Popup>
-        </AlertDialog.Portal>
-      </AlertDialog.Root>
-
-      <DownloadDialog
-        open={downloadDialogOpen}
-        onOpenChange={setDownloadDialogOpen}
-        onExportJson={handleSubmit(onExportJson, onValidationError)}
-        onExportDocx={handleSubmit(onExportDocx, onValidationError)}
-        exporting={exporting}
+      <CvEditorDialogs
+        apiKeyWarningOpen={form.apiKeyWarningOpen}
+        setApiKeyWarningOpen={form.setApiKeyWarningOpen}
+        onExportJsonWithoutKey={form.onExportJsonWithoutKey}
+        onExportJsonWithKey={form.onExportJsonWithKey}
+        clearConfirmOpen={form.clearConfirmOpen}
+        setClearConfirmOpen={form.setClearConfirmOpen}
+        onClearAll={form.onClearAll}
+        downloadDialogOpen={form.downloadDialogOpen}
+        setDownloadDialogOpen={form.setDownloadDialogOpen}
+        onExportJson={form.handleSubmit(form.onExportJson, form.onValidationError)}
+        onExportDocx={form.handleSubmit(form.onExportDocx, form.onValidationError)}
+        exporting={form.exporting}
       />
 
       <Toaster position="bottom-left" mobileOffset={{ bottom: 72 }} />

@@ -4,9 +4,10 @@
     <script>
       (function () {
         var t = localStorage.getItem('theme');
-        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          document.documentElement.classList.add('dark');
-        }
+        var dark = t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        if (dark) document.documentElement.classList.add('dark');
+        var m = document.querySelector('meta[name="theme-color"]');
+        if (m) m.setAttribute('content', dark ? '#3d3d3d' : '#ffffff');
       })();
     </script>
     <meta charset="UTF-8" />

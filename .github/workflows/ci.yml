@@ -35,7 +35,7 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - run: npx playwright test --project=chromium
       - uses: actions/upload-pages-artifact@v4
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         with:

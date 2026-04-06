@@ -8,7 +8,10 @@ export default defineConfig({
     baseURL: 'http://localhost:4173/cv-builder/',
     headless: true,
   },
-  projects: [{ name: 'chromium', use: { browserName: 'chromium' } }],
+  projects: [
+    { name: 'chromium', use: { browserName: 'chromium' } },
+    { name: 'webkit', use: { browserName: 'webkit' } },
+  ],
   webServer: {
     command: 'npm run preview',
     port: 4173,
