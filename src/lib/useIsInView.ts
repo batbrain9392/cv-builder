@@ -1,30 +1,60 @@
-import { type RefObject, useEffect, useState } from 'react';
+import {
+  type RefCallback,
+  type RefObject,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useState,
+} from 'react';
+
+export type UseIsInViewOptions = {
+  /** Intersection observer root; `null` uses the viewport. */
+  root?: RefObject<HTMLElement | null> | null;
+  /** 0–1; can be a single value or array (see IntersectionObserver). */
+  threshold?: number | number[];
+  rootMargin?: string;
+};
 
 /**
- * Returns `true` while the observed element intersects the viewport.
- * Uses `IntersectionObserver` — no per-frame scroll cost.
+ * Observe whether an element intersects the observer root (viewport when `root` is omitted).
+ *
+ * Returns `[isInView, ref]` — pass `ref` to the element to observe. Updates correctly on mount
+ * and unmount without relying on `ref.current` in effect dependency lists.
  */
 export function useIsInView(
-  ref: RefObject<HTMLElement | null>,
-  options?: { root?: RefObject<HTMLElement | null>; threshold?: number },
-): boolean {
+  options?: UseIsInViewOptions,
+): readonly [boolean, RefCallback<HTMLElement | null>] {
   const [inView, setInView] = useState(false);
+  const [node, setNode] = useState<HTMLElement | null>(null);
+  const [rootEl, setRootEl] = useState<Element | null>(null);
 
-  const root = options?.root;
+  const rootOption = options?.root ?? null;
   const threshold = options?.threshold ?? 0;
+  const rootMargin = options?.rootMargin ?? '0px';
+
+  useLayoutEffect(() => {
+    setRootEl(rootOption?.current ?? null);
+  }, [rootOption, node]);
 
   useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
+    if (!node) {
+      setInView(false);
+      return;
+    }
 
     const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting), {
-      root: root?.current ?? null,
+      root: rootEl,
+      rootMargin,
       threshold,
     });
 
-    observer.observe(el);
+    observer.observe(node);
     return () => observer.disconnect();
-  }, [ref, root, threshold]);
+  }, [node, rootEl, rootMargin, threshold]);
 
-  return inView;
+  const setTargetRef = useCallback((el: HTMLElement | null) => {
+    setNode(el);
+  }, []);
+
+  return [inView, setTargetRef];
 }

@@ -4,6 +4,7 @@ import { useRef } from 'react';
 import { ErrorBoundary } from '@/components/ErrorBoundary';
 import { Button } from '@/components/ui/button';
 import { Toaster } from '@/components/ui/sonner';
+import { mergeRefs } from '@/lib/mergeRefs.ts';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import { useIsInView } from '@/lib/useIsInView';
 
@@ -20,20 +21,30 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const form = useCvEditorForm(defaultValues);
 
-  const isPreviewInView = useIsInView(form.mobilePreviewRef, {
-    root: scrollContainerRef,
-    threshold: 0.3,
-  });
+  const [isPreviewInView, previewIntersectionRef] = useIsInView(
+    form.isDesktop ? { root: scrollContainerRef, threshold: 0.3 } : { threshold: 0.3 },
+  );
 
   const scrollToTop = () => {
-    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    if (form.isDesktop) {
+      scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
   const scrollToPreview = () => {
     form.mobilePreviewRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
-    <div className="flex h-dvh flex-col overflow-hidden bg-background text-foreground lg:bg-[linear-gradient(to_right,var(--color-background)_50%,var(--color-muted)_50%)]">
+    <div
+      className={
+        'flex min-h-dvh flex-col bg-background text-foreground ' +
+        /* Large screens: fill the viewport without document scroll-lock; panes scroll inside. */
+        'lg:fixed lg:inset-0 lg:z-20 lg:overflow-hidden ' +
+        'lg:bg-[linear-gradient(to_right,var(--color-background)_50%,var(--color-muted)_50%)]'
+      }
+    >
       <a
         href="#cv-editor"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-60 focus:rounded-lg focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg"
@@ -41,9 +52,16 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
         Skip to editor
       </a>
 
-      <main className="mx-auto flex min-h-0 w-full max-w-[1728px] flex-1 overflow-hidden lg:flex-row">
-        {/* Form panel */}
-        <div ref={scrollContainerRef} className="min-h-0 flex-1 overflow-y-auto scroll-smooth">
+      <main
+        className={
+          'mx-auto flex w-full max-w-[1728px] flex-col pb-24 ' +
+          'lg:min-h-0 lg:flex-1 lg:flex-row lg:overflow-hidden lg:pb-0'
+        }
+      >
+        <div
+          ref={scrollContainerRef}
+          className="min-w-0 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:scroll-smooth"
+        >
           <ErrorBoundary
             fallback={(reset) => (
               <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
@@ -108,7 +126,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           {/* Mobile preview — shown below form on mobile, hidden on desktop */}
           {!form.isDesktop && (
             <div
-              ref={form.mobilePreviewRef}
+              ref={mergeRefs(form.mobilePreviewRef, previewIntersectionRef)}
               id="cv-preview-panel-mobile"
               aria-label="CV preview"
               className="border-t bg-muted pb-20"
@@ -160,7 +178,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           <aside
             id="cv-preview-panel-desktop"
             aria-label="CV preview"
-            className="min-h-0 overflow-y-auto border-l bg-muted lg:w-1/2"
+            className="min-h-0 min-w-0 overflow-y-auto border-l bg-muted lg:w-1/2"
           >
             <ErrorBoundary
               fallback={(reset) => (

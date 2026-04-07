@@ -8,9 +8,17 @@
 html,
 body {
   margin: 0;
-  height: 100%;
-  overflow: hidden;
   min-width: 360px;
+}
+
+/* Default: clip horizontal overflow only; vertical scrolling uses the normal document. */
+html {
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100%;
+  overflow-x: hidden;
 }
 
 @theme inline {

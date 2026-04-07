@@ -778,7 +778,7 @@ function LandingNav({ shadow }: { shadow: boolean }) {
 // Footer
 // ---------------------------------------------------------------------------
 
-function LandingFooter({ ref }: { ref: React.RefObject<HTMLElement | null> }) {
+function LandingFooter({ ref }: { ref: React.Ref<HTMLElement | null> }) {
   return (
     <footer ref={ref} className="bg-primary px-4 py-10 text-primary-foreground lg:px-6">
       <div className="mx-auto flex max-w-5xl flex-col items-center gap-6 text-center">
@@ -838,20 +838,18 @@ function LandingFooter({ ref }: { ref: React.RefObject<HTMLElement | null> }) {
 
 export default function LandingPage() {
   useDocumentTitle();
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const heroRef = useRef<HTMLElement>(null);
-  const footerRef = useRef<HTMLElement>(null);
   const ctaScrolledPast = useIsScrolledPast(ctaRef);
   const heroScrolledPast = useIsScrolledPast(heroRef);
-  const footerInView = useIsInView(footerRef);
+  const [footerInView, footerInViewRef] = useIsInView();
 
   const scrollToTop = () => {
-    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <div ref={scrollContainerRef} className="h-dvh overflow-y-auto bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <LandingNav shadow={heroScrolledPast} />
       <main>
         <HeroSection ctaRef={ctaRef} sectionRef={heroRef} />
@@ -861,7 +859,7 @@ export default function LandingPage() {
         <FeaturesSection />
         <BehindTheScenesSection />
       </main>
-      <LandingFooter ref={footerRef} />
+      <LandingFooter ref={footerInViewRef} />
       <FloatingCta visible={ctaScrolledPast && !footerInView} />
       <ScrollToTopFab
         visible={heroScrolledPast}

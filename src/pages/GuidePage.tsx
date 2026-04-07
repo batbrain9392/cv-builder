@@ -27,6 +27,7 @@ import { GuidePathPicker } from '@/guide/GuidePathPicker';
 import { GuidePhase } from '@/guide/GuidePhase';
 import { GuideSection } from '@/guide/GuideSection';
 import { GuideToc, type TocGroup } from '@/guide/GuideToc';
+import { LG_MEDIA_QUERY } from '@/lib/breakpoints.ts';
 import { useDocumentTitle } from '@/lib/useDocumentTitle';
 import { useIsInView } from '@/lib/useIsInView';
 import { useIsScrolledPast } from '@/lib/useIsScrolledPast';
@@ -113,20 +114,17 @@ const PATH_CARDS = [
 // Scroll spy
 // ---------------------------------------------------------------------------
 
-function useActiveSection(scrollContainer: React.RefObject<HTMLElement | null>) {
+function useActiveSection() {
   const [activeId, setActiveId] = useState<string | null>(ALL_IDS[0]);
 
   useEffect(() => {
-    const root = scrollContainer.current;
-    if (!root) return;
-
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) setActiveId(entry.target.id);
         }
       },
-      { root, rootMargin: '-20% 0px -60% 0px', threshold: 0 },
+      { root: null, rootMargin: '-20% 0px -60% 0px', threshold: 0 },
     );
 
     for (const id of ALL_IDS) {
@@ -135,7 +133,7 @@ function useActiveSection(scrollContainer: React.RefObject<HTMLElement | null>) 
     }
 
     return () => observer.disconnect();
-  }, [scrollContainer]);
+  }, []);
 
   return activeId;
 }
@@ -241,13 +239,11 @@ function ImportHint({ section }: { section: string }) {
 
 export default function GuidePage() {
   useDocumentTitle('Guide');
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const heroRef = useRef<HTMLElement>(null);
-  const ctaRef = useRef<HTMLElement>(null);
   const heroScrolledPast = useIsScrolledPast(heroRef);
-  const ctaInView = useIsInView(ctaRef, { root: scrollContainerRef });
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
-  const activeId = useActiveSection(scrollContainerRef);
+  const [ctaInView, ctaSectionRef] = useIsInView();
+  const isDesktop = useMediaQuery(LG_MEDIA_QUERY);
+  const activeId = useActiveSection();
 
   const [phases, setPhases] = useState<Record<PhaseId, boolean>>({
     'phase-getting-started': true,
@@ -261,7 +257,7 @@ export default function GuidePage() {
   }, []);
 
   const scrollToTop = useCallback(() => {
-    scrollContainerRef.current?.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
   const scrollToSection = useCallback(
@@ -280,7 +276,7 @@ export default function GuidePage() {
   );
 
   return (
-    <div ref={scrollContainerRef} className="h-dvh overflow-y-auto bg-background text-foreground">
+    <div className="min-h-dvh bg-background text-foreground">
       <GuideNav shadow={heroScrolledPast} />
 
       {/* Hero */}
@@ -317,7 +313,7 @@ export default function GuidePage() {
       <div className="mx-auto flex max-w-5xl">
         {/* Desktop sidebar TOC */}
         {isDesktop && (
-          <aside className="sticky top-[52px] hidden h-[calc(100dvh-52px)] w-56 shrink-0 overflow-y-auto border-r py-6 pl-4 pr-2 lg:block">
+          <aside className="sticky top-[52px] hidden w-56 shrink-0 self-start border-r py-6 pl-4 pr-2 lg:block">
             <GuideToc groups={TOC_GROUPS} activeId={activeId} onSelect={scrollToSection} />
           </aside>
         )}
@@ -678,7 +674,7 @@ export default function GuidePage() {
 
           {/* Bottom CTA */}
           <section
-            ref={ctaRef}
+            ref={ctaSectionRef}
             className="mt-auto bg-primary px-4 py-14 text-primary-foreground sm:py-16"
           >
             <div className="mx-auto flex max-w-2xl flex-col items-center gap-5 text-center">

@@ -3,6 +3,7 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
+import { LG_MEDIA_QUERY } from '@/lib/breakpoints.ts';
 import { clearCv, hasUserCv, saveCv } from '@/lib/cvStorage.ts';
 import {
   dismissEditorGuideHint,
@@ -74,7 +75,7 @@ export const EMPTY_EDUCATION = {
 
 export function useCvEditorForm(defaultValues: CvFormData) {
   const mobilePreviewRef = useRef<HTMLDivElement>(null);
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isDesktop = useMediaQuery(LG_MEDIA_QUERY);
 
   const [isStarterData, setIsStarterData] = useState(() => !hasUserCv());
   const [toolsOpen, setToolsOpen] = useState(false);
