@@ -202,38 +202,6 @@ function drawRobot(ctx, left, centerY, height) {
   return pw;
 }
 
-// Draw a download-arrow icon (↓ with tray) at the given position.
-function drawDownloadIcon(ctx, x, centerY, size, color = PRIMARY) {
-  const half = size / 2;
-  const lw = Math.max(2, size * 0.14);
-  ctx.save();
-  ctx.strokeStyle = color;
-  ctx.lineWidth = lw;
-  ctx.lineCap = 'round';
-  ctx.lineJoin = 'round';
-
-  // Vertical shaft
-  ctx.beginPath();
-  ctx.moveTo(x + half, centerY - half * 0.7);
-  ctx.lineTo(x + half, centerY + half * 0.3);
-  ctx.stroke();
-
-  // Arrowhead
-  ctx.beginPath();
-  ctx.moveTo(x + half - half * 0.45, centerY - half * 0.1);
-  ctx.lineTo(x + half, centerY + half * 0.4);
-  ctx.lineTo(x + half + half * 0.45, centerY - half * 0.1);
-  ctx.stroke();
-
-  // Tray (bottom line)
-  ctx.beginPath();
-  ctx.moveTo(x + half - half * 0.6, centerY + half * 0.7);
-  ctx.lineTo(x + half + half * 0.6, centerY + half * 0.7);
-  ctx.stroke();
-
-  ctx.restore();
-}
-
 // Draw a globe icon at the given position (simplified: circle + two arcs + equator).
 function drawGlobeIcon(ctx, x, centerY, size) {
   const r = size / 2 - 1;
@@ -317,14 +285,12 @@ async function composite(formBuf, previewBuf) {
   ctx.fillText('Runs entirely in your browser \u00B7 No sign-up \u00B7 No cookies', TEXT_X, y);
   y += secondaryH + GAP;
 
-  // -- Install CTA pill --
-  const pillLabel = 'Install as a Progressive Web App';
+  // -- Privacy pill --
+  const pillLabel = 'Your data stays in your browser';
   ctx.font = '18px Geist';
-  const iconSize = 18;
-  const iconGap = 8;
-  const pillPadX = 18;
+  const pillPadX = 22;
   const pillMetrics = ctx.measureText(pillLabel);
-  const pillW = pillPadX + iconSize + iconGap + pillMetrics.width + pillPadX;
+  const pillW = pillPadX * 2 + pillMetrics.width;
   const pillCenterY = y + pillH / 2;
 
   ctx.fillStyle = PRIMARY;
@@ -332,11 +298,9 @@ async function composite(formBuf, previewBuf) {
   ctx.roundRect(TEXT_X, y, pillW, pillH, pillH / 2);
   ctx.fill();
 
-  drawDownloadIcon(ctx, TEXT_X + pillPadX, pillCenterY, iconSize, BG);
-
   ctx.fillStyle = BG;
   ctx.textBaseline = 'middle';
-  ctx.fillText(pillLabel, TEXT_X + pillPadX + iconSize + iconGap, pillCenterY);
+  ctx.fillText(pillLabel, TEXT_X + pillPadX, pillCenterY);
 
   // -- URL (footer, anchored to bottom) with link icon --
   const urlIconSize = 16;

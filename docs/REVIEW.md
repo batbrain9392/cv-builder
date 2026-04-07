@@ -76,12 +76,11 @@ TypeScript clean, ESLint clean, 130/130 tests pass (up from 79), production buil
 | --- | ---------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | 7   | `CvEditorPage` is now 944 lines (was 680 in Review #1)                       | Medium   | Grew due to new features (import, cover letter, starter data handling). Form sections are extracted into `*Fields.tsx`. Further splitting adds prop-drilling complexity. |
 | 8   | `EMPTY_DEFAULTS` has empty arrays that violate schema's `min(1)` constraints | Low      | Only used as form reset defaults (not validated on mount). Tests that reference `EMPTY_DEFAULTS.experience[0]` are fragile but passing.                                  |
-| 9   | Mobile "Install app" menu item does nothing for non-installable states       | Low      | Edge case (iOS hint flow). The desktop `InstallPwa` component handles it correctly via Popover.                                                                          |
-| 10  | `parseCvFromText` relaxed path returns structurally incomplete `CvFormData`  | Low      | By design — surfaces `issues[]` to caller. Users fix in the form.                                                                                                        |
-| 11  | CV preview hardcodes colors (`#000`, `#333`) instead of theme variables      | Low      | Intentional — preview simulates printed document appearance.                                                                                                             |
-| 12  | `GeminiIcon` and "built with" logos load from `cdn.simpleicons.org`          | Low      | Decorative images with `alt=""` — graceful failure.                                                                                                                      |
-| 13  | Index-based `key` props in `CvPreview` list rendering                        | Low      | Preview is read-only (no reorder/delete); React reconciliation risk is minimal.                                                                                          |
-| 14  | Landing page "step cards" use manual classes instead of `Card` component     | Low      | Intentional design variation — step cards have a different visual treatment (number badges, no border-left accent) than feature cards.                                   |
+| 9   | `parseCvFromText` relaxed path returns structurally incomplete `CvFormData`  | Low      | By design — surfaces `issues[]` to caller. Users fix in the form.                                                                                                        |
+| 10  | CV preview hardcodes colors (`#000`, `#333`) instead of theme variables      | Low      | Intentional — preview simulates printed document appearance.                                                                                                             |
+| 11  | `GeminiIcon` and "built with" logos load from `cdn.simpleicons.org`          | Low      | Decorative images with `alt=""` — graceful failure.                                                                                                                      |
+| 12  | Index-based `key` props in `CvPreview` list rendering                        | Low      | Preview is read-only (no reorder/delete); React reconciliation risk is minimal.                                                                                          |
+| 13  | Landing page "step cards" use manual classes instead of `Card` component     | Low      | Intentional design variation — step cards have a different visual treatment (number badges, no border-left accent) than feature cards.                                   |
 
 ### Metrics
 
@@ -104,7 +103,6 @@ TypeScript clean, ESLint clean, 130/130 tests pass (up from 79), production buil
 - **Import**: CV file parsing via `mammoth` (DOCX) and Gemini (PDF/image), dynamically imported.
 - **Export**: DOCX via `docx` library, dynamically imported.
 - **Styling**: Tailwind CSS v4 + shadcn-style UI primitives. OKLCH CSS variables for theming, including new `--warning-*` semantic tokens.
-- **PWA**: Service worker with stale-while-revalidate, version-stamped cache.
 - **Error monitoring**: Sentry with PII scrubbing, lazy-loaded (143 KB chunk).
 - **Persistence**: CV data, API key, and theme in `localStorage` via `cvStorage.ts`.
 
@@ -140,12 +138,11 @@ TypeScript clean, ESLint clean, 79/79 tests pass, production build succeeds.
 | --- | ----------------------------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 7   | `CvEditorPage` is 680+ lines                                                  | Medium   | Form sections are already extracted into `*Fields.tsx`. Splitting further would add prop-drilling complexity without clear benefit until new features are added. |
 | 8   | `EMPTY_DEFAULTS` has empty arrays that violate schema's `min(1)` constraints  | Low      | Only used as form reset defaults (not validated on mount). Tests that reference `EMPTY_DEFAULTS.experience[0]` are fragile but passing.                          |
-| 9   | Mobile "Install app" menu item does nothing for non-installable states        | Low      | Edge case (iOS hint flow). The desktop `InstallPwa` component handles it correctly via Popover.                                                                  |
-| 10  | `parseCvFromText` relaxed path returns structurally incomplete `CvFormData`   | Low      | By design — surfaces `issues[]` to caller. Users fix in the form.                                                                                                |
-| 11  | CV preview hardcodes colors (`#000`, `#333`) instead of theme variables       | Low      | Intentional — preview simulates printed document appearance.                                                                                                     |
-| 12  | `GeminiIcon` and "built with" logos load from `cdn.simpleicons.org`           | Low      | Decorative images with `alt=""` — graceful failure.                                                                                                              |
-| 13  | Index-based `key` props in `CvPreview` list rendering                         | Low      | Preview is read-only (no reorder/delete); React reconciliation risk is minimal.                                                                                  |
-| 14  | `onGenerateSummary` / `onGenerateCoverLetter` not memoized with `useCallback` | Low      | These are passed to components that don't memo-compare props. No measurable impact.                                                                              |
+| 9   | `parseCvFromText` relaxed path returns structurally incomplete `CvFormData`   | Low      | By design — surfaces `issues[]` to caller. Users fix in the form.                                                                                                |
+| 10  | CV preview hardcodes colors (`#000`, `#333`) instead of theme variables       | Low      | Intentional — preview simulates printed document appearance.                                                                                                     |
+| 11  | `GeminiIcon` and "built with" logos load from `cdn.simpleicons.org`           | Low      | Decorative images with `alt=""` — graceful failure.                                                                                                              |
+| 12  | Index-based `key` props in `CvPreview` list rendering                         | Low      | Preview is read-only (no reorder/delete); React reconciliation risk is minimal.                                                                                  |
+| 13  | `onGenerateSummary` / `onGenerateCoverLetter` not memoized with `useCallback` | Low      | These are passed to components that don't memo-compare props. No measurable impact.                                                                              |
 
 ### Metrics
 
@@ -166,7 +163,6 @@ TypeScript clean, ESLint clean, 79/79 tests pass, production build succeeds.
 - **AI**: Client-side Gemini calls via `@google/genai`, dynamically imported.
 - **Export**: DOCX via `docx` library, dynamically imported.
 - **Styling**: Tailwind CSS v4 + shadcn-style UI primitives. OKLCH CSS variables for theming.
-- **PWA**: Service worker with stale-while-revalidate, version-stamped cache.
 
 ### Areas to Watch in Future Reviews
 

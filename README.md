@@ -6,8 +6,6 @@ AI-powered CV and cover letter builder that runs entirely in your browser.
 
 <img src="docs/screenshot-desktop.png" alt="Desktop view" height="280" /> &nbsp; <img src="docs/screenshot-form.png" alt="Mobile editor" height="280" /> &nbsp; <img src="docs/screenshot-preview.png" alt="Mobile preview" height="280" />
 
-📲 Installable as a [Progressive Web App](https://web.dev/explore/progressive-web-apps) — works offline on phone or desktop, no app store needed. Core editing and export work without a connection; AI features require internet.
-
 ## ✨ Features
 
 - ✏️ Build and edit a CV with a **live side-by-side preview**
@@ -15,7 +13,6 @@ AI-powered CV and cover letter builder that runs entirely in your browser.
 - 📥 **Import** a CV from Word (.docx), PDF, image, or plain text — or restore a JSON backup you exported earlier
 - 📄 Export to **DOCX** or **JSON** for submission or portable backup
 - 📝 **Markdown** support in text fields for rich formatting
-- 📲 Installable **Progressive Web App** with service worker caching
 - 📖 Built-in **[step-by-step guide](https://batbrain9392.github.io/cv-builder/#/guide)** covering every feature from first load to final export
 
 ## 🧑‍💻 Using the AI features (optional)
@@ -79,7 +76,7 @@ npm run dev
 | `npm run typecheck`         | Run TypeScript compiler checks                                       |
 | `npm run test`              | Run tests with Vitest                                                |
 | `npm run test:e2e`          | Run Playwright end-to-end tests                                      |
-| `npm run generate:icons`    | Regenerate PWA icons and favicon                                     |
+| `npm run generate:icons`    | Regenerate favicon and touch icons                                   |
 | `npm run generate:og`       | Regenerate OG image and screenshots (requires `npm run build` first) |
 | `npm run generate:overview` | Regenerate `OVERVIEW.md` (project map for AI agents)                 |
 

@@ -25,7 +25,6 @@ import { Link } from 'react-router';
 
 import { AppLogo } from '@/components/AppLogo';
 import { GeminiIcon, GEMINI_LOGO_URL } from '@/components/GeminiIcon';
-import { InstallPwa } from '@/components/InstallPwa';
 import { RobotIcon } from '@/components/RobotIcon';
 import { ScrollToTopFab } from '@/components/ScrollToTopFab';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -481,30 +480,6 @@ function FeaturesSection() {
 }
 
 // ---------------------------------------------------------------------------
-// Install banner
-// ---------------------------------------------------------------------------
-
-function InstallBanner() {
-  return (
-    <section className="bg-primary px-4 py-14 text-primary-foreground sm:py-16 lg:px-6 xl:px-8">
-      <div className="mx-auto flex max-w-2xl flex-col items-center gap-5 text-center">
-        <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">
-          Install BioBot on your device
-        </h2>
-        <p className="max-w-lg text-sm text-primary-foreground/80 sm:text-base">
-          No app store. No download. Tap install and use it like a native app — even offline. Your
-          data never leaves your browser.
-        </p>
-        <InstallPwa variant="inverted-fill" size="default" label="Install BioBot" />
-        <p className="text-xs text-primary-foreground/50">
-          Works on Chrome, Edge, Safari, and most mobile browsers.
-        </p>
-      </div>
-    </section>
-  );
-}
-
-// ---------------------------------------------------------------------------
 // Behind the scenes (condensed About content)
 // ---------------------------------------------------------------------------
 
@@ -816,7 +791,6 @@ function LandingNav({ shadow }: { shadow: boolean }) {
       <div className="mx-auto flex max-w-5xl items-center justify-between">
         <AppLogo />
         <div className="flex items-center gap-2">
-          <InstallPwa />
           <ThemeToggle />
           <Link
             to="/guide"
@@ -924,7 +898,6 @@ export default function LandingPage() {
         <AtsSectionsGrid />
         <AiTailoringSection />
         <FeaturesSection />
-        <InstallBanner />
         <BehindTheScenesSection />
       </main>
       <LandingFooter ref={footerRef} />

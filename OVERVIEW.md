@@ -1,6 +1,6 @@
 # BioBot — Project Overview for AI Agents
 
-> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-06 (main@d059ea4).
+> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-07 (main@45e90b4).
 > Re-run with `npm run generate:overview` after structural changes.
 
 ---
@@ -63,7 +63,8 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   └── mcp.json
 ├── .github/
 │   └── workflows/
-│       └── ci.yml
+│       ├── ci.yml
+│       └── e2e-webkit.yml
 ├── docs/
 │   ├── REVIEW.md
 │   ├── screenshot-desktop.png
@@ -78,9 +79,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   ├── icon-192.png
 │   ├── icon-512.png
 │   ├── icon-maskable.png
-│   ├── manifest.json
-│   ├── og-image.png
-│   └── sw.js
+│   └── og-image.png
 ├── scripts/
 │   ├── generate-icons.mjs
 │   ├── generate-og-image.mjs
@@ -106,7 +105,6 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   ├── ErrorBoundary.test.tsx
 │   │   ├── ErrorBoundary.tsx
 │   │   ├── GeminiIcon.tsx
-│   │   ├── InstallPwa.tsx
 │   │   ├── menuItemClass.ts
 │   │   ├── RobotIcon.tsx
 │   │   ├── ScrollToTopFab.tsx
@@ -175,10 +173,9 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   ├── lib/
 │   │   ├── cvStorage.ts
 │   │   ├── patchIosKeyboardGap.ts
-│   │   ├── pwa.ts
 │   │   ├── sentry.ts
 │   │   ├── share.ts
-│   │   ├── useInstallPwa.ts
+│   │   ├── useDocumentTitle.ts
 │   │   ├── useIsInView.ts
 │   │   ├── useIsKeyboardOpen.ts
 │   │   ├── useIsScrolledPast.test.tsx
@@ -187,10 +184,13 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   ├── useTheme.ts
 │   │   └── utils.ts
 │   ├── pages/
+│   │   ├── CvEditorDialogs.tsx
 │   │   ├── CvEditorPage.test.tsx
 │   │   ├── CvEditorPage.tsx
+│   │   ├── CvFormPanel.tsx
 │   │   ├── GuidePage.tsx
-│   │   └── LandingPage.tsx
+│   │   ├── LandingPage.tsx
+│   │   └── useCvEditorForm.ts
 │   ├── App.tsx
 │   ├── index.css
 │   ├── main.tsx
@@ -214,13 +214,13 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 └── vitest.config.ts
 ```
 
-### Source files (82 source, 15 test, 1 e2e)
+### Source files (83 source, 15 test, 1 e2e)
 
 #### `src/` layout
 
 | Directory            | Purpose                                                                             |
 | -------------------- | ----------------------------------------------------------------------------------- |
-| `src/components/`    | Shared app-shell components (AppHeader, ErrorBoundary, icons, PWA, theme, share)    |
+| `src/components/`    | Shared app-shell components (AppHeader, ErrorBoundary, icons, theme, share)         |
 | `src/components/ui/` | shadcn-style primitives (button, card, field, input, textarea, etc.)                |
 | `src/cv/`            | CV domain: schema, hooks, constants, formatters, export logic                       |
 | `src/cv/form/`       | Form section components (PersonalInfo, Experience, Education, AI settings, dialogs) |
@@ -228,20 +228,20 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 | `src/cv/ai/`         | AI generation helpers (Gemini calls, CV text parsing)                               |
 | `src/cv/export/`     | DOCX document builder                                                               |
 | `src/guide/`         | User guide UI components (path picker, phases, sections, TOC)                       |
-| `src/lib/`           | Utilities, custom hooks (theme, PWA install, media queries, viewport)               |
+| `src/lib/`           | Utilities, custom hooks (theme, media queries, viewport)                            |
 | `src/pages/`         | Route-level page components (LandingPage, GuidePage, CvEditorPage)                  |
 
 #### Key entry points
 
-| File                          | Role                                                                        |
-| ----------------------------- | --------------------------------------------------------------------------- |
-| `src/main.tsx`                | App bootstrap: HashRouter, loadDefaultValues(), service worker registration |
-| `src/App.tsx`                 | Route definitions (landing, guide, and editor)                              |
-| `src/pages/CvEditorPage.tsx`  | Main CV editor UI (form, preview, dialogs, AI wiring)                       |
-| `src/pages/GuidePage.tsx`     | Step-by-step user guide with collapsible phases and TOC                     |
-| `src/index.css`               | Global Tailwind imports, CSS variables, theme tokens (OKLCH)                |
-| `src/cv/cvFormSchema.ts`      | Zod schema and TypeScript types for the entire CV form                      |
-| `src/cv/loadDefaultValues.ts` | Merges starter data with schema defaults                                    |
+| File                          | Role                                                                                        |
+| ----------------------------- | ------------------------------------------------------------------------------------------- |
+| `src/main.tsx`                | App bootstrap: HashRouter, loadDefaultValues(), legacy service worker cleanup in production |
+| `src/App.tsx`                 | Route definitions (landing, guide, and editor)                                              |
+| `src/pages/CvEditorPage.tsx`  | Main CV editor UI (form, preview, dialogs, AI wiring)                                       |
+| `src/pages/GuidePage.tsx`     | Step-by-step user guide with collapsible phases and TOC                                     |
+| `src/index.css`               | Global Tailwind imports, CSS variables, theme tokens (OKLCH)                                |
+| `src/cv/cvFormSchema.ts`      | Zod schema and TypeScript types for the entire CV form                                      |
+| `src/cv/loadDefaultValues.ts` | Merges starter data with schema defaults                                                    |
 
 ---
 
@@ -260,7 +260,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 - **No global state library.** No Redux, Zustand, or Context-based stores.
 - **react-hook-form** owns the entire CV form state (useForm, useFieldArray, useWatch, zodResolver).
 - **Local state** via `useState` / `useRef` / `useCallback` for UI concerns (dialogs, preview toggle, collapsibles).
-- **Custom hooks** encapsulate side effects: `useAiGeneration`, `useCvExport`, `useTheme`, `useInstallPwa`.
+- **Custom hooks** encapsulate side effects: `useAiGeneration`, `useCvExport`, `useTheme`.
 - **Persistence:** CV data, Gemini API key, and theme preference persist in `localStorage` (via `src/lib/cvStorage.ts` and `useTheme`). Nothing is sent to any server.
 
 ### Styling
@@ -433,7 +433,7 @@ These rules are non-negotiable. Violating them will be flagged during review.
 ### Vite
 
 - Base path: `/cv-builder/` (GitHub Pages subpath)
-- Plugins: `@tailwindcss/vite`, `@vitejs/plugin-react`, custom `stampServiceWorker` (injects git SHA into `sw.js`)
+- Plugins: `@tailwindcss/vite`, `@vitejs/plugin-react`, `@sentry/vite-plugin` (when `SENTRY_AUTH_TOKEN` is set)
 - Alias: `@` → `./src`
 
 ### ESLint highlights
@@ -448,18 +448,18 @@ These rules are non-negotiable. Violating them will be flagged during review.
 
 ## NPM scripts
 
-| Script              | Command                              | Purpose                          |
-| ------------------- | ------------------------------------ | -------------------------------- |
-| `dev`               | `vite`                               | Local dev server                 |
-| `build`             | `tsc --noEmit && vite build`         | Type-check + production build    |
-| `preview`           | `vite preview`                       | Serve production build locally   |
-| `lint`              | `eslint .`                           | Run ESLint                       |
-| `typecheck`         | `tsc --noEmit`                       | TypeScript compiler checks       |
-| `test`              | `vitest run`                         | Run unit + component tests       |
-| `test:e2e`          | `playwright test`                    | Run Playwright e2e tests         |
-| `generate:icons`    | `node scripts/generate-icons.mjs`    | Regenerate PWA icons and favicon |
-| `generate:og`       | `node scripts/generate-og-image.mjs` | Regenerate OG image              |
-| `generate:overview` | `node scripts/generate-overview.mjs` | Regenerate this document         |
+| Script              | Command                              | Purpose                            |
+| ------------------- | ------------------------------------ | ---------------------------------- |
+| `dev`               | `vite`                               | Local dev server                   |
+| `build`             | `tsc --noEmit && vite build`         | Type-check + production build      |
+| `preview`           | `vite preview`                       | Serve production build locally     |
+| `lint`              | `eslint .`                           | Run ESLint                         |
+| `typecheck`         | `tsc --noEmit`                       | TypeScript compiler checks         |
+| `test`              | `vitest run`                         | Run unit + component tests         |
+| `test:e2e`          | `playwright test`                    | Run Playwright e2e tests           |
+| `generate:icons`    | `node scripts/generate-icons.mjs`    | Regenerate favicon and touch icons |
+| `generate:og`       | `node scripts/generate-og-image.mjs` | Regenerate OG image                |
+| `generate:overview` | `node scripts/generate-overview.mjs` | Regenerate this document           |
 
 ---
 
@@ -469,15 +469,15 @@ The app has several generated image assets that depend on branding or UI. When t
 
 ### Logo / icon
 
-The app logo is a document-robot SVG defined inline in `src/components/RobotIcon.tsx`. The PWA/favicon icons are **canvas-drawn replicas** of the same design in `scripts/generate-icons.mjs`.
+The app logo is a document-robot SVG defined inline in `src/components/RobotIcon.tsx`. Favicons and touch icons are **canvas-drawn replicas** of the same design in `scripts/generate-icons.mjs`.
 
-| Asset                    | Generated by             | Output path(s)                 | Consumed in                                                     |
-| ------------------------ | ------------------------ | ------------------------------ | --------------------------------------------------------------- |
-| `RobotIcon` (inline SVG) | Hand-coded component     | `src/components/RobotIcon.tsx` | `AppLogo.tsx`, `LandingPage.tsx`                                |
-| `favicon-32.png`         | `npm run generate:icons` | `public/favicon-32.png`        | `index.html` (`<link rel="icon">`)                              |
-| `icon-192.png`           | `npm run generate:icons` | `public/icon-192.png`          | `index.html` (`<link rel="apple-touch-icon">`), `manifest.json` |
-| `icon-512.png`           | `npm run generate:icons` | `public/icon-512.png`          | `manifest.json`                                                 |
-| `icon-maskable.png`      | `npm run generate:icons` | `public/icon-maskable.png`     | `manifest.json`                                                 |
+| Asset                    | Generated by             | Output path(s)                 | Consumed in                                    |
+| ------------------------ | ------------------------ | ------------------------------ | ---------------------------------------------- |
+| `RobotIcon` (inline SVG) | Hand-coded component     | `src/components/RobotIcon.tsx` | `AppLogo.tsx`, `LandingPage.tsx`               |
+| `favicon-32.png`         | `npm run generate:icons` | `public/favicon-32.png`        | `index.html` (`<link rel="icon">`)             |
+| `icon-192.png`           | `npm run generate:icons` | `public/icon-192.png`          | `index.html` (`<link rel="apple-touch-icon">`) |
+| `icon-512.png`           | `npm run generate:icons` | `public/icon-512.png`          | Unused in HTML; kept for sharing or future use |
+| `icon-maskable.png`      | `npm run generate:icons` | `public/icon-maskable.png`     | Unused in HTML; kept for sharing or future use |
 
 **If you change `RobotIcon.tsx`:** you must also update the canvas replica in `scripts/generate-icons.mjs` and re-run `npm run generate:icons` to keep favicons in sync.
 
@@ -508,7 +508,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 
 ## File inventory
 
-### Source files (82)
+### Source files (83)
 
 - `src/components/menuItemClass.ts` (3 lines)
 - `src/cv/ai/extractTextFromFile.ts` (54 lines)
@@ -527,25 +527,24 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/useCvExport.ts` (108 lines)
 - `src/lib/cvStorage.ts` (43 lines)
 - `src/lib/patchIosKeyboardGap.ts` (45 lines)
-- `src/lib/pwa.ts` (5 lines)
 - `src/lib/sentry.ts` (146 lines)
 - `src/lib/share.ts` (22 lines)
-- `src/lib/useInstallPwa.ts` (74 lines)
+- `src/lib/useDocumentTitle.ts` (13 lines)
 - `src/lib/useIsInView.ts` (31 lines)
 - `src/lib/useIsKeyboardOpen.ts` (45 lines)
 - `src/lib/useIsScrolledPast.ts` (32 lines)
 - `src/lib/useMediaQuery.ts` (17 lines)
-- `src/lib/useTheme.ts` (29 lines)
+- `src/lib/useTheme.ts` (33 lines)
 - `src/lib/utils.ts` (7 lines)
+- `src/pages/useCvEditorForm.ts` (314 lines)
 - `src/test-setup.ts` (2 lines)
 - `src/vite-env.d.ts` (16 lines)
 - `src/App.tsx` (46 lines)
-- `src/components/AppHeader.tsx` (100 lines)
+- `src/components/AppHeader.tsx` (85 lines)
 - `src/components/AppLogo.tsx` (13 lines)
 - `src/components/EmojiIcon.tsx` (13 lines)
 - `src/components/ErrorBoundary.tsx` (42 lines)
 - `src/components/GeminiIcon.tsx` (18 lines)
-- `src/components/InstallPwa.tsx` (95 lines)
 - `src/components/RobotIcon.tsx` (81 lines)
 - `src/components/ScrollToTopFab.tsx` (32 lines)
 - `src/components/ShareButton.tsx` (23 lines)
@@ -588,10 +587,12 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/guide/GuidePhase.tsx` (70 lines)
 - `src/guide/GuideSection.tsx` (40 lines)
 - `src/guide/GuideToc.tsx` (52 lines)
-- `src/main.tsx` (67 lines)
-- `src/pages/CvEditorPage.tsx` (968 lines)
-- `src/pages/GuidePage.tsx` (771 lines)
-- `src/pages/LandingPage.tsx` (938 lines)
+- `src/main.tsx` (40 lines)
+- `src/pages/CvEditorDialogs.tsx` (129 lines)
+- `src/pages/CvEditorPage.tsx` (218 lines)
+- `src/pages/CvFormPanel.tsx` (606 lines)
+- `src/pages/GuidePage.tsx` (731 lines)
+- `src/pages/LandingPage.tsx` (913 lines)
 
 ### Test files (15)
 
@@ -613,7 +614,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 
 ### E2E files (1)
 
-- `e2e/cv-editor.spec.ts` (87 lines)
+- `e2e/cv-editor.spec.ts` (88 lines)
 
 ---
 

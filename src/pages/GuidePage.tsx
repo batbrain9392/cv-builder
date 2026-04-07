@@ -8,7 +8,6 @@ import {
   FileTextIcon,
   InfoIcon,
   KeyRoundIcon,
-  MonitorSmartphoneIcon,
   PenLineIcon,
   PlayIcon,
   SaveIcon,
@@ -21,7 +20,6 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 
 import { AppLogo } from '@/components/AppLogo';
-import { InstallPwa } from '@/components/InstallPwa';
 import { ScrollToTopFab } from '@/components/ScrollToTopFab';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { GuideCallout } from '@/guide/GuideCallout';
@@ -67,21 +65,11 @@ const TOC_GROUPS: TocGroup[] = [
       { id: 'docx-to-pdf', title: 'DOCX to PDF' },
     ],
   },
-  {
-    label: 'Optional',
-    items: [{ id: 'install-pwa', title: 'Install as an app' }],
-  },
 ];
 
 const ALL_IDS = TOC_GROUPS.flatMap((g) => g.items.map((i) => i.id));
 
-const PHASE_IDS = [
-  'phase-getting-started',
-  'phase-editor',
-  'phase-ai',
-  'phase-export',
-  'phase-optional',
-] as const;
+const PHASE_IDS = ['phase-getting-started', 'phase-editor', 'phase-ai', 'phase-export'] as const;
 type PhaseId = (typeof PHASE_IDS)[number];
 
 const SECTION_TO_PHASE: Record<string, PhaseId> = {};
@@ -115,8 +103,8 @@ const PATH_CARDS = [
   },
   {
     icon: DownloadIcon,
-    label: 'Preview, export, or install',
-    description: 'Live preview, DOCX download, PDF tips, and PWA install.',
+    label: 'Preview and export',
+    description: 'Live preview, DOCX download, and PDF tips.',
     targetId: 'preview',
   },
 ];
@@ -167,7 +155,6 @@ function GuideNav({ shadow }: { shadow: boolean }) {
       <div className="mx-auto flex max-w-5xl items-center justify-between">
         <AppLogo />
         <nav aria-label="Guide navigation" className="flex items-center gap-2">
-          <InstallPwa />
           <ThemeToggle />
           <Link
             to="/"
@@ -267,7 +254,6 @@ export default function GuidePage() {
     'phase-editor': false,
     'phase-ai': false,
     'phase-export': false,
-    'phase-optional': false,
   });
 
   const setPhaseOpen = useCallback((phaseId: PhaseId, open: boolean) => {
@@ -686,39 +672,6 @@ export default function GuidePage() {
               <GuideCallout icon={InfoIcon}>
                 Google Docs is free and produces excellent PDF output. Upload the DOCX to Google
                 Drive, open with Docs, then File &rarr; Download &rarr; PDF.
-              </GuideCallout>
-            </GuideSection>
-          </GuidePhase>
-
-          {/* ── Phase 5: Optional ── */}
-          <GuidePhase
-            id="phase-optional"
-            title="Optional"
-            open={phases['phase-optional']}
-            onOpenChange={(o) => setPhaseOpen('phase-optional', o)}
-          >
-            <GuideSection
-              id="install-pwa"
-              icon={MonitorSmartphoneIcon}
-              title="Install as an app"
-              tag={{ label: 'Optional', variant: 'optional' }}
-            >
-              <p className="text-sm text-muted-foreground">
-                BioBot is a Progressive Web App &mdash; install it on your device for offline use.
-              </p>
-              <ol className="list-inside list-decimal space-y-2 text-sm text-muted-foreground">
-                <li>
-                  Tap the <strong>Install</strong> button in the top bar or hamburger menu.
-                </li>
-                <li>
-                  Follow your browser&rsquo;s install prompt. On iOS Safari, use the Share menu
-                  &rarr; Add to Home Screen.
-                </li>
-                <li>The installed app works offline and opens without browser chrome.</li>
-              </ol>
-              <GuideCallout icon={InfoIcon}>
-                Works on Chrome, Edge, Safari, and most mobile browsers. Data stays in the browser
-                that installed the app.
               </GuideCallout>
             </GuideSection>
           </GuidePhase>

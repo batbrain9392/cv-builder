@@ -1,16 +1,14 @@
 import type React from 'react';
 
 import { Menu } from '@base-ui/react/menu';
-import { EllipsisVerticalIcon, MonitorDownIcon, MoonIcon, Share2Icon, SunIcon } from 'lucide-react';
+import { EllipsisVerticalIcon, MoonIcon, Share2Icon, SunIcon } from 'lucide-react';
 
 import { AppLogo } from '@/components/AppLogo';
-import { InstallPwa } from '@/components/InstallPwa';
 import { menuItemClass } from '@/components/menuItemClass';
 import { ShareButton } from '@/components/ShareButton';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { Button } from '@/components/ui/button';
 import { shareApp } from '@/lib/share';
-import { useInstallPwa } from '@/lib/useInstallPwa';
 import { useIsKeyboardOpen } from '@/lib/useIsKeyboardOpen';
 import { useTheme } from '@/lib/useTheme';
 
@@ -22,7 +20,6 @@ interface AppHeaderProps {
 
 export function AppHeader({ children, mobileActionButtons, mobileMenuItems }: AppHeaderProps) {
   const { theme, toggle: toggleTheme } = useTheme();
-  const { state: installState, handleInstall } = useInstallPwa();
   const keyboardOpen = useIsKeyboardOpen();
 
   return (
@@ -38,9 +35,6 @@ export function AppHeader({ children, mobileActionButtons, mobileMenuItems }: Ap
         <AppLogo />
 
         <nav aria-label="App actions" className="flex items-center gap-2">
-          <div className="hidden lg:flex">
-            <InstallPwa />
-          </div>
           <div className="hidden lg:flex">
             <ShareButton />
           </div>
@@ -66,15 +60,6 @@ export function AppHeader({ children, mobileActionButtons, mobileMenuItems }: Ap
             <Menu.Portal>
               <Menu.Positioner className="z-[60]" align="end" side="top" sideOffset={12}>
                 <Menu.Popup className="min-w-40 rounded-lg border bg-popover p-1 text-popover-foreground shadow-md">
-                  {installState !== 'standalone' && (
-                    <Menu.Item
-                      className={menuItemClass}
-                      onClick={installState === 'installable' ? handleInstall : undefined}
-                    >
-                      <MonitorDownIcon className="size-4" />
-                      Install app
-                    </Menu.Item>
-                  )}
                   <Menu.Item className={menuItemClass} onClick={shareApp}>
                     <Share2Icon className="size-4" />
                     Share
