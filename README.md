@@ -29,10 +29,23 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 
 - 🚫 **No backend for your CV.** There is no server that stores your draft. **`localStorage`** keeps your CV data, Gemini API key, and theme in your browser so you can pick up where you left off.
 - 🤖 **Gemini (optional):** API calls go **from your browser to Google** using your own key.
-- 🍪 **No ad or marketing cookies.** The app does not use HTTP cookies for its own features. Optional **[Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/)** (free, privacy-oriented): in the Cloudflare dashboard go to **Web Analytics** → **Add a site** → enter your public hostname (e.g. `batbrain9392.github.io` or your custom domain) → **Manage site** and copy the snippet’s **token**. At build time set **`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN`** to that token (e.g. a GitHub Actions **secret** referenced in the `npm run build` step). Cloudflare’s beacon tracks SPA navigations via the History API. Alternatively, **`VITE_ANALYTICS_SCRIPT_URL`** plus optional **`VITE_ANALYTICS_DATA_DOMAIN`** supports a Plausible-style script if the Cloudflare token is unset — see [`src/lib/analytics.ts`](src/lib/analytics.ts). **Sentry** (below) may use browser storage for error session correlation.
+- 🍪 **No ad or marketing cookies.** The app does not use HTTP cookies for its own features. Optional analytics are **off by default**; enable them at build time — see **Analytics (optional)** below. **Sentry** (below) may use browser storage for error session correlation.
 - 🔑 Your Gemini API key stays on your device — anyone with access to this browser can read it, so use a device you trust.
 - 📤 You can export as JSON or DOCX anytime. Use **Clear all** in the editor to wipe the form and local storage.
 - 🐛 **Error monitoring** uses [Sentry](https://sentry.io) in production to track crashes and failed API calls so bugs can be fixed quickly. All events are scrubbed of API keys, email addresses, phone numbers, and UUIDs **in the browser** before anything is sent. The SDK does not attach IP addresses or user identifiers to events (`sendDefaultPii` is off, `event.user` is deleted). Sentry's server-side **"Prevent Storing IP Addresses"** setting is also enabled. Only console warnings and errors are captured — not general logs. Session Replay is not enabled.
+
+## 📊 Analytics (optional)
+
+| What                          | Where                                                                                          |
+| ----------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Injection & vendor logic**  | [`src/lib/analytics.ts`](src/lib/analytics.ts)                                                 |
+| **Called at startup**         | [`src/main.tsx`](src/main.tsx) (`initAnalytics()`)                                             |
+| **Env types**                 | [`src/vite-env.d.ts`](src/vite-env.d.ts)                                                       |
+| **CI: pass token into build** | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN`) |
+
+**Cloudflare Web Analytics** (recommended): [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) → **Web Analytics** → **Add a site** → your public hostname → **Manage site** → copy the snippet **token**. Set **`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN`** at build time (e.g. GitHub Actions repository secret). The beacon tracks SPA navigations via the History API.
+
+**Plausible-style script** (if Cloudflare token is unset): **`VITE_ANALYTICS_SCRIPT_URL`** and optional **`VITE_ANALYTICS_DATA_DOMAIN`**.
 
 ## ⚙️ Tech stack
 
