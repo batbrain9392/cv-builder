@@ -6,7 +6,7 @@ import { expect, test } from '@playwright/test';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 test('app boots with starter data and preview updates on edit', async ({ page }) => {
-  await page.goto('/#/app');
+  await page.goto('app');
 
   await page.getByRole('button', { name: /Personal Information/ }).click();
 
@@ -22,7 +22,7 @@ test('app boots with starter data and preview updates on edit', async ({ page })
 });
 
 test('import JSON file populates the form', async ({ page }) => {
-  await page.goto('/#/app');
+  await page.goto('app');
 
   const fileInput = page.locator('input[aria-label="Import CV JSON"]');
   await fileInput.setInputFiles(path.resolve(__dirname, 'fixtures/test-cv.json'));
@@ -36,7 +36,7 @@ test('import JSON file populates the form', async ({ page }) => {
 });
 
 test('clear all resets the form after confirmation', async ({ page }) => {
-  await page.goto('/#/app');
+  await page.goto('app');
 
   await page.getByRole('button', { name: /Personal Information/ }).click();
 
@@ -53,7 +53,7 @@ test('clear all resets the form after confirmation', async ({ page }) => {
 });
 
 test('DOCX download triggers a file download', async ({ page }) => {
-  await page.goto('/#/app');
+  await page.goto('app');
 
   const preview = page.locator('#cv-preview-panel-desktop');
   await preview.getByRole('button', { name: 'Download' }).click();
@@ -77,8 +77,15 @@ test('Landing page is the default route', async ({ page }) => {
   await expect(page.locator('form[aria-label="CV editor"]')).toBeVisible();
 });
 
+test('Guide route renders without Suspense loading placeholder', async ({ page }) => {
+  await page.goto('guide');
+
+  await expect(page.getByText('Loading…')).not.toBeVisible();
+  await expect(page.getByRole('heading', { name: /how biobot works/i })).toBeVisible();
+});
+
 test('Editor links back to landing page', async ({ page }) => {
-  await page.goto('/#/app');
+  await page.goto('app');
 
   await page.getByRole('button', { name: 'Help and info' }).click();
   await page.getByRole('menuitem', { name: 'Why BioBot?' }).click();

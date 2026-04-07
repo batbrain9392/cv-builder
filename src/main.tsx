@@ -1,15 +1,17 @@
 import * as Sentry from '@sentry/react';
 import { StrictMode } from 'react';
-import { createRoot } from 'react-dom/client';
-import { HashRouter } from 'react-router';
+import { createRoot, hydrateRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router';
 
 import { App } from './App.tsx';
 import { loadDefaultValues } from './cv/loadDefaultValues.ts';
+import { initAnalytics } from './lib/analytics.ts';
 import { patchIosKeyboardGap } from './lib/patchIosKeyboardGap.ts';
 import { initSentry } from './lib/sentry.ts';
 import './index.css';
 
 initSentry();
+initAnalytics();
 patchIosKeyboardGap();
 
 /** Unregister any previously registered service workers after removing offline caching. */
@@ -26,14 +28,24 @@ if (!el) {
   throw new Error('Root element #root not found');
 }
 
-createRoot(el, {
+const rootOptions = {
   onUncaughtError: Sentry.reactErrorHandler(),
   onCaughtError: Sentry.reactErrorHandler(),
   onRecoverableError: Sentry.reactErrorHandler(),
-}).render(
+} as const;
+
+const app = (
   <StrictMode>
-    <HashRouter>
+    <BrowserRouter basename="/cv-builder">
       <App defaultValues={loadDefaultValues()} />
-    </HashRouter>
-  </StrictMode>,
+    </BrowserRouter>
+  </StrictMode>
 );
+
+const shouldHydrate = !import.meta.env.DEV && el.innerHTML.trim().length > 0;
+
+if (shouldHydrate) {
+  hydrateRoot(el, app, rootOptions);
+} else {
+  createRoot(el, rootOptions).render(app);
+}

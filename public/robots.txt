@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://batbrain9392.github.io/cv-builder/sitemap.xml

@@ -22,5 +22,13 @@
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src", "vite.config.ts", "vitest.config.ts"]
+  "include": [
+    "src",
+    "scripts/copy-github-pages-404.ts",
+    "scripts/html-root.ts",
+    "scripts/prerender.ts",
+    "scripts/prerenderRoutes.ts",
+    "vite.config.ts",
+    "vitest.config.ts"
+  ]
 }

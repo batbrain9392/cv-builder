@@ -590,8 +590,10 @@ function BehindTheScenesSection() {
               what is redacted.
             </p>
             <p>
-              No ad or marketing cookies. The Sentry SDK may still use browser storage for its own
-              session correlation.
+              No ad or marketing cookies. If anonymous, cookieless analytics are enabled, they
+              collect only aggregate page views &mdash; no personal identifiers, no cross-site
+              tracking. The Sentry SDK may still use browser storage for its own session
+              correlation.
             </p>
             <p>
               Your API key stays on your device &mdash; anyone with access to this browser could

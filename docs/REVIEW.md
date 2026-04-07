@@ -2,6 +2,8 @@
 
 Last reviewed: 2026-04-06
 
+_See [github-pages-spa-routing.md](./github-pages-spa-routing.md) for path-based routing and the GitHub Pages `404.html` SPA fallback._
+
 ## Review #3 — 2026-04-06
 
 **Scope: guide page and documentation sync**

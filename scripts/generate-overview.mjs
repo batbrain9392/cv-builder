@@ -152,7 +152,7 @@ ${markdownTable(
     ['Build tool', 'Vite', `${pkg.dependencies.vite || pkg.devDependencies.vite}`],
     ['Styling', 'Tailwind CSS v4 + shadcn (base-nova)', `${pkg.dependencies.tailwindcss}`],
     ['Form state', 'react-hook-form + Zod v4', `RHF ${pkg.dependencies['react-hook-form']}, Zod ${pkg.dependencies.zod}`],
-    ['Routing', 'react-router (HashRouter)', `${pkg.dependencies['react-router']}`],
+    ['Routing', 'react-router (BrowserRouter, basename /cv-builder)', `${pkg.dependencies['react-router']}`],
     ['AI', '@google/genai (Gemini, client-side)', `${pkg.dependencies['@google/genai']}`],
     ['DOCX export', 'docx.js', `${pkg.dependencies.docx}`],
     ['DOCX import', 'mammoth', `${pkg.dependencies.mammoth}`],
@@ -211,7 +211,8 @@ ${markdownTable(
 ${markdownTable(
   ['File', 'Role'],
   [
-    ['\`src/main.tsx\`', 'App bootstrap: HashRouter, loadDefaultValues(), legacy service worker cleanup in production'],
+    ['\`src/main.tsx\`', 'App bootstrap: BrowserRouter (basename /cv-builder), hydrateRoot when #root is prerendered else createRoot, loadDefaultValues(), analytics (env-gated), legacy service worker cleanup in production'],
+    ['\`src/prerender.tsx\`', 'Build-time prerender entry: renders / and /guide to static HTML via renderToString (used by scripts/prerender.ts)'],
     ['\`src/App.tsx\`', 'Route definitions (landing, guide, and editor)'],
     ['\`src/pages/CvEditorPage.tsx\`', 'Main CV editor UI (form, preview, dialogs, AI wiring)'],
     ['\`src/pages/GuidePage.tsx\`', 'Step-by-step user guide with collapsible phases and TOC'],
@@ -227,7 +228,8 @@ ${markdownTable(
 
 ### Routing
 
-- **HashRouter** — serves from GitHub Pages subpath (\`/cv-builder/\`). Hash routes: \`/#/\`, \`/#/guide\`, \`/#/app\`.
+- **BrowserRouter** — \`basename="/cv-builder"\`. Routes: \`/\` (landing), \`/guide\`, \`/app\`. \`scripts/copy-github-pages-404.ts\` writes \`dist/404.html\` with the same assets as \`index.html\` but an **empty** \`#root\` (so \`/app\` deep links do not ship prerendered landing markup). See \`docs/github-pages-spa-routing.md\`.
+- **Build-time prerender** — \`scripts/prerender.ts\` injects \`/\` and \`/guide\` HTML via \`replaceRootInner\` (\`scripts/html-root.ts\`). SSR bundle: \`vite build --ssr\` + \`vite.config.ssr.ts\`, then deleted. \`dist/guide/index.html\` gets guide-specific \`<head>\` patches (canonical, OG, Twitter, meta description).
 - **Routes:**
   - \`/\` → \`LandingPage\` (lazy-loaded, marketing/info page)
   - \`/guide\` → \`GuidePage\` (lazy-loaded, step-by-step user guide)
@@ -324,7 +326,7 @@ These rules are non-negotiable. Violating them will be flagged during review.
 
 - **Minimize dependencies.** Don't add a library for something that can be done in a few lines.
 - **No backend.** Everything runs client-side. Gemini API calls go directly from the browser.
-- **No ad cookies or marketing analytics.** \`localStorage\` stores CV data, Gemini API key, and theme preference locally. Production Sentry is error/performance monitoring only (scrubbed, no Session Replay).
+- **No ad cookies or marketing analytics.** \`localStorage\` stores CV data, Gemini API key, and theme preference locally. Anonymous, cookieless analytics may be enabled via \`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN\` (Cloudflare Web Analytics) or \`VITE_ANALYTICS_SCRIPT_URL\` (e.g. Plausible-style; aggregate page views only, no personal identifiers). Production Sentry is error/performance monitoring only (scrubbed, no Session Replay).
 
 ### Git and CI
 
