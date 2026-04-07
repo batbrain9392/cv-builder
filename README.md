@@ -27,12 +27,12 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 
 ## 🔒 Privacy
 
-- 🍪 **No cookies.** None.
-- 🚫 **No backend server.** Gemini API calls go directly from your browser to Google using your own API key.
-- 💾 **`localStorage`** is used to save your CV data, Gemini API key, and theme preference in your browser so you can pick up where you left off. Nothing is sent to any server.
-- 🔑 Your Gemini API key is stored locally on your device — never on a server. Anyone with access to this browser can read it, so use a device you trust.
-- 📤 You can also export your data as JSON or DOCX at any time. Use **Clear all** in the editor to wipe both the form and local storage.
-- 🐛 **Error monitoring** uses [Sentry](https://sentry.io) in production to track crashes and failed API calls so bugs can be fixed quickly. All events are scrubbed of API keys, email addresses, phone numbers, and UUIDs **in the browser** before anything is sent. The SDK does not attach IP addresses or user identifiers to events (`sendDefaultPii` is off, `event.user` is deleted). Sentry's server-side **"Prevent Storing IP Addresses"** setting is also enabled. Only console warnings and errors are captured — not general logs.
+- 🚫 **No backend for your CV.** There is no server that stores your draft. **`localStorage`** keeps your CV data, Gemini API key, and theme in your browser so you can pick up where you left off.
+- 🤖 **Gemini (optional):** API calls go **from your browser to Google** using your own key.
+- 🍪 **No ad or marketing cookies.** The app does not use HTTP cookies for its own features. **Sentry** (below) may use browser storage for error session correlation.
+- 🔑 Your Gemini API key stays on your device — anyone with access to this browser can read it, so use a device you trust.
+- 📤 You can export as JSON or DOCX anytime. Use **Clear all** in the editor to wipe the form and local storage.
+- 🐛 **Error monitoring** uses [Sentry](https://sentry.io) in production to track crashes and failed API calls so bugs can be fixed quickly. All events are scrubbed of API keys, email addresses, phone numbers, and UUIDs **in the browser** before anything is sent. The SDK does not attach IP addresses or user identifiers to events (`sendDefaultPii` is off, `event.user` is deleted). Sentry's server-side **"Prevent Storing IP Addresses"** setting is also enabled. Only console warnings and errors are captured — not general logs. Session Replay is not enabled.
 
 ## ⚙️ Tech stack
 

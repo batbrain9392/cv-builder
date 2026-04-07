@@ -112,7 +112,7 @@ const FEATURES = [
   {
     icon: ShieldCheckIcon,
     title: 'Privacy-first',
-    desc: 'Everything stays in your browser\u2019s local storage. No server, no cookies, no sign-up.',
+    desc: 'Your CV draft lives in local storage on your device. No sign-up and no app server. Optional Gemini; production builds send scrubbed errors to Sentry.',
   },
   {
     icon: KeyRoundIcon,
@@ -618,22 +618,31 @@ function BehindTheScenesSection() {
         <Card>
           <CardHeader>
             <CardTitle as="h3">
-              <LockIcon className="inline size-4" aria-hidden="true" /> Cookies &amp; data privacy
+              <LockIcon className="inline size-4" aria-hidden="true" /> Data privacy
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-2 text-xs text-muted-foreground">
             <p>
-              No cookies. No server. Gemini calls go directly from your browser to Google using your
-              own API key.
+              This app has <strong>no backend</strong> for your CV. Your draft, API key, and theme
+              are saved to <code className="rounded bg-muted px-1">localStorage</code> on your
+              device so you can pick up where you left off. They are not uploaded to us.
             </p>
             <p>
-              Your CV data, API key, and theme preference are saved to{' '}
-              <code className="rounded bg-muted px-1">localStorage</code> in your browser so you can
-              pick up where you left off. Nothing is sent to any server.
+              <strong>Gemini</strong> (optional): requests go from your browser straight to Google
+              using your own API key.
             </p>
             <p>
-              Your API key is stored locally on your device &mdash; never on a server. Anyone with
-              access to this browser could read it, so use a device you trust.
+              <strong>Sentry</strong> (production only): scrubbed crash and performance data may be
+              sent to Sentry so bugs can be fixed. Session replay is off. See the project README for
+              what is redacted.
+            </p>
+            <p>
+              No ad or marketing cookies. The Sentry SDK may still use browser storage for its own
+              session correlation.
+            </p>
+            <p>
+              Your API key stays on your device &mdash; anyone with access to this browser could
+              read it, so use a device you trust.
             </p>
           </CardContent>
         </Card>

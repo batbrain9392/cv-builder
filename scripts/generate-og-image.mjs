@@ -282,11 +282,11 @@ async function composite(formBuf, previewBuf) {
 
   // -- Secondary line --
   ctx.font = '20px Geist';
-  ctx.fillText('Runs entirely in your browser \u00B7 No sign-up \u00B7 No cookies', TEXT_X, y);
+  ctx.fillText('Runs entirely in your browser \u00B7 No sign-up \u00B7 No app server', TEXT_X, y);
   y += secondaryH + GAP;
 
   // -- Privacy pill --
-  const pillLabel = 'Your data stays in your browser';
+  const pillLabel = 'Your CV draft stays on your device';
   ctx.font = '18px Geist';
   const pillPadX = 22;
   const pillMetrics = ctx.measureText(pillLabel);

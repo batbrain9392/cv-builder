@@ -1,6 +1,6 @@
 # BioBot — Project Overview for AI Agents
 
-> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-07 (main@45e90b4).
+> **Auto-generated** by `scripts/generate-overview.mjs` on 2026-04-07 (main@92c328c).
 > Re-run with `npm run generate:overview` after structural changes.
 
 ---
@@ -13,7 +13,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 
 - **ATS-compatible output is the #1 priority** — every feature, AI prompt, and export format must preserve clean, structured, plain-text formatting that applicant tracking systems parse correctly. Nothing in the app should alter the CV's structure, reorder sections, or inject content unless the user explicitly requests and confirms it.
 - **Per-job tailoring** — load data once, paste a JD, generate AI suggestions, tweak, export. Repeat for each application.
-- **Privacy-first, local-first** — no cookies, no server, no analytics. Gemini API calls go directly from the browser using the user's own API key.
+- **Privacy-first, local-first** — no app backend for CV data; no ad/marketing cookies. Optional Gemini from the browser with the user's API key; production Sentry for scrubbed errors/traces (no Session Replay).
 - **Simple English, honest content** — no fake metrics, no company-specific acronyms in exported CVs. AI must not invent claims or data not present in the source.
 
 ---
@@ -101,6 +101,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   │   └── tooltip.tsx
 │   │   ├── AppHeader.tsx
 │   │   ├── AppLogo.tsx
+│   │   ├── DismissibleStatusBanner.tsx
 │   │   ├── EmojiIcon.tsx
 │   │   ├── ErrorBoundary.test.tsx
 │   │   ├── ErrorBoundary.tsx
@@ -131,6 +132,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   │   ├── CollapsibleSection.tsx
 │   │   │   ├── CoverLetterFields.tsx
 │   │   │   ├── DownloadDialog.tsx
+│   │   │   ├── EditorGuideHint.tsx
 │   │   │   ├── EducationFields.tsx
 │   │   │   ├── ExperienceEntryFields.tsx
 │   │   │   ├── FormActions.tsx
@@ -172,6 +174,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 │   │   └── GuideToc.tsx
 │   ├── lib/
 │   │   ├── cvStorage.ts
+│   │   ├── editorGuideHintStorage.ts
 │   │   ├── patchIosKeyboardGap.ts
 │   │   ├── sentry.ts
 │   │   ├── share.ts
@@ -214,7 +217,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 └── vitest.config.ts
 ```
 
-### Source files (83 source, 15 test, 1 e2e)
+### Source files (86 source, 15 test, 1 e2e)
 
 #### `src/` layout
 
@@ -261,7 +264,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 - **react-hook-form** owns the entire CV form state (useForm, useFieldArray, useWatch, zodResolver).
 - **Local state** via `useState` / `useRef` / `useCallback` for UI concerns (dialogs, preview toggle, collapsibles).
 - **Custom hooks** encapsulate side effects: `useAiGeneration`, `useCvExport`, `useTheme`.
-- **Persistence:** CV data, Gemini API key, and theme preference persist in `localStorage` (via `src/lib/cvStorage.ts` and `useTheme`). Nothing is sent to any server.
+- **Persistence:** CV data, Gemini API key, and theme preference persist in `localStorage` (via `src/lib/cvStorage.ts` and `useTheme`). Not uploaded to an app server; optional Gemini to Google; production Sentry receives scrubbed errors/traces.
 
 ### Styling
 
@@ -346,7 +349,7 @@ These rules are non-negotiable. Violating them will be flagged during review.
 
 - **Minimize dependencies.** Don't add a library for something that can be done in a few lines.
 - **No backend.** Everything runs client-side. Gemini API calls go directly from the browser.
-- **No cookies, no analytics, no tracking.** `localStorage` stores CV data, Gemini API key, and theme preference — all local-only.
+- **No ad cookies or marketing analytics.** `localStorage` stores CV data, Gemini API key, and theme preference locally. Production Sentry is error/performance monitoring only (scrubbed, no Session Replay).
 
 ### Git and CI
 
@@ -508,7 +511,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 
 ## File inventory
 
-### Source files (83)
+### Source files (86)
 
 - `src/components/menuItemClass.ts` (3 lines)
 - `src/cv/ai/extractTextFromFile.ts` (54 lines)
@@ -526,6 +529,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/useAiGeneration.ts` (214 lines)
 - `src/cv/useCvExport.ts` (108 lines)
 - `src/lib/cvStorage.ts` (43 lines)
+- `src/lib/editorGuideHintStorage.ts` (18 lines)
 - `src/lib/patchIosKeyboardGap.ts` (45 lines)
 - `src/lib/sentry.ts` (146 lines)
 - `src/lib/share.ts` (22 lines)
@@ -536,12 +540,13 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/lib/useMediaQuery.ts` (17 lines)
 - `src/lib/useTheme.ts` (33 lines)
 - `src/lib/utils.ts` (7 lines)
-- `src/pages/useCvEditorForm.ts` (314 lines)
+- `src/pages/useCvEditorForm.ts` (330 lines)
 - `src/test-setup.ts` (2 lines)
 - `src/vite-env.d.ts` (16 lines)
 - `src/App.tsx` (46 lines)
 - `src/components/AppHeader.tsx` (85 lines)
 - `src/components/AppLogo.tsx` (13 lines)
+- `src/components/DismissibleStatusBanner.tsx` (42 lines)
 - `src/components/EmojiIcon.tsx` (13 lines)
 - `src/components/ErrorBoundary.tsx` (42 lines)
 - `src/components/GeminiIcon.tsx` (18 lines)
@@ -567,6 +572,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/form/CollapsibleSection.tsx` (60 lines)
 - `src/cv/form/CoverLetterFields.tsx` (193 lines)
 - `src/cv/form/DownloadDialog.tsx` (84 lines)
+- `src/cv/form/EditorGuideHint.tsx` (29 lines)
 - `src/cv/form/EducationFields.tsx` (211 lines)
 - `src/cv/form/ExperienceEntryFields.tsx` (263 lines)
 - `src/cv/form/FormActions.tsx` (108 lines)
@@ -580,7 +586,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/form/SectionToolbar.tsx` (69 lines)
 - `src/cv/form/TagsInput.tsx` (94 lines)
 - `src/cv/preview/CvPreview.tsx` (180 lines)
-- `src/cv/preview/CvPreviewPanel.tsx` (150 lines)
+- `src/cv/preview/CvPreviewPanel.tsx` (142 lines)
 - `src/cv/preview/Markdown.tsx` (21 lines)
 - `src/guide/GuideCallout.tsx` (23 lines)
 - `src/guide/GuidePathPicker.tsx` (36 lines)
@@ -589,10 +595,10 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/guide/GuideToc.tsx` (52 lines)
 - `src/main.tsx` (40 lines)
 - `src/pages/CvEditorDialogs.tsx` (129 lines)
-- `src/pages/CvEditorPage.tsx` (218 lines)
-- `src/pages/CvFormPanel.tsx` (606 lines)
-- `src/pages/GuidePage.tsx` (731 lines)
-- `src/pages/LandingPage.tsx` (913 lines)
+- `src/pages/CvEditorPage.tsx` (220 lines)
+- `src/pages/CvFormPanel.tsx` (613 lines)
+- `src/pages/GuidePage.tsx` (726 lines)
+- `src/pages/LandingPage.tsx` (922 lines)
 
 ### Test files (15)
 
@@ -610,7 +616,7 @@ The OG image is a 1200×630 composite built by `scripts/generate-og-image.mjs`. 
 - `src/cv/form/ImportDialog.test.tsx` (146 lines)
 - `src/cv/form/TagsInput.test.tsx` (108 lines)
 - `src/lib/useIsScrolledPast.test.tsx` (89 lines)
-- `src/pages/CvEditorPage.test.tsx` (184 lines)
+- `src/pages/CvEditorPage.test.tsx` (222 lines)
 
 ### E2E files (1)
 

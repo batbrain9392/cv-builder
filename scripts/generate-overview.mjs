@@ -138,7 +138,7 @@ BioBot is an **AI-powered CV and cover letter builder** that runs entirely in th
 
 - **ATS-compatible output is the #1 priority** — every feature, AI prompt, and export format must preserve clean, structured, plain-text formatting that applicant tracking systems parse correctly. Nothing in the app should alter the CV's structure, reorder sections, or inject content unless the user explicitly requests and confirms it.
 - **Per-job tailoring** — load data once, paste a JD, generate AI suggestions, tweak, export. Repeat for each application.
-- **Privacy-first, local-first** — no cookies, no server, no analytics. Gemini API calls go directly from the browser using the user's own API key.
+- **Privacy-first, local-first** — no app backend for CV data; no ad/marketing cookies. Optional Gemini from the browser with the user's API key; production Sentry for scrubbed errors/traces (no Session Replay).
 - **Simple English, honest content** — no fake metrics, no company-specific acronyms in exported CVs. AI must not invent claims or data not present in the source.
 
 ---
@@ -239,7 +239,7 @@ ${markdownTable(
 - **react-hook-form** owns the entire CV form state (useForm, useFieldArray, useWatch, zodResolver).
 - **Local state** via \`useState\` / \`useRef\` / \`useCallback\` for UI concerns (dialogs, preview toggle, collapsibles).
 - **Custom hooks** encapsulate side effects: \`useAiGeneration\`, \`useCvExport\`, \`useTheme\`.
-- **Persistence:** CV data, Gemini API key, and theme preference persist in \`localStorage\` (via \`src/lib/cvStorage.ts\` and \`useTheme\`). Nothing is sent to any server.
+- **Persistence:** CV data, Gemini API key, and theme preference persist in \`localStorage\` (via \`src/lib/cvStorage.ts\` and \`useTheme\`). Not uploaded to an app server; optional Gemini to Google; production Sentry receives scrubbed errors/traces.
 
 ### Styling
 
@@ -324,7 +324,7 @@ These rules are non-negotiable. Violating them will be flagged during review.
 
 - **Minimize dependencies.** Don't add a library for something that can be done in a few lines.
 - **No backend.** Everything runs client-side. Gemini API calls go directly from the browser.
-- **No cookies, no analytics, no tracking.** \`localStorage\` stores CV data, Gemini API key, and theme preference — all local-only.
+- **No ad cookies or marketing analytics.** \`localStorage\` stores CV data, Gemini API key, and theme preference locally. Production Sentry is error/performance monitoring only (scrubbed, no Session Replay).
 
 ### Git and CI
 
