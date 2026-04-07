@@ -1,4 +1,4 @@
-import { cleanup, render, within } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
@@ -34,8 +34,12 @@ vi.mock('../cv/useAiGeneration.ts', () => ({
     }),
   }),
 }));
+const { mockUseMediaQuery } = vi.hoisted(() => ({
+  mockUseMediaQuery: vi.fn(() => true),
+}));
+
 vi.mock('@/lib/useMediaQuery', () => ({
-  useMediaQuery: () => true,
+  useMediaQuery: () => mockUseMediaQuery(),
 }));
 
 import { CvEditorPage } from './CvEditorPage.tsx';
@@ -43,6 +47,8 @@ import { CvEditorPage } from './CvEditorPage.tsx';
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
+  localStorage.clear();
+  mockUseMediaQuery.mockReturnValue(true);
 });
 
 function renderPage() {
@@ -179,5 +185,37 @@ describe('CvEditorPage card expansion', () => {
     for (const id of TOOLS_SECTION_IDS) {
       expect(getSectionTrigger(toolsCard, id).getAttribute('aria-expanded')).toBe('false');
     }
+  });
+});
+
+describe('CvEditorPage editor guide hint', () => {
+  it('shows a dismissible how-to hint', async () => {
+    vi.spyOn(cvStorage, 'hasUserCv').mockReturnValue(true);
+    const user = userEvent.setup();
+
+    renderPage();
+
+    expect(screen.getByRole('status', { name: /how-to guide suggestion/i })).toBeInTheDocument();
+
+    const guideBtn = screen.getByRole('button', { name: /open how-to guide/i });
+    expect(guideBtn).toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /dismiss guide hint/i }));
+
+    expect(
+      screen.queryByRole('status', { name: /how-to guide suggestion/i }),
+    ).not.toBeInTheDocument();
+    expect(localStorage.getItem('biobot-editor-guide-hint-dismissed')).toBe('1');
+  });
+
+  it('does not show the hint again after dismiss', () => {
+    vi.spyOn(cvStorage, 'hasUserCv').mockReturnValue(true);
+    localStorage.setItem('biobot-editor-guide-hint-dismissed', '1');
+
+    renderPage();
+
+    expect(
+      screen.queryByRole('status', { name: /how-to guide suggestion/i }),
+    ).not.toBeInTheDocument();
   });
 });

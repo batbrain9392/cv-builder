@@ -1,6 +1,9 @@
-import { FileTextIcon, InfoIcon, XIcon } from 'lucide-react';
+import { FileTextIcon, UploadIcon } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useWatch, type Control } from 'react-hook-form';
+
+import { DismissibleStatusBanner } from '@/components/DismissibleStatusBanner';
+import { Button } from '@/components/ui/button';
 
 import type { CvFormData } from '../cvFormSchema.ts';
 
@@ -109,37 +112,26 @@ export function CvPreviewPanel({
         </p>
       </div>
       {showBanner && (
-        <div
-          role="status"
-          className="flex items-start gap-2.5 rounded-lg border border-primary/20 bg-primary/10 px-3.5 py-3 text-sm text-foreground"
+        <DismissibleStatusBanner
+          aria-label="Sample data notice"
+          onDismiss={() => setBannerDismissed(true)}
+          dismissAriaLabel="Dismiss sample data notice"
         >
-          <InfoIcon className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-          <p className="flex-1">
-            This is <strong>sample data</strong> to show how the editor works.{' '}
+          <div className="space-y-2">
+            <p>
+              This is <strong>sample data</strong> to show how the editor works. Replace it by
+              importing a file or filling in your details below.
+            </p>
             {onGoToImport ? (
-              <>
-                <button
-                  type="button"
-                  onClick={onGoToImport}
-                  className="font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
-                >
-                  Import your CV
-                </button>{' '}
-                or fill in your details to get started.
-              </>
+              <Button type="button" variant="outline" size="sm" onClick={onGoToImport}>
+                <UploadIcon data-icon="inline-start" className="size-3.5" aria-hidden="true" />
+                Import your CV
+              </Button>
             ) : (
-              'Fill in your details to get started.'
+              <p className="text-muted-foreground">Fill in your details to get started.</p>
             )}
-          </p>
-          <button
-            type="button"
-            onClick={() => setBannerDismissed(true)}
-            className="mt-0.5 shrink-0 rounded-sm p-0.5 text-foreground/60 transition-colors hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
-            aria-label="Dismiss sample data notice"
-          >
-            <XIcon className="size-3.5" />
-          </button>
-        </div>
+          </div>
+        </DismissibleStatusBanner>
       )}
       <div ref={wrapperRef} className="flex justify-center">
         <CvPreview data={data} />

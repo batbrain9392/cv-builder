@@ -37,6 +37,7 @@ import type { SectionKey, ToolsSectionKey } from './useCvEditorForm.ts';
 import { AiSettingsFields } from '../cv/form/AiSettingsFields.tsx';
 import { BackupReminder } from '../cv/form/BackupReminder.tsx';
 import { CoverLetterFields } from '../cv/form/CoverLetterFields.tsx';
+import { EditorGuideHint } from '../cv/form/EditorGuideHint.tsx';
 import { EducationEntry } from '../cv/form/EducationFields.tsx';
 import { ExperienceEntryFields } from '../cv/form/ExperienceEntryFields.tsx';
 import { HighlightsInput } from '../cv/form/HighlightsInput.tsx';
@@ -108,6 +109,8 @@ interface CvFormPanelProps {
   isStarterData: boolean;
   showBackupBanner: boolean;
   onDismissBackup: () => void;
+  showEditorGuideHint: boolean;
+  onDismissEditorGuideHint: () => void;
 
   toolsOpen: boolean;
   setToolsOpen: (open: boolean) => void;
@@ -157,6 +160,8 @@ export function CvFormPanel({
   isStarterData,
   showBackupBanner,
   onDismissBackup,
+  showEditorGuideHint,
+  onDismissEditorGuideHint,
   toolsOpen,
   setToolsOpen,
   mainCardOpen,
@@ -213,6 +218,8 @@ export function CvFormPanel({
         </p>
       </div>
 
+      {showEditorGuideHint && <EditorGuideHint onDismiss={onDismissEditorGuideHint} />}
+
       {showBackupBanner && <BackupReminder onDismiss={onDismissBackup} />}
 
       <CollapsibleCard
@@ -220,7 +227,7 @@ export function CvFormPanel({
         title={
           <>
             <SettingsIcon className="size-4" />
-            Import existing CV
+            Import CV <span className="font-normal text-muted-foreground">(optional)</span>
           </>
         }
         description={
@@ -297,7 +304,7 @@ export function CvFormPanel({
                 onClick={scrollToImport}
                 className="inline font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
               >
-                Import existing CV
+                Import CV
               </button>{' '}
               above to load a previous backup or parse an existing CV.
             </>
@@ -309,7 +316,7 @@ export function CvFormPanel({
                 onClick={scrollToImport}
                 className="inline font-medium text-primary-text underline underline-offset-2 hover:text-primary-text/80"
               >
-                Import existing CV
+                Import CV
               </button>{' '}
               above to load a previous backup or parse an existing CV.
             </>

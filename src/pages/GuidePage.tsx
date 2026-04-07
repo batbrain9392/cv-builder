@@ -229,7 +229,7 @@ function MobileTocDrawer({
 function ImportHint({ section }: { section: string }) {
   return (
     <p className="text-sm text-muted-foreground">
-      In the editor, expand <strong>Import existing CV</strong>, then open{' '}
+      In the editor, expand <strong>Import CV</strong> (optional), then open{' '}
       <strong>{section}</strong>.
     </p>
   );
@@ -370,8 +370,8 @@ export default function GuidePage() {
                   ).
                 </li>
                 <li>
-                  Expand <strong>Import existing CV</strong> &rarr; <strong>Import data</strong> and
-                  drag your file into the drop zone, or paste your CV text directly.
+                  Expand <strong>Import CV</strong> (optional) &rarr; <strong>Import data</strong>{' '}
+                  and drag your file into the drop zone, or paste your CV text directly.
                 </li>
                 <li>
                   Click <strong>Parse with Gemini</strong>. The AI populates every form field.
@@ -395,7 +395,7 @@ export default function GuidePage() {
               </p>
               <ol className="list-inside list-decimal space-y-2 text-sm text-muted-foreground">
                 <li>
-                  Expand <strong>Import existing CV</strong> &rarr; <strong>Import data</strong>.
+                  Expand <strong>Import CV</strong> (optional) &rarr; <strong>Import data</strong>.
                 </li>
                 <li>
                   Click <strong>Load JSON backup</strong> and select your{' '}
@@ -440,7 +440,7 @@ export default function GuidePage() {
                   <code className="rounded bg-muted px-1 text-xs">AIza...</code>).
                 </li>
                 <li>
-                  In BioBot, expand <strong>Import existing CV</strong> &rarr;{' '}
+                  In BioBot, expand <strong>Import CV</strong> (optional) &rarr;{' '}
                   <strong>Gemini API</strong> and paste it.
                 </li>
               </ol>

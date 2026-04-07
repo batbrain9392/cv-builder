@@ -71,6 +71,8 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               isStarterData={form.isStarterData}
               showBackupBanner={form.showBackupBanner}
               onDismissBackup={() => form.setShowBackupBanner(false)}
+              showEditorGuideHint={form.showEditorGuideHint}
+              onDismissEditorGuideHint={form.onDismissEditorGuideHint}
               toolsOpen={form.toolsOpen}
               setToolsOpen={form.setToolsOpen}
               mainCardOpen={form.mainCardOpen}

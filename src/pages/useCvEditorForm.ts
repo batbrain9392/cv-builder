@@ -4,6 +4,10 @@ import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { clearCv, hasUserCv, saveCv } from '@/lib/cvStorage.ts';
+import {
+  dismissEditorGuideHint,
+  isEditorGuideHintDismissed,
+} from '@/lib/editorGuideHintStorage.ts';
 import { useMediaQuery } from '@/lib/useMediaQuery';
 
 import type { CvFormData } from '../cv/cvFormSchema.ts';
@@ -123,7 +127,17 @@ export function useCvEditorForm(defaultValues: CvFormData) {
   const [downloadDialogOpen, setDownloadDialogOpen] = useState(false);
   const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const [showBackupBanner, setShowBackupBanner] = useState(false);
+  const [editorGuideHintDismissed, setEditorGuideHintDismissed] = useState(() =>
+    isEditorGuideHintDismissed(),
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const showEditorGuideHint = !editorGuideHintDismissed;
+
+  const onDismissEditorGuideHint = useCallback(() => {
+    dismissEditorGuideHint();
+    setEditorGuideHintDismissed(true);
+  }, []);
 
   const {
     register,
@@ -285,6 +299,8 @@ export function useCvEditorForm(defaultValues: CvFormData) {
     setClearConfirmOpen,
     showBackupBanner,
     setShowBackupBanner,
+    showEditorGuideHint,
+    onDismissEditorGuideHint,
 
     // AI
     aiApiKey,
