@@ -29,12 +29,14 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 
 - 🚫 **No backend for your CV.** There is no server that stores your draft. **`localStorage`** keeps your CV data, Gemini API key, and theme in your browser so you can pick up where you left off.
 - 🤖 **Gemini (optional):** API calls go **from your browser to Google** using your own key.
-- 🍪 **No ad or marketing cookies.** The app does not use HTTP cookies for its own features. Optional analytics are **off by default**; enable them at build time — see **Analytics (optional)** below. **Sentry** (below) may use browser storage for error session correlation.
+- 🍪 **No ad or marketing cookies.** The app does not use HTTP cookies for its own features. **Production builds** load **[Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/)** (cookieless, aggregate traffic) only when the GitHub Actions secret **`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN`** is set; otherwise **no** analytics script ships. Local `npm run dev` and forks without that secret behave the same as “no token.” **Sentry** (below) may use browser storage for error session correlation.
 - 🔑 Your Gemini API key stays on your device — anyone with access to this browser can read it, so use a device you trust.
 - 📤 You can export as JSON or DOCX anytime. Use **Clear all** in the editor to wipe the form and local storage.
 - 🐛 **Error monitoring** uses [Sentry](https://sentry.io) in production to track crashes and failed API calls so bugs can be fixed quickly. All events are scrubbed of API keys, email addresses, phone numbers, and UUIDs **in the browser** before anything is sent. The SDK does not attach IP addresses or user identifiers to events (`sendDefaultPii` is off, `event.user` is deleted). Sentry's server-side **"Prevent Storing IP Addresses"** setting is also enabled. Only console warnings and errors are captured — not general logs. Session Replay is not enabled.
 
-## 📊 Analytics (optional)
+## 📊 Analytics (Cloudflare Web Analytics)
+
+When **`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN`** is set for **`npm run build`** (e.g. GitHub Actions secret in CI below), production bundles load **[Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/)** — privacy-oriented, cookieless, aggregate page views and performance signals. If the token is missing at build time, no analytics beacon is included.
 
 | What                          | Where                                                                                          |
 | ----------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -43,23 +45,26 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 | **Env types**                 | [`src/vite-env.d.ts`](src/vite-env.d.ts)                                                       |
 | **CI: pass token into build** | [`.github/workflows/ci.yml`](.github/workflows/ci.yml) (`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN`) |
 
-**Cloudflare Web Analytics** (recommended): [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/) → **Web Analytics** → **Add a site** → your public hostname → **Manage site** → copy the snippet **token**. Set **`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN`** at build time (e.g. GitHub Actions repository secret). The beacon tracks SPA navigations via the History API.
+**Dashboard:** [Cloudflare](https://dash.cloudflare.com) → **Web Analytics** → **Add a site** → hostname visitors use (e.g. `batbrain9392.github.io`) → **Manage site** → copy the snippet **token** into the GitHub Actions secret above. The beacon tracks SPA navigations via the History API (see Cloudflare docs).
 
-**Plausible-style script** (if Cloudflare token is unset): **`VITE_ANALYTICS_SCRIPT_URL`** and optional **`VITE_ANALYTICS_DATA_DOMAIN`**.
+**Forks / local dev:** omit the secret to ship **no** analytics.
+
+**Alternative** (if Cloudflare token is unset): **`VITE_ANALYTICS_SCRIPT_URL`** and optional **`VITE_ANALYTICS_DATA_DOMAIN`** (Plausible-style). See [`src/lib/analytics.ts`](src/lib/analytics.ts).
 
 ## ⚙️ Tech stack
 
-|     | Technology                                                                   |                           |
-| --- | ---------------------------------------------------------------------------- | ------------------------- |
-| ⚛️  | [React 19](https://react.dev) + TypeScript                                   | UI framework              |
-| ⚡  | [Vite 6](https://vite.dev)                                                   | Build tool                |
-| 🎨  | [Tailwind CSS v4](https://tailwindcss.com) + [shadcn](https://ui.shadcn.com) | Styling and components    |
-| 📋  | [react-hook-form](https://react-hook-form.com) + [Zod](https://zod.dev)      | Form state and validation |
-| 🔀  | [react-router](https://reactrouter.com)                                      | Client-side routing       |
-| 📄  | [docx.js](https://docx.js.org)                                               | Word document generation  |
-| 📝  | [marked](https://marked.js.org)                                              | Markdown rendering        |
-| 🐛  | [Sentry](https://sentry.io)                                                  | Error monitoring          |
-| 🌐  | Fully client-side                                                            | No backend required       |
+|     | Technology                                                                   |                                                         |
+| --- | ---------------------------------------------------------------------------- | ------------------------------------------------------- |
+| ⚛️  | [React 19](https://react.dev) + TypeScript                                   | UI framework                                            |
+| ⚡  | [Vite 6](https://vite.dev)                                                   | Build tool                                              |
+| 🎨  | [Tailwind CSS v4](https://tailwindcss.com) + [shadcn](https://ui.shadcn.com) | Styling and components                                  |
+| 📋  | [react-hook-form](https://react-hook-form.com) + [Zod](https://zod.dev)      | Form state and validation                               |
+| 🔀  | [react-router](https://reactrouter.com)                                      | Client-side routing                                     |
+| 📄  | [docx.js](https://docx.js.org)                                               | Word document generation                                |
+| 📝  | [marked](https://marked.js.org)                                              | Markdown rendering                                      |
+| 🐛  | [Sentry](https://sentry.io)                                                  | Error monitoring                                        |
+| 📈  | [Cloudflare Web Analytics](https://www.cloudflare.com/web-analytics/)        | Cookieless traffic metrics (production, when token set) |
+| 🌐  | Fully client-side                                                            | No backend required                                     |
 
 ## 🛠️ Built with
 
@@ -70,6 +75,8 @@ The core CV builder works perfectly without AI — you can build, preview, and e
 Deployed automatically to **GitHub Pages** on every push to `main` via [GitHub Actions](.github/workflows/ci.yml). CI runs lint, typecheck, tests, and build — deploy only happens if all checks pass. The app is served under a `/cv-builder/` subpath and uses **`BrowserRouter`** (`basename="/cv-builder"`). Routes: `/cv-builder/` (landing), `/cv-builder/guide`, `/cv-builder/app`. The build writes **`404.html`** with the same scripts and styles as **`index.html`** but an **empty `#root`**, so unknown paths (including `/app` on first load) get a clean SPA shell while **`/`** and **`/guide`** stay prerendered (see below).
 
 📎 **Why we ship `404.html` and how path routing works on GitHub Pages:** [`docs/github-pages-spa-routing.md`](docs/github-pages-spa-routing.md).
+
+📎 **Maintainers — SEO, prerender, Google Search Console, Cloudflare Web Analytics, sitemap, forks:** [`docs/maintainer-seo.md`](docs/maintainer-seo.md).
 
 To enable on a fresh fork: go to **Settings > Pages** and set the source to **GitHub Actions**.
 

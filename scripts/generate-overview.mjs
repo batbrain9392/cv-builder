@@ -326,7 +326,7 @@ These rules are non-negotiable. Violating them will be flagged during review.
 
 - **Minimize dependencies.** Don't add a library for something that can be done in a few lines.
 - **No backend.** Everything runs client-side. Gemini API calls go directly from the browser.
-- **No ad cookies or marketing analytics.** \`localStorage\` stores CV data, Gemini API key, and theme preference locally. Anonymous, cookieless analytics may be enabled via \`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN\` (Cloudflare Web Analytics) or \`VITE_ANALYTICS_SCRIPT_URL\` (e.g. Plausible-style; aggregate page views only, no personal identifiers). Production Sentry is error/performance monitoring only (scrubbed, no Session Replay).
+- **No ad cookies or marketing cookies.** \`localStorage\` stores CV data, Gemini API key, and theme preference locally. Production builds may include **Cloudflare Web Analytics** (cookieless aggregate traffic) when \`VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN\` is set in CI; otherwise \`VITE_ANALYTICS_SCRIPT_URL\` (e.g. Plausible-style) if used. Production Sentry is error/performance monitoring only (scrubbed, no Session Replay).
 
 ### Git and CI
 
