@@ -26,12 +26,13 @@ const ROUTES = marketingHtmlPaths(dist, loadMarketingPrerenderUrls(root));
 function patchGuideHead(html: string): string {
   let out = html;
 
+  /** Multiline <meta> blocks only; must not start at `<meta charset` (would swallow <head> through description). */
   const replacements: [RegExp, string][] = [
     [
-      /<meta\s+name="description"\s+content="[^"]*"\s*\/>/,
+      /<meta\s*\n\s*name="description"\s*\n\s*content="[^"]*"\s*\n\s*\/>/,
       '<meta name="description" content="Step-by-step BioBot guide: start from sample data, import a CV, optional Gemini AI tailoring, live preview, and ATS-friendly Word export." />',
     ],
-    [/<title>[^<]*<\/title>/, '<title>Guide — BioBot</title>'],
+    [/<title>[^<]*<\/title>/, '<title>BioBot — Guide</title>'],
     [
       /<link rel="canonical" href="[^"]*"\s*\/>/,
       `<link rel="canonical" href="${SITE_ORIGIN}/guide" />`,
@@ -41,19 +42,19 @@ function patchGuideHead(html: string): string {
       `<meta property="og:url" content="${SITE_ORIGIN}/guide" />`,
     ],
     [
-      /<meta property="og:title" content="[^"]*"\s*\/>/,
+      /<meta\s*\n\s*property="og:title"\s*\n\s*content="[^"]*"\s*\n\s*\/>/,
       '<meta property="og:title" content="BioBot — How to use the CV builder" />',
     ],
     [
-      /<meta\s+property="og:description"\s+content="[^"]*"\s*\/>/,
+      /<meta\s*\n\s*property="og:description"\s*\n\s*content="[^"]*"\s*\n\s*\/>/,
       '<meta property="og:description" content="Step-by-step: import your CV, optional AI tailoring to job descriptions, live preview, and ATS-friendly Word export — all in your browser." />',
     ],
     [
-      /<meta name="twitter:title" content="[^"]*"\s*\/>/,
+      /<meta\s*\n\s*name="twitter:title"\s*\n\s*content="[^"]*"\s*\n\s*\/>/,
       '<meta name="twitter:title" content="BioBot — How to use the CV builder" />',
     ],
     [
-      /<meta\s+name="twitter:description"\s+content="[^"]*"\s*\/>/,
+      /<meta\s*\n\s*name="twitter:description"\s*\n\s*content="[^"]*"\s*\n\s*\/>/,
       '<meta name="twitter:description" content="Step-by-step guide: import, AI tailoring, export. Runs in your browser." />',
     ],
   ];

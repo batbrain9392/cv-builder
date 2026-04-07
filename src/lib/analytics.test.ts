@@ -12,6 +12,9 @@ describe('initAnalytics', () => {
       holder.appendChild(node);
       return node;
     });
+    vi.stubEnv('VITE_CLOUDFLARE_WEB_ANALYTICS_TOKEN', '');
+    vi.stubEnv('VITE_ANALYTICS_SCRIPT_URL', '');
+    vi.stubEnv('VITE_ANALYTICS_DATA_DOMAIN', '');
   });
 
   afterEach(() => {

@@ -25,6 +25,7 @@ import { Link } from 'react-router';
 
 import { AppLogo } from '@/components/AppLogo';
 import { GeminiIcon, GEMINI_LOGO_URL } from '@/components/GeminiIcon';
+import { LandingSeoJsonLd } from '@/components/LandingSeoJsonLd.tsx';
 import { RobotIcon } from '@/components/RobotIcon';
 import { ScrollToTopFab } from '@/components/ScrollToTopFab';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -838,8 +839,11 @@ function LandingFooter({ ref }: { ref: React.Ref<HTMLElement | null> }) {
 // Page root
 // ---------------------------------------------------------------------------
 
+/** Keep in sync with `<title>` in index.html after the `BioBot —` prefix. */
+const LANDING_TITLE_SUBTITLE = 'CV & resume builder (ATS-friendly Word, optional AI)';
+
 export default function LandingPage() {
-  useDocumentTitle();
+  useDocumentTitle(LANDING_TITLE_SUBTITLE);
   const ctaRef = useRef<HTMLAnchorElement>(null);
   const heroRef = useRef<HTMLElement>(null);
   const ctaScrolledPast = useIsScrolledPast(ctaRef);
@@ -852,6 +856,7 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-dvh bg-background text-foreground">
+      <LandingSeoJsonLd />
       <LandingNav shadow={heroScrolledPast} />
       <main>
         <HeroSection ctaRef={ctaRef} sectionRef={heroRef} />
