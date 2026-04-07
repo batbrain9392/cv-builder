@@ -284,71 +284,6 @@ function AtsExplainerSection() {
   );
 }
 
-const GET_STARTED_STEPS = [
-  {
-    step: 1,
-    icon: UploadIcon,
-    title: 'Upload your CV',
-    desc: 'PDF, Word document, or a screenshot — just drag and drop.',
-  },
-  {
-    step: 2,
-    icon: KeyRoundIcon,
-    title: 'Add your free Gemini API key',
-    desc: 'Get a key from Google AI Studio in seconds — no billing required.',
-  },
-  {
-    step: 3,
-    icon: SparklesIcon,
-    title: 'Your CV is ready',
-    desc: 'Every field is populated. Review, tweak, and export as a clean DOCX.',
-  },
-] as const;
-
-function GetStartedSection() {
-  return (
-    <SectionWrapper className="bg-secondary text-secondary-foreground">
-      <SectionHeading>Get started in seconds</SectionHeading>
-      <p className="mx-auto -mt-4 mb-10 max-w-2xl text-center text-sm text-muted-foreground sm:text-base">
-        Already have a CV? Upload it and let Gemini do the rest. No manual data entry.
-      </p>
-      <div className="mx-auto grid max-w-4xl gap-5 sm:grid-cols-3">
-        {GET_STARTED_STEPS.map(({ step, icon: Icon, title, desc }) => (
-          <div
-            key={step}
-            className="relative rounded-xl border bg-card p-5 text-card-foreground ring-1 ring-foreground/5"
-          >
-            <span className="absolute -top-3 left-4 flex size-6 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-              {step}
-            </span>
-            <Icon className="mb-3 size-5 text-primary-text" aria-hidden="true" />
-            <p className="mb-1 text-sm font-semibold">{title}</p>
-            <p className="text-xs leading-relaxed text-muted-foreground">{desc}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mx-auto mt-10 max-w-lg rounded-xl border bg-card p-6 text-center ring-1 ring-foreground/5">
-        <BookOpenIcon className="mx-auto mb-3 size-6 text-primary-text" aria-hidden="true" />
-        <p className="mb-1 text-sm font-semibold text-card-foreground">
-          Need a detailed walkthrough?
-        </p>
-        <p className="mb-4 text-xs text-muted-foreground">
-          Step-by-step instructions for every feature — from importing your CV to exporting the
-          final DOCX.
-        </p>
-        <Link
-          to="/guide"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2 text-sm font-medium text-primary-text transition-colors hover:bg-primary/10"
-        >
-          <BookOpenIcon className="size-4" />
-          Read the full guide
-        </Link>
-      </div>
-    </SectionWrapper>
-  );
-}
-
 // ---------------------------------------------------------------------------
 // What makes a CV ATS-friendly
 // ---------------------------------------------------------------------------
@@ -440,6 +375,24 @@ function AiTailoringSection() {
         ))}
       </div>
 
+      <div className="mx-auto mt-10 max-w-lg rounded-xl border bg-card p-6 text-center ring-1 ring-foreground/5">
+        <BookOpenIcon className="mx-auto mb-3 size-6 text-primary-text" aria-hidden="true" />
+        <p className="mb-1 text-sm font-semibold text-card-foreground">
+          Need a detailed walkthrough?
+        </p>
+        <p className="mb-4 text-xs text-muted-foreground">
+          Step-by-step instructions for every feature — from importing your CV to exporting the
+          final DOCX.
+        </p>
+        <Link
+          to="/guide"
+          className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/5 px-4 py-2 text-sm font-medium text-primary-text transition-colors hover:bg-primary/10"
+        >
+          <BookOpenIcon className="size-4" />
+          Read the full guide
+        </Link>
+      </div>
+
       <div className="mt-8 flex items-start justify-center gap-2 text-center text-xs text-muted-foreground">
         <ShieldCheckIcon className="mt-0.5 size-3.5 shrink-0" aria-hidden="true" />
         <span>
@@ -457,7 +410,7 @@ function AiTailoringSection() {
 
 function FeaturesSection() {
   return (
-    <SectionWrapper className="bg-background text-foreground">
+    <SectionWrapper className="bg-secondary text-secondary-foreground">
       <SectionHeading>How BioBot helps you land the interview</SectionHeading>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -576,7 +529,7 @@ function BuiltWithCard({
 
 function BehindTheScenesSection() {
   return (
-    <SectionWrapper className="bg-muted text-foreground" id="behind-the-scenes">
+    <SectionWrapper className="bg-background text-foreground" id="behind-the-scenes">
       <SectionHeading>Behind the scenes</SectionHeading>
 
       <div className="grid gap-5 lg:grid-cols-2">
@@ -903,9 +856,8 @@ export default function LandingPage() {
       <main>
         <HeroSection ctaRef={ctaRef} sectionRef={heroRef} />
         <AtsExplainerSection />
-        <GetStartedSection />
-        <AtsSectionsGrid />
         <AiTailoringSection />
+        <AtsSectionsGrid />
         <FeaturesSection />
         <BehindTheScenesSection />
       </main>
