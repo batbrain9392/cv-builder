@@ -107,6 +107,7 @@ function drawIcon(size, maskable = false) {
 }
 
 const sizes = [
+  { name: 'favicon-48.png', size: 48, maskable: false },
   { name: 'favicon-32.png', size: 32, maskable: false },
   { name: 'icon-192.png', size: 192, maskable: false },
   { name: 'icon-512.png', size: 512, maskable: false },

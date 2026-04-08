@@ -3,7 +3,7 @@ import { SITE_ORIGIN } from './siteOrigin.ts';
 const APP_NAME = 'BioBot';
 
 const DESCRIPTION =
-  'Free in-browser CV and resume builder with ATS-oriented Word export, live preview, and optional Google Gemini tailoring to job descriptions. No sign-up; your draft stays on your device.';
+  'Free, open-source CV and resume builder in the browser. ATS-oriented Word export, live preview, optional Google Gemini tailoring to job descriptions. No sign-up; source on GitHub; your draft stays on your device.';
 
 /** Canonical public URL for the app (trailing slash, matches index.html link rel=canonical). */
 export function landingPageUrl(): string {

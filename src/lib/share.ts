@@ -1,8 +1,8 @@
 import { toast } from 'sonner';
 
 const SHARE_DATA: ShareData = {
-  title: 'BioBot — CV & resume builder',
-  text: 'Free CV and resume builder with live preview and Word export. Runs in your browser.',
+  title: 'BioBot — Free, open-source CV & resume builder',
+  text: 'Free, open-source CV builder with live preview and Word export. Runs in your browser; source on GitHub.',
   url: 'https://batbrain9392.github.io/cv-builder/',
 };
 

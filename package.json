@@ -2,7 +2,7 @@
   "name": "biobot",
   "private": true,
   "version": "0.0.1",
-  "description": "BioBot — free CV and resume builder with live preview, Word export, and optional AI tailoring. Runs in your browser.",
+  "description": "BioBot — free, open-source CV and resume builder with live preview, Word export, and optional AI tailoring. Runs in your browser; source on GitHub.",
   "homepage": "https://batbrain9392.github.io/cv-builder/",
   "repository": {
     "type": "git",

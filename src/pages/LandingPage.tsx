@@ -840,7 +840,8 @@ function LandingFooter({ ref }: { ref: React.Ref<HTMLElement | null> }) {
 // ---------------------------------------------------------------------------
 
 /** Keep in sync with `<title>` in index.html after the `BioBot —` prefix. */
-const LANDING_TITLE_SUBTITLE = 'CV & resume builder (ATS-friendly Word, optional AI)';
+const LANDING_TITLE_SUBTITLE =
+  'Free, open-source CV & resume builder (ATS-friendly Word, optional AI)';
 
 export default function LandingPage() {
   useDocumentTitle(LANDING_TITLE_SUBTITLE);
