@@ -1,7 +1,7 @@
 import type { CvFormData } from '@/cv/cvFormSchema.ts';
 
 import { cvFormSchema } from '@/cv/cvFormSchema.ts';
-import { backfillEntryPrompts } from '@/cv/loadDefaultValues.ts';
+import { AI_FIELD_DEFAULTS, backfillEntryPrompts } from '@/cv/loadDefaultValues.ts';
 
 const STORAGE_KEY = 'biobot-cv-data';
 
@@ -19,7 +19,18 @@ export function loadCv(): CvFormData | null {
     if (!raw) return null;
     const parsed: Record<string, unknown> = JSON.parse(raw);
     if (typeof parsed !== 'object' || parsed === null) return null;
-    return cvFormSchema.parse(backfillEntryPrompts(parsed));
+    // Merge AI field defaults before parsing so that saves from older app versions
+    // (which may be missing newly-added fields like aiCoverLetterPrompt) still load
+    // correctly rather than failing the schema parse and silently falling back to
+    // starter data.
+    const withDefaults = { ...AI_FIELD_DEFAULTS, ...backfillEntryPrompts(parsed) };
+    const result = cvFormSchema.safeParse(withDefaults);
+    if (result.success) return result.data;
+    console.warn(
+      '[cvStorage] Saved CV failed schema validation — data may be from an older version:',
+      result.error.issues,
+    );
+    return null;
   } catch {
     return null;
   }

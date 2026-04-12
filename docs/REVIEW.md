@@ -4,6 +4,46 @@ Last reviewed: 2026-04-12
 
 _See [github-pages-spa-routing.md](./github-pages-spa-routing.md) for path-based routing and the GitHub Pages `404.html` SPA fallback._
 
+## Review #5 — 2026-04-12
+
+**Scope: localStorage load regression fix + auto-save**
+
+TypeScript clean, ESLint clean, 164/164 tests pass (up from 155), production build succeeds. Two bugs fixed; one new test file added.
+
+### Bugs fixed
+
+**1. Saved CV silently discarded on reload after schema update (high)**
+
+`loadCv` in `cvStorage.ts` called `cvFormSchema.parse(...)` which threw when the saved JSON was missing a field added in a newer schema version (e.g. `coverLetterEnabled`, `coverLetter`, `aiCoverLetterPrompt`). The `catch` swallowed the error and returned `null`, so `loadDefaultValues` fell back to the starter data — the user's saved CV was in `localStorage` but never loaded.
+
+Fix: merge `AI_FIELD_DEFAULTS` before parsing (same pattern as `loadDefaultValues`) so newly-added top-level fields are backfilled. Switch to `safeParse` + `console.warn` so failures are visible in devtools rather than silent.
+
+**2. No auto-save — edits lost on reload (medium)**
+
+The form only wrote to `localStorage` on explicit "Save to browser" or "Download" actions. Any edit between those actions was lost on reload.
+
+Fix: `useCvEditorForm` now subscribes to form changes via `watch(callback)` (public RHF API, no re-renders) and debounces `saveCv` at 500ms. Only saves when `cvFormSchema.safeParse` succeeds — partially-filled required fields don't corrupt storage.
+
+### New test file
+
+`src/lib/cvStorage.test.ts` — 9 tests covering:
+
+- round-trip save/load
+- backward-compat backfill for missing `aiCoverLetterPrompt` and `aiHighlightsPrompt`
+- warn + null on invalid data
+- `hasUserCv` and `clearCv`
+
+### Metrics
+
+| Metric     | Value                                |
+| ---------- | ------------------------------------ |
+| TypeScript | 0 errors                             |
+| ESLint     | 0 errors, 0 warnings                 |
+| Tests      | 164 passed, 0 failed (21 test files) |
+| Build      | clean, ~4.75 s                       |
+
+---
+
 ## Review #4 — 2026-04-12
 
 **Scope: Gemini BYOK proxy (CORS fix)**

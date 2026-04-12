@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useFieldArray, useForm, useWatch } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -148,6 +148,7 @@ export function useCvEditorForm(defaultValues: CvFormData) {
     reset,
     setValue,
     getValues,
+    watch,
   } = useForm<CvFormData>({
     resolver: zodResolver(cvFormSchema),
     defaultValues,
@@ -155,6 +156,23 @@ export function useCvEditorForm(defaultValues: CvFormData) {
 
   const aiApiKey = useWatch({ control, name: 'aiApiKey' });
   const canGenerate = Boolean(aiApiKey);
+
+  // Auto-save to localStorage on every change, debounced to avoid excessive writes.
+  // Only save when the form data is fully valid — partial mid-typing states are skipped.
+  useEffect(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    const { unsubscribe } = watch((values) => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        const result = cvFormSchema.safeParse(values);
+        if (result.success) saveCv(result.data);
+      }, 500);
+    });
+    return () => {
+      clearTimeout(timer);
+      unsubscribe();
+    };
+  }, [watch]);
 
   const links = useFieldArray({ control, name: 'personalInfo.links' });
   const experience = useFieldArray({ control, name: 'experience' });
