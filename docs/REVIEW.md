@@ -4,6 +4,35 @@ Last reviewed: 2026-04-12
 
 _See [github-pages-spa-routing.md](./github-pages-spa-routing.md) for path-based routing and the GitHub Pages `404.html` SPA fallback._
 
+## Review #6 — 2026-04-12
+
+**Scope: skill category bold — explicit markdown in stored strings**
+
+TypeScript clean, ESLint clean, 164/164 tests pass (unchanged), production build succeeds. No regressions. No new issues.
+
+### Change
+
+Replaced the transparent regex in `CvPreview.tsx` (`line.replace(/^([^:]+):/, '**$1:**')`) with explicit `**Category:**` markdown stored directly in the skill strings. Three files changed:
+
+- `src/cv/starterCv.json` — starter skill updated to `"**Core:** TypeScript, React, Next.js, Node.js"`.
+- `src/cv/ai/parseCvFromText.ts` — system prompt (both the RULES section and the example JSON) updated to instruct Gemini to produce `**Category:** skill1, skill2` format.
+- `src/cv/preview/CvPreview.tsx` — regex transform removed; skill line passed to `InlineMarkdown` as-is.
+
+The DOCX export already handled `**bold**` markdown correctly via `parseInlineSegments` → `inlineTextRuns`, so exported files render the bold category label without raw asterisks.
+
+**Trade-off accepted:** Existing saved CVs using the old `Category: ...` format (without markdown) will no longer be auto-bolded. Users must update manually or re-parse with AI.
+
+### Metrics
+
+| Metric     | Value                                |
+| ---------- | ------------------------------------ |
+| TypeScript | 0 errors                             |
+| ESLint     | 0 errors, 0 warnings                 |
+| Tests      | 164 passed, 0 failed (21 test files) |
+| Build      | clean, ~5.18 s                       |
+
+---
+
 ## Review #5 — 2026-04-12
 
 **Scope: localStorage load regression fix + auto-save**

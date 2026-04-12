@@ -23,9 +23,9 @@ const EXAMPLE_STRUCTURE = `{
   },
   "summary": "8+ years of experience building performant, accessible web applications.",
   "skills": [
-    "Frontend: TypeScript, React, Node.js",
-    "Backend: PostgreSQL, Redis",
-    "Tools: Git, Docker, AWS"
+    "**Frontend:** TypeScript, React, Node.js",
+    "**Backend:** PostgreSQL, Redis",
+    "**Tools:** Git, Docker, AWS"
   ],
   "experience": [
     {
@@ -78,7 +78,7 @@ RULES:
 - "personalInfo": name and email are required. title, location, and phone are optional (default "").
 - "experience" is for work/employment history. Each entry needs: role, company, startDate. Optional (default "" or []): url, endDate, location, items, tagsLabel, tags.
 - "education" is for degrees/academic qualifications. Each entry needs: degree, institution, startYear. Optional (default "" or []): institutionUrl, endYear, location, items.
-- "skills" is a flat array of strings. Each string is one line in the format "Category: skill1, skill2, skill3". Extract all skills from the CV and group them into relevant categories (e.g. "Frontend: React, TypeScript", "Backend: Node.js, PostgreSQL", "Tools: Git, Docker"). Do NOT include skills inside "summary" or "others". Categorise based on the candidate's role and the job description, if provided.
+- "skills" is a flat array of strings. Each string is one line in the format "**Category:** skill1, skill2, skill3" — the category label must be wrapped in **bold** markdown. Extract all skills from the CV and group them into relevant categories (e.g. "**Frontend:** React, TypeScript", "**Backend:** Node.js, PostgreSQL", "**Tools:** Git, Docker"). Do NOT include skills inside "summary" or "others". Categorise based on the candidate's role and the job description, if provided.
 - "others" is for everything else: certifications, projects, volunteer work, publications, awards. Use the same shape as experience entries. DO NOT put skills sections here.
 - "url", "institutionUrl" fields: set to "" unless a URL is explicitly present in the text. Never invent URLs.
 - Preserve dates exactly as written in the source text. For education, use year strings only (e.g. "2012").
