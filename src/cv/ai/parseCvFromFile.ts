@@ -9,6 +9,7 @@ import {
   resolveMimeType,
   SUPPORTED_MIME_TYPES,
 } from './fileUtils.ts';
+import { generateContent } from './geminiClient.ts';
 import { parseCvFromText, SYSTEM_PROMPT, validateParsedCv } from './parseCvFromText.ts';
 
 const MODEL = 'gemini-2.5-flash';
@@ -26,9 +27,7 @@ export async function parseCvFromFile(apiKey: string, file: File): Promise<Parse
 
   if (INLINE_GEMINI_MIME_TYPES.has(mimeType)) {
     const base64 = await fileToBase64(file);
-    const { GoogleGenAI } = await import('@google/genai');
-    const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
+    const response = await generateContent(apiKey, {
       model: MODEL,
       config: {
         systemInstruction: SYSTEM_PROMPT,

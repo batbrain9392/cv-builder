@@ -9,10 +9,8 @@ const { mockGenerateContent, mockParseCvFromText } = vi.hoisted(() => ({
   mockParseCvFromText: vi.fn(),
 }));
 
-vi.mock('@google/genai', () => ({
-  GoogleGenAI: vi.fn().mockImplementation(() => ({
-    models: { generateContent: mockGenerateContent },
-  })),
+vi.mock('./geminiClient.ts', () => ({
+  generateContent: mockGenerateContent,
 }));
 
 vi.mock('./parseCvFromText.ts', async (importOriginal) => {
@@ -87,6 +85,7 @@ describe('parseCvFromFile', () => {
     const result = await parseCvFromFile('key', file);
 
     expect(mockGenerateContent).toHaveBeenCalledWith(
+      'key',
       expect.objectContaining({
         model: 'gemini-2.5-flash',
         contents: [

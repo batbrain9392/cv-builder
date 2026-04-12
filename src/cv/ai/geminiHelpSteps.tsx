@@ -50,7 +50,8 @@ export const GEMINI_HELP_STEPS: HelpStep[] = [
       <>
         Once the key is generated, copy it (it starts with{' '}
         <code className="rounded bg-muted px-1 text-[0.7rem]">AIza</code>) and paste it into the
-        Gemini API Key field. It is only sent directly to Google from your browser.{' '}
+        Gemini API Key field. It is sent to our proxy on each AI request, which forwards it to
+        Google — it is never stored server-side.{' '}
         <strong>
           Save a copy of the key somewhere safe (e.g.&nbsp;a password manager) &mdash; Google
           won&rsquo;t show it again.

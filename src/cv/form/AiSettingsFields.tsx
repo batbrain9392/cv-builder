@@ -53,9 +53,9 @@ export function AiSettingsFields({ register, errors, open, onOpenChange }: AiSet
 
           <p id="aiApiKey-warning" className="text-xs text-warning-text">
             Your API key is saved in this browser&rsquo;s local storage alongside your CV data. It
-            never leaves your device, but anyone with access to this browser can read it. Keep the
-            key backed up safely (e.g.&nbsp;a password manager) &mdash; Google won&rsquo;t show it
-            again after creation.
+            is sent to our proxy on each AI request, which forwards it to Google — it is never
+            stored server-side. Keep the key backed up safely (e.g.&nbsp;a password manager) &mdash;
+            Google won&rsquo;t show it again after creation.
           </p>
 
           {errors.aiApiKey && <FieldError id="aiApiKey-error" errors={[errors.aiApiKey]} />}

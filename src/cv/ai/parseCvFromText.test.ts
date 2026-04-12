@@ -3,12 +3,10 @@ import { ZodError, type core } from 'zod';
 
 import { DEFAULT_HIGHLIGHTS_PROMPT } from '../cvFormSchema.ts';
 
-const mockGenerateContent = vi.fn();
+const mockGenerateContent = vi.hoisted(() => vi.fn());
 
-vi.mock('@google/genai', () => ({
-  GoogleGenAI: vi.fn().mockImplementation(() => ({
-    models: { generateContent: mockGenerateContent },
-  })),
+vi.mock('./geminiClient.ts', () => ({
+  generateContent: mockGenerateContent,
 }));
 
 import { buildIssuesFromZodError, parseCvFromText, splitCamelCase } from './parseCvFromText.ts';

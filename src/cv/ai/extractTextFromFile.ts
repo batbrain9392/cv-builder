@@ -6,6 +6,7 @@ import {
   MAX_FILE_SIZE,
   resolveMimeType,
 } from './fileUtils.ts';
+import { generateContent } from './geminiClient.ts';
 
 const MODEL = 'gemini-2.5-flash';
 
@@ -21,9 +22,7 @@ export async function extractTextFromFile(apiKey: string, file: File): Promise<s
 
   if (INLINE_GEMINI_MIME_TYPES.has(mimeType)) {
     const base64 = await fileToBase64(file);
-    const { GoogleGenAI } = await import('@google/genai');
-    const ai = new GoogleGenAI({ apiKey });
-    const response = await ai.models.generateContent({
+    const response = await generateContent(apiKey, {
       model: MODEL,
       config: { systemInstruction: OCR_PROMPT },
       contents: [

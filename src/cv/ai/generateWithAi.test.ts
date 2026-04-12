@@ -4,12 +4,10 @@ import type { CvFormData } from '../cvFormSchema.ts';
 
 import { DEFAULT_HIGHLIGHTS_PROMPT, DEFAULT_SUMMARY_PROMPT } from '../cvFormSchema.ts';
 
-const mockGenerateContent = vi.fn();
+const mockGenerateContent = vi.hoisted(() => vi.fn());
 
-vi.mock('@google/genai', () => ({
-  GoogleGenAI: vi.fn().mockImplementation(() => ({
-    models: { generateContent: mockGenerateContent },
-  })),
+vi.mock('./geminiClient.ts', () => ({
+  generateContent: mockGenerateContent,
 }));
 
 import {

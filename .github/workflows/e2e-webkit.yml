@@ -21,5 +21,6 @@ jobs:
       - run: npm run build
         env:
           VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          VITE_GEMINI_PROXY_URL: ${{ vars.VITE_GEMINI_PROXY_URL }}
       - run: npx playwright install --with-deps webkit
       - run: npx playwright test --project=webkit

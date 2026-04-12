@@ -1,5 +1,7 @@
 import type { CvFormData } from '../cvFormSchema.ts';
 
+import { generateContent } from './geminiClient.ts';
+
 const MODEL = 'gemini-2.5-flash';
 
 const ATS_CONSTRAINT =
@@ -82,10 +84,7 @@ export function splitReasoning(raw: string): { content: string; reasoning: strin
 }
 
 async function generate(apiKey: string, instructions: string, input: string): Promise<string> {
-  const { GoogleGenAI } = await import('@google/genai');
-  const ai = new GoogleGenAI({ apiKey });
-
-  const response = await ai.models.generateContent({
+  const response = await generateContent(apiKey, {
     model: MODEL,
     config: { systemInstruction: instructions + ATS_CONSTRAINT + REASONING_SUFFIX },
     contents: input,
