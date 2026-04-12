@@ -12,6 +12,9 @@ import { z } from 'zod';
 
 const PROXY_BASE = import.meta.env.VITE_GEMINI_PROXY_URL || 'http://localhost:8787';
 
+/** Model used for all Gemini calls (generation and parsing). */
+export const GEMINI_MODEL = 'gemini-2.5-flash';
+
 export interface GeminiPart {
   text?: string;
   inlineData?: { data: string; mimeType: string };

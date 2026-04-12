@@ -253,8 +253,6 @@ export function useCvEditorForm(defaultValues: CvFormData) {
     });
   }, []);
 
-  const onPickJsonFile = () => fileInputRef.current?.click();
-
   const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     onImport(e);
     if (fileInputRef.current) fileInputRef.current.value = '';
@@ -341,7 +339,6 @@ export function useCvEditorForm(defaultValues: CvFormData) {
     onSaveToBrowser,
     onValidationError,
     scrollToImport,
-    onPickJsonFile,
     handleImport,
     handleDownloadClick,
   };

@@ -8,6 +8,7 @@ const mockGenerateContent = vi.hoisted(() => vi.fn());
 
 vi.mock('./geminiClient.ts', () => ({
   generateContent: mockGenerateContent,
+  GEMINI_MODEL: 'gemini-2.5-flash',
 }));
 
 import {

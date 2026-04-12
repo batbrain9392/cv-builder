@@ -1,8 +1,6 @@
 import type { CvFormData } from '../cvFormSchema.ts';
 
-import { generateContent } from './geminiClient.ts';
-
-const MODEL = 'gemini-2.5-flash';
+import { GEMINI_MODEL, generateContent } from './geminiClient.ts';
 
 const ATS_CONSTRAINT =
   '\n\nCRITICAL — ATS COMPATIBILITY IS THE PRIMARY OBJECTIVE. The output must be parseable by applicant tracking systems. Rules: use plain text only (no tables, columns, icons, or graphics). Do not invent metrics, company-specific acronyms, or claims not supported by the source data. Keep formatting simple: short paragraphs or one bullet per line. Preserve reverse chronological order (most recent first) within each section. Never restructure, reorder, or remove CV sections unless the user explicitly asks. Your role is to improve wording within the existing structure, not redesign the CV. STRICT FORMATTING RULE: Do NOT use markdown headings (#), blockquotes (>), HTML tags, or any other complex formatting. Use only **bold** and *italic* text for emphasis.';
@@ -85,7 +83,7 @@ export function splitReasoning(raw: string): { content: string; reasoning: strin
 
 async function generate(apiKey: string, instructions: string, input: string): Promise<string> {
   const response = await generateContent(apiKey, {
-    model: MODEL,
+    model: GEMINI_MODEL,
     config: { systemInstruction: instructions + ATS_CONSTRAINT + REASONING_SUFFIX },
     contents: input,
   });

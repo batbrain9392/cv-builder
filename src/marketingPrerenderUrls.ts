@@ -15,3 +15,11 @@ assertMarketingUrls(raw.urls);
 
 /** Locations passed to `StaticRouter` in prerender; must match routes in `marketingRouteElements.tsx`. */
 export const MARKETING_PRERENDER_URLS: readonly string[] = raw.urls;
+
+/**
+ * Canonical list of marketing route paths. Keep this in sync with the
+ * `<Route>` entries in `marketingRouteElements.tsx`.
+ * The test in `marketingPrerenderUrls.test.ts` asserts that
+ * `MARKETING_PRERENDER_URLS` covers exactly these paths.
+ */
+export const MARKETING_ROUTE_PATHS = ['/', '/guide'] as const;

@@ -5,9 +5,7 @@ import type { CvFormData } from '../cvFormSchema.ts';
 import { sortCvSections } from '../cvFormatters.ts';
 import { cvFormSchema } from '../cvFormSchema.ts';
 import { AI_FIELD_DEFAULTS, backfillEntryPrompts } from '../loadDefaultValues.ts';
-import { generateContent } from './geminiClient.ts';
-
-const MODEL = 'gemini-2.5-flash';
+import { GEMINI_MODEL, generateContent } from './geminiClient.ts';
 
 const EXAMPLE_STRUCTURE = `{
   "personalInfo": {
@@ -239,7 +237,7 @@ export function validateParsedCv(parsed: unknown): ParseCvResult {
 
 export async function parseCvFromText(apiKey: string, rawText: string): Promise<ParseCvResult> {
   const response = await generateContent(apiKey, {
-    model: MODEL,
+    model: GEMINI_MODEL,
     config: {
       systemInstruction: SYSTEM_PROMPT,
       responseMimeType: 'application/json',

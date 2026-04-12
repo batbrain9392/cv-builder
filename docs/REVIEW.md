@@ -4,6 +4,50 @@ Last reviewed: 2026-04-12
 
 _See [github-pages-spa-routing.md](./github-pages-spa-routing.md) for path-based routing and the GitHub Pages `404.html` SPA fallback._
 
+## Review #7 — 2026-04-12
+
+**Scope: simplification refactor — Context, dedup ErrorBoundary/model, extract GeneratedSummaryCard, prerender guard**
+
+TypeScript clean, ESLint 0 errors (1 expected warning — see below), 165/165 tests pass (up from 164), production build succeeds. No regressions.
+
+### Changes in scope
+
+| File                                                 | Change                                                                                                                                       |
+| ---------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/pages/CvEditorContext.tsx`                      | New — defines `CvEditorContextValue`, `CvEditorProvider`, `useCvEditor()`                                                                    |
+| `src/pages/CvEditorPage.tsx`                         | Split into `CvEditorPage` (provider + hook) + `CvEditorPageInner` (consumer); extracted `EditorPaneErrorFallback` and `PreviewErrorFallback` |
+| `src/pages/CvFormPanel.tsx`                          | Props removed entirely; reads from `useCvEditor()`                                                                                           |
+| `src/pages/useCvEditorForm.ts`                       | Unchanged logic; added `as const` export of type                                                                                             |
+| `src/cv/ai/geminiClient.ts`                          | Exports `GEMINI_MODEL = 'gemini-2.5-flash'`                                                                                                  |
+| `src/cv/ai/generateWithAi.ts` + `parseCvFromText.ts` | Import `GEMINI_MODEL` instead of local `const MODEL`                                                                                         |
+| `src/cv/form/GeneratedSummaryCard.tsx`               | Extracted from inline definition in `CvFormPanel`                                                                                            |
+| `src/marketingPrerenderUrls.ts`                      | Exports `MARKETING_ROUTE_PATHS` canonical constant                                                                                           |
+| `src/marketingPrerenderUrls.test.ts`                 | New test asserts prerender URLs == route paths                                                                                               |
+
+### Issues Found
+
+| #   | Issue                                                                                                                                                                     | Severity | Status                                                                                                                                                                        |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `CvEditorContext.tsx` exports both a component (`CvEditorProvider`) and a hook (`useCvEditor`) in the same file, causing a `react-refresh/only-export-components` warning | Low      | **Accepted** — co-locating provider and hook in a context file is standard practice; fast-refresh degradation is development-only and the file contains no stateful component |
+| 2   | `onPickJsonFile` dead export: returned from `useCvEditorForm` but never consumed via context — `CvFormPanel` inlined the call directly                                    | Low      | **Fixed** — removed `onPickJsonFile` from hook return                                                                                                                         |
+
+### Metrics
+
+| Metric     | Value                                         |
+| ---------- | --------------------------------------------- |
+| TypeScript | 0 errors                                      |
+| ESLint     | 0 errors, 1 warning (fast-refresh — accepted) |
+| Tests      | 165 passed, 0 failed (21 test files)          |
+| Build      | clean, ~4.73 s                                |
+| Chunks     | unchanged from Review #6                      |
+
+### Notes
+
+- `CvEditorPage` complexity concern from Reviews #2–#3 is now resolved. The page is no longer 944+ lines; logic lives in `useCvEditorForm` (hook) + context, layout in `CvEditorPageInner`, and the public export is a slim provider wrapper.
+- Known issues #7–#15 from previous reviews are unchanged and still accepted.
+
+---
+
 ## Review #6 — 2026-04-12
 
 **Scope: skill category bold — explicit markdown in stored strings**

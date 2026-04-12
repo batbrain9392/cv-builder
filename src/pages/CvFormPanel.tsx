@@ -1,21 +1,10 @@
-import type {
-  Control,
-  FieldErrors,
-  UseFieldArrayReturn,
-  UseFormRegister,
-  UseFormSetValue,
-} from 'react-hook-form';
-
 import {
-  CheckIcon,
   ChevronDownIcon,
-  ClipboardIcon,
   Loader2Icon,
   PenLineIcon,
   SaveIcon,
   SettingsIcon,
   Trash2Icon,
-  XIcon,
 } from 'lucide-react';
 
 import { EmojiIcon } from '@/components/EmojiIcon';
@@ -28,11 +17,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { CollapsibleCard } from '@/cv/form/CollapsibleCard.tsx';
 import { CollapsibleSection } from '@/cv/form/CollapsibleSection.tsx';
 import { MarkdownHint } from '@/cv/form/MarkdownHint.tsx';
-import { BlockMarkdown } from '@/cv/preview/Markdown.tsx';
-
-import type { CvFormData } from '../cv/cvFormSchema.ts';
-import type { useAiGeneration } from '../cv/useAiGeneration.ts';
-import type { SectionKey, ToolsSectionKey } from './useCvEditorForm.ts';
 
 import { AiSettingsFields } from '../cv/form/AiSettingsFields.tsx';
 import { BackupReminder } from '../cv/form/BackupReminder.tsx';
@@ -40,158 +24,63 @@ import { CoverLetterFields } from '../cv/form/CoverLetterFields.tsx';
 import { EditorGuideHint } from '../cv/form/EditorGuideHint.tsx';
 import { EducationEntry } from '../cv/form/EducationFields.tsx';
 import { ExperienceEntryFields } from '../cv/form/ExperienceEntryFields.tsx';
+import { GeneratedSummaryCard } from '../cv/form/GeneratedSummaryCard.tsx';
 import { HighlightsInput } from '../cv/form/HighlightsInput.tsx';
 import { ImportDataFields } from '../cv/form/ImportDataFields.tsx';
 import { JobDescriptionFields } from '../cv/form/JobDescriptionFields.tsx';
 import { PersonalInfoFields } from '../cv/form/PersonalInfoFields.tsx';
 import { SectionToolbar } from '../cv/form/SectionToolbar.tsx';
+import { useCvEditor } from './CvEditorContext.tsx';
 import { EMPTY_EDUCATION, EMPTY_ENTRY } from './useCvEditorForm.ts';
 
-interface GeneratedSummaryCardProps {
-  summary: { content: string; reasoning: string };
-  onCopy: (text: string) => void;
-  onDismiss: () => void;
-  onUse: () => void;
-}
+export function CvFormPanel() {
+  const {
+    register,
+    control,
+    errors,
+    setValue,
+    links,
+    experience,
+    education,
+    others,
+    fileInputRef,
+    handleImport,
+    isStarterData,
+    showBackupBanner,
+    setShowBackupBanner,
+    showEditorGuideHint,
+    onDismissEditorGuideHint,
+    toolsOpen,
+    setToolsOpen,
+    mainCardOpen,
+    setMainCardOpen,
+    sections,
+    setSectionOpen,
+    toolsSections,
+    setToolsSectionOpen,
+    summaryAiOpen,
+    setSummaryAiOpen,
+    anySectionOpen,
+    anyToolsSectionOpen,
+    expandAllSections,
+    collapseAllSections,
+    expandAllToolsSections,
+    collapseAllToolsSections,
+    expSignal,
+    setExpSignal,
+    eduSignal,
+    setEduSignal,
+    othSignal,
+    setOthSignal,
+    aiApiKey,
+    canGenerate,
+    ai,
+    onImportParsed,
+    scrollToImport,
+    onSaveToBrowser,
+    setClearConfirmOpen,
+  } = useCvEditor();
 
-function GeneratedSummaryCard({ summary, onCopy, onDismiss, onUse }: GeneratedSummaryCardProps) {
-  return (
-    <div className="space-y-2 rounded-lg border border-dashed border-primary/30 bg-muted/50 p-3">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-muted-foreground">
-          AI-generated summary
-          {summary.reasoning && <span className="block font-normal">{summary.reasoning}</span>}
-        </span>
-        <div className="flex gap-1">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            onClick={() => onCopy(summary.content)}
-            aria-label="Copy to clipboard"
-          >
-            <ClipboardIcon />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-xs"
-            onClick={onDismiss}
-            aria-label="Dismiss"
-          >
-            <XIcon />
-          </Button>
-        </div>
-      </div>
-      <BlockMarkdown text={summary.content} className="text-sm" />
-      <Button type="button" variant="default" size="sm" onClick={onUse}>
-        <CheckIcon data-icon="inline-start" />
-        Use this summary
-      </Button>
-    </div>
-  );
-}
-
-interface CvFormPanelProps {
-  register: UseFormRegister<CvFormData>;
-  control: Control<CvFormData>;
-  errors: FieldErrors<CvFormData>;
-  setValue: UseFormSetValue<CvFormData>;
-
-  links: UseFieldArrayReturn<CvFormData, 'personalInfo.links'>;
-  experience: UseFieldArrayReturn<CvFormData, 'experience'>;
-  education: UseFieldArrayReturn<CvFormData, 'education'>;
-  others: UseFieldArrayReturn<CvFormData, 'others'>;
-
-  fileInputRef: React.RefObject<HTMLInputElement | null>;
-  handleImport: (e: React.ChangeEvent<HTMLInputElement>) => void;
-
-  isStarterData: boolean;
-  showBackupBanner: boolean;
-  onDismissBackup: () => void;
-  showEditorGuideHint: boolean;
-  onDismissEditorGuideHint: () => void;
-
-  toolsOpen: boolean;
-  setToolsOpen: (open: boolean) => void;
-  mainCardOpen: boolean;
-  setMainCardOpen: (open: boolean) => void;
-  sections: Record<SectionKey, boolean>;
-  setSectionOpen: (key: SectionKey, open: boolean) => void;
-  toolsSections: Record<ToolsSectionKey, boolean>;
-  setToolsSectionOpen: (key: ToolsSectionKey, open: boolean) => void;
-  summaryAiOpen: boolean;
-  setSummaryAiOpen: (open: boolean) => void;
-  anySectionOpen: boolean;
-  anyToolsSectionOpen: boolean;
-  expandAllSections: () => void;
-  collapseAllSections: () => void;
-  expandAllToolsSections: () => void;
-  collapseAllToolsSections: () => void;
-
-  expSignal: { n: number; open: boolean };
-  setExpSignal: React.Dispatch<React.SetStateAction<{ n: number; open: boolean }>>;
-  eduSignal: { n: number; open: boolean };
-  setEduSignal: React.Dispatch<React.SetStateAction<{ n: number; open: boolean }>>;
-  othSignal: { n: number; open: boolean };
-  setOthSignal: React.Dispatch<React.SetStateAction<{ n: number; open: boolean }>>;
-
-  aiApiKey: string | undefined;
-  canGenerate: boolean;
-  ai: ReturnType<typeof useAiGeneration>;
-
-  onImportParsed: (data: CvFormData) => void;
-  scrollToImport: () => void;
-  onSaveToBrowser: () => void;
-  onClearConfirm: () => void;
-}
-
-export function CvFormPanel({
-  register,
-  control,
-  errors,
-  setValue,
-  links,
-  experience,
-  education,
-  others,
-  fileInputRef,
-  handleImport,
-  isStarterData,
-  showBackupBanner,
-  onDismissBackup,
-  showEditorGuideHint,
-  onDismissEditorGuideHint,
-  toolsOpen,
-  setToolsOpen,
-  mainCardOpen,
-  setMainCardOpen,
-  sections,
-  setSectionOpen,
-  toolsSections,
-  setToolsSectionOpen,
-  summaryAiOpen,
-  setSummaryAiOpen,
-  anySectionOpen,
-  anyToolsSectionOpen,
-  expandAllSections,
-  collapseAllSections,
-  expandAllToolsSections,
-  collapseAllToolsSections,
-  expSignal,
-  setExpSignal,
-  eduSignal,
-  setEduSignal,
-  othSignal,
-  setOthSignal,
-  aiApiKey,
-  canGenerate,
-  ai,
-  onImportParsed,
-  scrollToImport,
-  onSaveToBrowser,
-  onClearConfirm,
-}: CvFormPanelProps) {
   return (
     <form
       id="cv-editor"
@@ -220,7 +109,7 @@ export function CvFormPanel({
 
       {showEditorGuideHint && <EditorGuideHint onDismiss={onDismissEditorGuideHint} />}
 
-      {showBackupBanner && <BackupReminder onDismiss={onDismissBackup} />}
+      {showBackupBanner && <BackupReminder onDismiss={() => setShowBackupBanner(false)} />}
 
       <CollapsibleCard
         id="tools-import-title"
@@ -598,7 +487,7 @@ export function CvFormPanel({
       </CollapsibleCard>
 
       <div className="hidden items-center justify-end gap-3 border-t pt-6 lg:flex">
-        <Button type="button" variant="ghost" onClick={onClearConfirm}>
+        <Button type="button" variant="ghost" onClick={() => setClearConfirmOpen(true)}>
           <Trash2Icon data-icon="inline-start" />
           Clear all
         </Button>

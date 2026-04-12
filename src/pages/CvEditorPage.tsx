@@ -12,14 +12,40 @@ import type { CvFormData } from '../cv/cvFormSchema.ts';
 
 import { FormActions } from '../cv/form/FormActions.tsx';
 import { CvPreviewPanel } from '../cv/preview/CvPreviewPanel.tsx';
+import { CvEditorProvider, useCvEditor } from './CvEditorContext.tsx';
 import { CvEditorDialogs } from './CvEditorDialogs.tsx';
 import { CvFormPanel } from './CvFormPanel.tsx';
 import { useCvEditorForm } from './useCvEditorForm.ts';
 
-export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
+function EditorPaneErrorFallback({ reset }: { reset: () => void }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
+      <p>
+        Something went wrong in the editor. If you have a JSON backup, you can reload your data
+        after retrying.
+      </p>
+      <Button variant="outline" size="sm" onClick={reset}>
+        Try again
+      </Button>
+    </div>
+  );
+}
+
+function PreviewErrorFallback({ reset }: { reset: () => void }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
+      <p>Preview could not be rendered. Check your form data for issues.</p>
+      <Button variant="outline" size="sm" onClick={reset}>
+        Try again
+      </Button>
+    </div>
+  );
+}
+
+function CvEditorPageInner({ defaultValues }: { defaultValues: CvFormData }) {
   useDocumentTitle('Editor');
+  const form = useCvEditor();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const form = useCvEditorForm(defaultValues);
 
   const [isPreviewInView, previewIntersectionRef] = useIsInView(
     form.isDesktop ? { root: scrollContainerRef, threshold: 0.3 } : { threshold: 0.3 },
@@ -62,65 +88,8 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
           ref={scrollContainerRef}
           className="min-w-0 lg:min-h-0 lg:flex-1 lg:overflow-y-auto lg:scroll-smooth"
         >
-          <ErrorBoundary
-            fallback={(reset) => (
-              <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
-                <p>
-                  Something went wrong in the editor. If you have a JSON backup, you can reload your
-                  data after retrying.
-                </p>
-                <Button variant="outline" size="sm" onClick={reset}>
-                  Try again
-                </Button>
-              </div>
-            )}
-          >
-            <CvFormPanel
-              register={form.register}
-              control={form.control}
-              errors={form.errors}
-              setValue={form.setValue}
-              links={form.links}
-              experience={form.experience}
-              education={form.education}
-              others={form.others}
-              fileInputRef={form.fileInputRef}
-              handleImport={form.handleImport}
-              isStarterData={form.isStarterData}
-              showBackupBanner={form.showBackupBanner}
-              onDismissBackup={() => form.setShowBackupBanner(false)}
-              showEditorGuideHint={form.showEditorGuideHint}
-              onDismissEditorGuideHint={form.onDismissEditorGuideHint}
-              toolsOpen={form.toolsOpen}
-              setToolsOpen={form.setToolsOpen}
-              mainCardOpen={form.mainCardOpen}
-              setMainCardOpen={form.setMainCardOpen}
-              sections={form.sections}
-              setSectionOpen={form.setSectionOpen}
-              toolsSections={form.toolsSections}
-              setToolsSectionOpen={form.setToolsSectionOpen}
-              summaryAiOpen={form.summaryAiOpen}
-              setSummaryAiOpen={form.setSummaryAiOpen}
-              anySectionOpen={form.anySectionOpen}
-              anyToolsSectionOpen={form.anyToolsSectionOpen}
-              expandAllSections={form.expandAllSections}
-              collapseAllSections={form.collapseAllSections}
-              expandAllToolsSections={form.expandAllToolsSections}
-              collapseAllToolsSections={form.collapseAllToolsSections}
-              expSignal={form.expSignal}
-              setExpSignal={form.setExpSignal}
-              eduSignal={form.eduSignal}
-              setEduSignal={form.setEduSignal}
-              othSignal={form.othSignal}
-              setOthSignal={form.setOthSignal}
-              aiApiKey={form.aiApiKey}
-              canGenerate={form.canGenerate}
-              ai={form.ai}
-              onImportParsed={form.onImportParsed}
-              scrollToImport={form.scrollToImport}
-              onSaveToBrowser={form.onSaveToBrowser}
-              onClearConfirm={() => form.setClearConfirmOpen(true)}
-            />
+          <ErrorBoundary fallback={(reset) => <EditorPaneErrorFallback reset={reset} />}>
+            <CvFormPanel />
           </ErrorBoundary>
 
           {/* Mobile preview — shown below form on mobile, hidden on desktop */}
@@ -131,16 +100,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
               aria-label="CV preview"
               className="border-t bg-muted pb-20"
             >
-              <ErrorBoundary
-                fallback={(reset) => (
-                  <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
-                    <p>Preview could not be rendered. Check your form data for issues.</p>
-                    <Button variant="outline" size="sm" onClick={reset}>
-                      Try again
-                    </Button>
-                  </div>
-                )}
-              >
+              <ErrorBoundary fallback={(reset) => <PreviewErrorFallback reset={reset} />}>
                 <CvPreviewPanel
                   control={form.control}
                   defaultValues={defaultValues}
@@ -180,16 +140,7 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
             aria-label="CV preview"
             className="min-h-0 min-w-0 overflow-y-auto border-l bg-muted lg:w-1/2"
           >
-            <ErrorBoundary
-              fallback={(reset) => (
-                <div className="flex h-full flex-col items-center justify-center gap-4 p-8 text-center text-muted-foreground">
-                  <p>Preview could not be rendered. Check your form data for issues.</p>
-                  <Button variant="outline" size="sm" onClick={reset}>
-                    Try again
-                  </Button>
-                </div>
-              )}
-            >
+            <ErrorBoundary fallback={(reset) => <PreviewErrorFallback reset={reset} />}>
               <CvPreviewPanel
                 control={form.control}
                 defaultValues={defaultValues}
@@ -233,5 +184,14 @@ export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
 
       <Toaster position="bottom-left" mobileOffset={{ bottom: 72 }} />
     </div>
+  );
+}
+
+export function CvEditorPage({ defaultValues }: { defaultValues: CvFormData }) {
+  const form = useCvEditorForm(defaultValues);
+  return (
+    <CvEditorProvider value={form}>
+      <CvEditorPageInner defaultValues={defaultValues} />
+    </CvEditorProvider>
   );
 }
