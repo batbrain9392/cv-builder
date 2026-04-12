@@ -28,7 +28,6 @@ export default defineConfig({
       output: {
         manualChunks: {
           docx: ['docx'],
-          genai: ['@google/genai'],
           mammoth: ['mammoth'],
           sentry: ['@sentry/react'],
           vendor: [

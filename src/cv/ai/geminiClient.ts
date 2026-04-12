@@ -10,7 +10,7 @@
 
 import { z } from 'zod';
 
-const PROXY_BASE = import.meta.env.VITE_GEMINI_PROXY_URL ?? 'http://localhost:8787';
+const PROXY_BASE = import.meta.env.VITE_GEMINI_PROXY_URL || 'http://localhost:8787';
 
 export interface GeminiPart {
   text?: string;

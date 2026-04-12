@@ -1,6 +1,71 @@
 # Code Review Log
 
-Last reviewed: 2026-04-06
+Last reviewed: 2026-04-12
+
+_See [github-pages-spa-routing.md](./github-pages-spa-routing.md) for path-based routing and the GitHub Pages `404.html` SPA fallback._
+
+## Review #4 — 2026-04-12
+
+**Scope: Gemini BYOK proxy (CORS fix)**
+
+TypeScript clean, ESLint clean, 155/155 tests pass (up from 130), production build succeeds (~4.8 s). No regressions. One issue found and fixed during review (empty `genai` chunk); one new test file added for `geminiClient.ts`.
+
+### New feature: Cloudflare Worker BYOK proxy
+
+The app previously called `generativelanguage.googleapis.com` directly from the browser, which is blocked by CORS on GitHub Pages. This change adds a Cloudflare Worker that acts as an origin-locked proxy. The user's API key is forwarded per request — never stored server-side.
+
+**Changed files:**
+
+- `worker/index.ts` — new Cloudflare Worker. Validates `Origin` header against `https://batbrain9392.github.io`, handles `OPTIONS` preflight, forwards `x-goog-api-key` + body to Gemini REST API.
+- `worker/wrangler.jsonc` — minimal Wrangler config.
+- `src/cv/ai/geminiClient.ts` — new shared client. Replaces `@google/genai` SDK with a `fetch` to the proxy. Uses Zod for response parsing (no `as` casts). Reads proxy URL from `VITE_GEMINI_PROXY_URL`, falls back to `http://localhost:8787`.
+- `src/cv/ai/geminiClient.test.ts` — 10 new unit tests covering request body shaping, response text extraction, and error handling.
+- `parseCvFromFile.ts`, `parseCvFromText.ts`, `extractTextFromFile.ts`, `generateWithAi.ts` — replaced `@google/genai` dynamic imports with `generateContent` from `geminiClient.ts`.
+- All three corresponding test files — mocks updated from `@google/genai` to `./geminiClient.ts` using `vi.hoisted`.
+- `AiSettingsFields.tsx`, `geminiHelpSteps.tsx` — UI copy updated: "never leaves your device" replaced with accurate "forwarded through proxy, never stored server-side."
+- `.github/workflows/ci.yml`, `e2e-webkit.yml` — `VITE_GEMINI_PROXY_URL` injected from repo variable at build time.
+- `vite.config.ts` — removed dead `genai: ['@google/genai']` manual chunk (SDK no longer bundled).
+
+### Issues Found During Review
+
+| #   | Issue                                                                                                             | Severity | Status                                               |
+| --- | ----------------------------------------------------------------------------------------------------------------- | -------- | ---------------------------------------------------- |
+| 1   | `genai` manual chunk in `vite.config.ts` produced a 0.00 kB empty file — `@google/genai` is no longer imported    | Low      | **Fixed** — entry removed from `manualChunks`        |
+| 2   | `geminiClient.ts` had no tests despite having three distinct `buildRequestBody` branches and error-handling paths | Medium   | **Fixed** — 10 tests added in `geminiClient.test.ts` |
+
+### Known Issues (Accepted, Carried Forward)
+
+Same as Review #3 (items 7–13 from Review #2, plus GuidePage growth watch).
+
+**New accepted items:**
+
+| #   | Issue                                                                                  | Severity | Reason                                                                                                              |
+| --- | -------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------------------------------------------------------- |
+| 14  | `ALLOWED_ORIGIN` in `worker/index.ts` is hardcoded to `https://batbrain9392.github.io` | Low      | Correct for the current deployment; will need updating if the app moves to a custom domain.                         |
+| 15  | `worker/` has no tsconfig; Worker globals are not type-checked by the project `tsc`    | Low      | The Worker has its own deploy toolchain (`wrangler`). Risk is minimal — the Worker is simple with no complex logic. |
+
+### Metrics
+
+| Metric                  | Value                                                       |
+| ----------------------- | ----------------------------------------------------------- |
+| TypeScript              | 0 errors                                                    |
+| ESLint                  | 0 errors, 0 warnings                                        |
+| Tests                   | 155 passed, 0 failed (20 test files)                        |
+| Source files            | 84 (up from 82)                                             |
+| Build time              | ~4.8 s                                                      |
+| Largest chunk (mammoth) | 500 KB (130 KB gzip)                                        |
+| Largest chunk (app)     | 410 KB (118 KB gzip)                                        |
+| Largest chunk (vendor)  | 388 KB (124 KB gzip)                                        |
+| Lazy chunks             | docx 407 KB, sentry 143 KB, LandingPage/GuidePage as before |
+| `genai` chunk           | removed (SDK no longer bundled)                             |
+
+### Architecture Notes (updated)
+
+- **AI**: Gemini calls now go via `geminiClient.ts` → Cloudflare Worker proxy → `generativelanguage.googleapis.com`. The `@google/genai` SDK is no longer bundled.
+- **BYOK model**: user's API key stored in `localStorage`, forwarded as `x-goog-api-key` header on each request. Proxy does not persist it.
+- **Worker deploy**: `cd worker && npx wrangler deploy`. URL baked into the app build via `VITE_GEMINI_PROXY_URL` repo variable.
+
+---
 
 _See [github-pages-spa-routing.md](./github-pages-spa-routing.md) for path-based routing and the GitHub Pages `404.html` SPA fallback._
 
